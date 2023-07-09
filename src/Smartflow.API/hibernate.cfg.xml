@@ -3,7 +3,7 @@
   <session-factory >
     <property name="connection.driver_class">NHibernate.Driver.Sql2008ClientDriver</property>
     <property name="connection.connection_string">
-      server=127.0.0.1;database=Smartflow.Core;uid=chengderen;pwd=123456
+      server=127.0.0.1;database=Smartflow.Core;uid=sa;pwd=123456
     </property>
     <property name="adonet.batch_size">10</property>
     <property name="show_sql">true</property>
