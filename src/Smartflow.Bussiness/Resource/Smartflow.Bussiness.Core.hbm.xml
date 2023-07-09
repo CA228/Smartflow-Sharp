@@ -11,7 +11,7 @@
 	</class>
 
 	<class name="StatisticsInstance">
-		<id name="Code" column="Code" type="String" generator="assigned"/>
+		<id name="Code"  type="String" generator="assigned"/>
 		<property name="Name"  type="String" />
 		<property name="Url" type="String" />
 		<property name="ParentCode" type="String" />
