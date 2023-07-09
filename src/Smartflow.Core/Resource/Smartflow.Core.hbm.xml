@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Smartflow.Core"
+                   namespace="Smartflow.Core">
+
+	<class name="WorkflowInstance" table="t_wf_instance">
+		<id name="Id" column="Id" type="String" />
+		<property name="TemplateId" column="TemplateId" type="Int64" />
+		<property name="CreateTime" column="CreateTime" type="DateTime" />
+		<property name="CategoryCode" column="CategoryCode" type="String" />
+		<property name="Creator" column="Creator" type="String" />
+		<property name="BusinessId" column="BusinessId" type="String" />
+	</class>
+
+	<class name="WorkflowRecord" table="t_wf_record">
+		<id name="Id" column="Id" type="Int64" generator="increment" />
+		<property name="Code" column="Code" type="String" />
+		<property name="Name" column="Name" type="String" />
+		<property name="Comment" column="Comment" type="String" />
+		<property name="InstanceId" column="InstanceId" type="String" />
+		<property name="LineName" column="LineName" type="String" />
+		<property name="Creator" column="Creator" type="String" />
+		<property name="CreateTime" column="CreateTime" type="DateTime" />
+	</class>
+
+	<class name="WorkflowTemplate" table="t_wf_template">
+		<id name="Id" column="Id" type="Int64" generator="increment" />
+		<property name="Name" column="Name" type="String" />
+		<property name="Source" column="Source" type="String" />
+		<property name="Version"  type="Decimal">
+		   <column name="Version" precision="14" scale="2"/>
+		</property>
+		<property name="Status" column="Status" type="Int32" />
+		<property name="CreateTime" column="CreateTime" type="DateTime" />
+		<property name="UpdateTime" column="UpdateTime" type="DateTime" />
+		<property name="CategoryName" column="CategoryName" type="String" />
+		<property name="CategoryCode" column="CategoryCode" type="String" />
+		<property name="Memo" column="Memo" type="String" />
+	</class>
+
+	<class name="WorkflowTask" table="t_wf_task">
+		<id name="Id" column="Id" type="Int64" generator="increment" />
+		<property name="Code" column="Code" type="String"  />
+		<property name="Name" column="Name" type="String" />
+		<property name="ParentId" column="ParentId" type="Int64" />
+		<property name="InstanceId" column="InstanceId" type="String" />
+		<property name="CreateTime" column="CreateTime" type="DateTime" />
+		<property name="Status" column="Status" type="Int32"  />
+		<property name="Parallel" column="Parallel" type="Int32"  />
+		<property name="Type" column="Type" type="String" />
+		<property name="Creator" column="Creator" type="String" />
+	</class>
+
+	<class name="WorkflowTaskAuth" table="t_wf_task_auth">
+		<id name="Id" column="Id" type="Int64" generator="increment" />
+		<property name="TaskId" column="TaskId" type="Int64"  />
+		<property name="AuthCode" column="AuthCode" type="String" />
+		<property name="Type" column="Type" type="Int32" />
+	</class>
+
+	<class name="WorkflowProcessRecord" table="t_wf_record">
+		<id name="Id" column="Id" type="Int64" generator="assigned" />
+		<property name="Name" column="Name" type="String" />
+		<property name="Comment" column="Comment" type="String" />
+		<property name="LineName" column="LineName" type="String" />
+		<property name="InstanceId" column="InstanceId" type="String" />
+		<property name="CreatorName" column="CreatorName" type="String" />
+		<property name="CreateTime" column="CreateTime" type="DateTime" />
+	</class>
+
+	<class name="Smartflow.Core.Mail.MailConfiguration" table="t_wf_mail">
+		<id name="Id" column="Id" type="Int32" generator="assigned" />
+		<property name="Account" column="Account" type="String" />
+		<property name="Password" column="Password" type="String" />
+		<property name="Name" column="Name" type="String" />
+		<property name="Host" column="Host" type="String" />
+		<property name="Port" column="Port" type="Int32" />
+		<property name="EnableSsl" column="EnableSsl" type="Int32" />
+	</class>
+
+	<sql-query name="queryUserTaskListByUserId">
+		<return alias="x" class="Smartflow.Core.WorkflowTask"/>
+		select {x.*}
+		from t_wf_task x,t_wf_task_auth y where x.Status=0 and  x.id=y.TaskId and ((y.Type=1 and y.AuthCode=:userId) or (y.Type=0 and y.AuthCode in (select RID from [dbo].[t_sys_umr] where UID=:userId)) or (y.Type=2 and y.AuthCode in (select OrganizationCode from [dbo].[t_sys_user] where UID=:userId)))
+	</sql-query>
+
+	<sql-query name="queryProcessRecordListByInstanceId">
+		<return alias="ax" class="Smartflow.Core.WorkflowProcessRecord"/>
+		select
+		a.ID AS {ax.Id},
+		a.NAME AS {ax.Name},
+		a.COMMENT AS {ax.Comment},
+		a.LINENAME AS {ax.LineName},
+		a.INSTANCEID AS {ax.InstanceId},
+		a.CREATETIME AS {ax.CreateTime},
+		[dbo].[F_GetUserName](a.CREATOR) As {ax.CreatorName}
+		FROM t_wf_record a where InstanceId=:instanceId order by CREATETIME
+	</sql-query>
+
+</hibernate-mapping>

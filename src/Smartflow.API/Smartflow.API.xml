@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Smartflow.API</name>
+    </assembly>
+    <members>
+        <member name="T:Smartflow.API.Controllers.SMFController">
+            <summary>
+            工作流核心API
+            </summary>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SMFController.Start(Smartflow.Core.WorkflowStart)">
+            <summary>
+            启动流程
+            </summary>
+            <param name="start">启动参数</param>
+            <returns>任务</returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SMFController.GetUserTaskListByUserId(System.String)">
+            <summary>
+            根据用户获取任务列表
+            </summary>
+            <param name="userId">用户Id</param>
+            <returns>任务清单</returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SMFController.Submit(Smartflow.Core.WorkflowContext)">
+            <summary>
+            提交任务
+            </summary>
+            <param name="context">提交实体</param>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SMFController.GetReportByUserId(System.String)">
+            <summary>
+            根据用户统计任务汇总
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Smartflow.API.Controllers.SettingController">
+            <summary>
+            配置信息API
+            </summary>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SettingController.GetRoles">
+            <summary>
+            获取角色清单
+            </summary>
+            <returns>角色列表</returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SettingController.GetRecordByInstanceId(System.String)">
+            <summary>
+            通过实例Id，获取过程记录
+            </summary>
+            <param name="instanceId">实例Id</param>
+            <returns>过程记录列表</returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SettingController.GetOrganization">
+            <summary>
+            获取单位清单
+            </summary>
+            <returns>单位列表</returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SettingController.GetCategories">
+            <summary>
+            获取类别清单
+            </summary>
+            <returns>类别列表</returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SettingController.GetCategory(System.String)">
+            <summary>
+            通过类别代码，获取类别实体
+            </summary>
+            <param name="code">类别代码</param>
+            <returns>类别信息</returns>
+        </member>
+        <member name="T:Smartflow.API.Controllers.TemplateController">
+            <summary>
+            流程模板操作API
+            </summary>
+        </member>
+        <member name="M:Smartflow.API.Controllers.TemplateController.GetWorkflowTemplateList">
+            <summary>
+            获取流程模板清单
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.TemplateController.GetWorkflowTemplateById(System.Int64)">
+            <summary>
+            通过流程模块Id获取流程模板信息
+            </summary>
+            <param name="id">流程Id</param>
+            <returns>流程模块</returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.TemplateController.Persist(Smartflow.API.Input.WorkflowTemplateBody)">
+            <summary>
+            保存/编辑流程模板
+            </summary>
+            <param name="body">流程模板实体</param>
+        </member>
+        <member name="M:Smartflow.API.Controllers.TemplateController.SaveAs(Smartflow.API.Input.WorkflowTemplateBody)">
+            <summary>
+            流程模板另存为
+            </summary>
+            <param name="body">流程模板实体</param>
+        </member>
+        <member name="M:Smartflow.API.Controllers.TemplateController.ChangeStatus(System.Int64,System.Int32)">
+            <summary>
+            通过流程Id和状态，修改流程模板使用状态
+            </summary>
+            <param name="id">流程模板Id</param>
+            <param name="status">状态</param>
+        </member>
+        <member name="T:Smartflow.API.DTOs.WorkflowSummaryInfo">
+            <summary>
+            汇总
+            </summary>
+        </member>
+        <member name="P:Smartflow.API.DTOs.WorkflowSummaryInfo.Dict">
+            <summary>
+            字典
+            </summary>
+        </member>
+        <member name="P:Smartflow.API.DTOs.WorkflowSummaryInfo.Instances">
+            <summary>
+            统计实例清单
+            </summary>
+        </member>
+    </members>
+</doc>

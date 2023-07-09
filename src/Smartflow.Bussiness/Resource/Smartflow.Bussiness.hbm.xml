@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Smartflow.Bussiness"
+                   namespace="Smartflow.Bussiness.Models">
+
+	<class name="Organization" table="t_sys_organization">
+		<id name="Id" column="Id" type="String">
+			<generator class="uuid.hex">
+				<param name="format"></param>
+				<param name="separator"></param>
+			</generator>
+		</id>
+		<property name="ParentId" column="ParentId" type="String" />
+		<property name="Name" column="Name" type="String" />
+	</class>
+
+	<class name="User" table="t_sys_user">
+		<id name="Id" column="Id" type="String" generator="assigned" />
+		<property name="Name" column="Name" type="String" />
+		<property name="Mail" column="Mail" type="String" />
+		<property name="OrganizationCode" column="OrganizationCode" type="String" />
+		<property name="OrganizationName" column="OrganizationName" type="String" />
+	</class>
+
+	<class name="Role" table="t_sys_role">
+		<id name="Id" column="Id" type="String" generator="assigned" />
+		<property name="Name" column="Name" type="String" />
+	</class>
+
+
+	<class name="Category" table="t_wf_category">
+		<id name="Code" column="Code" type="String" generator="assigned"/>
+		<property name="Name" column="Name" type="String" />
+		<property name="Url" column="Url" type="String" />
+		<property name="ParentCode" column="ParentCode" type="String" />
+	</class>
+	
+	<sql-query name="queryMailByRoleIds">
+		<return alias="ax" class="Smartflow.Bussiness.Models.User"/>
+		select {ax.*} from t_sys_user ax where Id in (select uid from t_sys_umr where rid in (:rIds)) and mail is not null
+	</sql-query>
+	
+	<sql-query name="queryMailByOrganizationCodes">
+		<return alias="ax" class="Smartflow.Bussiness.Models.User"/>
+		select {ax.*} from t_sys_user ax where organizationCode in (:organizationCodes) and mail is not null
+	</sql-query>
+
+</hibernate-mapping>

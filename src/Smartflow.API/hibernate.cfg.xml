@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-configuration  xmlns="urn:nhibernate-configuration-2.2" >
+  <session-factory >
+    <property name="connection.driver_class">NHibernate.Driver.Sql2008ClientDriver</property>
+    <property name="connection.connection_string">
+      server=127.0.0.1;database=Smartflow.Core;uid=chengderen;pwd=123456
+    </property>
+    <property name="adonet.batch_size">10</property>
+    <property name="show_sql">true</property>
+    <property name="format_sql">true</property>
+    <property name="dialect">NHibernate.Dialect.MsSql2008Dialect</property>
+    <property name="command_timeout">10</property>
+    <property name="query.substitutions">false</property>
+    <property name="connection.release_mode">on_close</property>
+    <property name="transaction.use_connection_on_system_prepare">true</property>
+    <!--
+     <property name="hbm2ddl.auto">create</property>  -->
+    <property name="hbm2ddl.keywords">auto-quote</property> 
+	<mapping resource="Smartflow.Bussiness.Resource.Smartflow.Bussiness.hbm.xml" assembly="Smartflow.Bussiness" />
+  </session-factory>
+</hibernate-configuration>
