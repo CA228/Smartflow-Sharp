@@ -33,8 +33,8 @@
             <summary>
             根据用户统计任务汇总
             </summary>
-            <param name="userId"></param>
-            <returns></returns>
+            <param name="userId">用户Id</param>
+            <returns>汇总</returns>
         </member>
         <member name="T:Smartflow.API.Controllers.SettingController">
             <summary>
@@ -91,13 +91,13 @@
             <param name="id">流程Id</param>
             <returns>流程模块</returns>
         </member>
-        <member name="M:Smartflow.API.Controllers.TemplateController.Persist(Smartflow.API.Input.WorkflowTemplateBody)">
+        <member name="M:Smartflow.API.Controllers.TemplateController.Persist(Smartflow.API.Input.WorkflowTemplateInput)">
             <summary>
             保存/编辑流程模板
             </summary>
             <param name="body">流程模板实体</param>
         </member>
-        <member name="M:Smartflow.API.Controllers.TemplateController.SaveAs(Smartflow.API.Input.WorkflowTemplateBody)">
+        <member name="M:Smartflow.API.Controllers.TemplateController.SaveAs(Smartflow.API.Input.WorkflowTemplateInput)">
             <summary>
             流程模板另存为
             </summary>

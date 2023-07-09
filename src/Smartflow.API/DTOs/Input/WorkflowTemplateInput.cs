@@ -2,7 +2,7 @@
 
 namespace Smartflow.API.Input
 {
-    public class WorkflowTemplateBody
+    public class WorkflowTemplateInput
     {
         public long Id
         {

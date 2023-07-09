@@ -47,7 +47,7 @@ namespace Smartflow.API.Controllers
         /// </summary>
         /// <param name="body">流程模板实体</param>
         [Route("api/wf/template/persist"), HttpPost]
-        public void Persist(WorkflowTemplateBody body)
+        public void Persist(WorkflowTemplateInput body)
         {
             WorkflowTemplate template;
             if (body.Id != 0)
@@ -78,7 +78,7 @@ namespace Smartflow.API.Controllers
         /// </summary>
         /// <param name="body">流程模板实体</param>
         [Route("api/wf/template/saveas"), HttpPost]
-        public void SaveAs(WorkflowTemplateBody body)
+        public void SaveAs(WorkflowTemplateInput body)
         {
             WorkflowTemplate template = new WorkflowTemplate
             {

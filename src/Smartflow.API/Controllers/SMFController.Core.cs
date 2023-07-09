@@ -56,8 +56,8 @@ namespace Smartflow.API.Controllers
         /// <summary>
         /// 根据用户统计任务汇总
         /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
+        /// <param name="userId">用户Id</param>
+        /// <returns>汇总</returns>
         [Route("api/smf/report/{userId}/list"), HttpGet]
         public WorkflowSummaryInfo GetReportByUserId(string userId)
         {
