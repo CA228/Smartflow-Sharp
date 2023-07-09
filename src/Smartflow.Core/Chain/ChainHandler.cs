@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Smartflow.Core.Chain
 {
-    public class ChainHandle
+    public class ChainHandler
     {
         private readonly Queue<IHandler> handlers= new Queue<IHandler>();
 
-        public ChainHandle Add(IHandler handle)
+        public ChainHandler Add(IHandler handle)
         {
             handlers.Enqueue(handle);
             return this;

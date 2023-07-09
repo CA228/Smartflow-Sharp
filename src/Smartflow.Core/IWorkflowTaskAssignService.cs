@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Smartflow.Core
 {
-    public interface IWorkflowTaskAssginService
+    public interface IWorkflowTaskAssignService
     {
-        void Assgin(Node node, IList<WorkflowTaskAuth> auth);
+        void Assign(Node node, IList<WorkflowTaskAuth> auth);
     }
 }

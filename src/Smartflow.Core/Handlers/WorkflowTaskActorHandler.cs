@@ -9,7 +9,7 @@ namespace Smartflow.Core.Handlers
     public class WorkflowTaskActorHandler : IHandler
     {
         private readonly IWorkflowTaskAuthService authService = WorkflowGlobalServiceProvider.Resolve<IWorkflowTaskAuthService>();
-        private readonly IWorkflowTaskAssginService assginService = WorkflowGlobalServiceProvider.Resolve<IWorkflowTaskAssginService>();
+        private readonly IWorkflowTaskAssignService assginService = WorkflowGlobalServiceProvider.Resolve<IWorkflowTaskAssignService>();
 
         private Node To { get; set; }
 
@@ -31,7 +31,7 @@ namespace Smartflow.Core.Handlers
         {
             IList<WorkflowTaskAuth> auths = GetTaskAuths(To, TaskId, Users, Roles);
 
-            assginService?.Assgin(To, auths);
+            assginService?.Assign(To, auths);
 
             if (auths.Count > 0)
             {
