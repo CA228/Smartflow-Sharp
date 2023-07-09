@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Smartflow.Core.Internals;
 using System.Xml.Linq;
-using Action = Smartflow.Core.Elements.Action;
 using System.Data;
 using Smartflow.Core.Cache;
 
@@ -53,7 +52,7 @@ namespace Smartflow.Core
                 {
                     foreach (Transition transition in transitions)
                     {
-                        if (!String.IsNullOrEmpty(transition.Expression) && resultSet.Select(transition.Expression).Length > 0)
+                        if (!string.IsNullOrEmpty(transition.Expression) && resultSet.Select(transition.Expression).Length > 0)
                         {
                             resultSelectTransition = transition;
                             break;
