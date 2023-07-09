@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="CustomerService.cs" />
+    <Compile Remove="ICustomerService.cs" />
+    <Compile Remove="Internals\DbFactory.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resource\Smartflow.Core.hbm.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Iesi.Collections" Version="4.0.4" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Smartflow.Common\Smartflow.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Elements\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resource\Smartflow.Core.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

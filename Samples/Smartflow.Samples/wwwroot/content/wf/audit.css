@@ -1,0 +1,57 @@
+﻿@import url('../common.css');
+.smartflow_tab {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    top:0;
+}
+.smartflow_tab_header_items {
+    height: 40px;
+    line-height: 40px;
+    background-color: #f8f8f8;
+    width: 100%;
+    color: #829098;
+    font-size: 16px;
+}
+.smartflow_tab_header_item {
+    padding: 0px 20px;
+    cursor: pointer;
+
+}
+.smartflow_tab_header_item + li {
+    border-left: solid 1px #deebf3;
+}
+.smartflow_tab_select {
+    background-color: #2194d6;
+    color: #FFF;
+}
+.smartflow_tab_content {
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+.button-container {
+    height: 40px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #f8f8f8;
+    line-height:40px;
+}
+.button-group{
+   margin-right:20px;
+}
+.flow-node {
+    width: 140px;
+    background-color: #f8f8f8;
+    color: #6d7173;
+}
+.audit_user {
+    position: absolute;
+    bottom: 60px;
+    left: 20px;
+}

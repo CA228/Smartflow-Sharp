@@ -1,0 +1,97 @@
+﻿.query-container{
+    margin:0 30px;
+
+}
+.tab-items{
+    margin:0;
+    padding:0;
+    overflow:hidden;
+}
+.tab-item {
+    height: 60px;
+    width: 120px;
+    background-color: #8cc2fa45;
+    border: solid 2px #8cc2fa45;
+    cursor:pointer;
+}
+.tab-item + li {
+        margin-left: 20px;
+    }
+.num {
+        font-size: 18px;
+        color: #2091c9;
+        font-family: sans-serif;
+        text-align: center;
+        border-bottom: solid 1px #2091c9;
+        margin: 0 10px;
+    }
+.text {
+    font-size: 20px;
+    font-family: 'Microsoft YaHei';
+    text-align: center;
+}
+.select, .tab-item:hover {
+    border: solid 2px #fae25c;
+}
+
+.list-container{
+
+}
+.list-box{
+
+}
+.list-item {
+    height: auto;
+    margin-bottom: 5px;
+    padding: 10px;
+    padding-bottom: 0px;
+    border: solid 2px #f1f1f1;
+    user-select: none;
+    position: relative;
+    user-select: none;
+}
+.list-item:hover {
+    border-color: #fae25c;
+}
+[v-cloak]{
+    visibility:hidden !important;
+}
+
+.pending-label {
+    float: left;
+    display: block;
+    width: 80px;
+    font-weight: 600;
+    text-align: right;
+}
+.pending-block {margin-left: 110px;min-height: 36px;font-family: tahoma;}
+.date-font {font-family: sans-serif,'ui-sans-serif','ui-monospace',sans-serif;}
+
+
+.button-sel {width: 210px;position: relative;display:inline-block;}
+.button-select {
+    height: 39px;
+    line-height: 39px;
+    border: solid 1px #d2d2d2;
+    padding-left: 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-family: 'Microsoft YaHei';
+    font-weight: 600;
+    border-left:none;
+}
+.button-arrow {font-family: Arial;float: right;padding: 0 10px;font-weight: 600;font-size:20px;}
+.button-list {position: absolute;top: 1px;left: 1px;z-index: 888;width: 168px;background: #fff;border: solid 1px #d2d2d2;border-top:none;}
+.button-item {width:100%;line-height: 37px;text-align: left; }
+.button-item span{padding-left:10px;}
+.button-item:hover {background-color: #F6F6F6;}
+.button-item + li { display: none;}
+.button-item:first-child {
+    border-bottom:none;
+}
+.ac{
+    text-align:center;
+}
+.ar {
+    text-align: right;
+}

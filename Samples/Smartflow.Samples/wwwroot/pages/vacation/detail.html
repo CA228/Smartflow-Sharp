@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="../../content/layui/css/layui.css" rel="stylesheet" />
+    <link href="../../content/common.css" rel="stylesheet" />
+    <script src="../../content/jquery.min.js"></script>
+    <script src="../../content/layui/layui.all.js"></script>
+    <script src="../../Content/base64.min.js"></script>
+    <script src="../../Content/common.js"></script>
+</head>
+<body>
+    <form class="layui-form" lay-filter="form-vacation">
+        <div class="layui-smf-box">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label">申请人</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="Name" id="txtApply" lay-verify="required" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label">请假时长</label>
+                                <div class="layui-input-block">
+                                    <select class="layui-select" id="ddlDay" name="Day">
+                                        <option value="1">1天</option>
+                                        <option value="2">2天</option>
+                                        <option value="3">3天</option>
+                                        <option value="4">4天</option>
+                                        <option value="5">5天</option>
+                                        <option value="6">6天</option>
+                                        <option value="7">7天</option>
+                                        <option value="8">8天</option>
+                                        <option value="9">9天</option>
+                                        <option value="10">10天</option>
+                                        <option value="11">11天</option>
+                                        <option value="12">12天</option>
+                                        <option value="13">13天</option>
+                                        <option value="14">14天</option>
+                                        <option value="15">15天</option>
+                                        <option value="16">16天</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label">请假类型</label>
+                                <div class="layui-input-block">
+                                    <select name="VacationType" lay-filter="vaction_type" lay-verify="required" style="width:100%;">
+                                        <option value=""></option>
+                                        <option>事假</option>
+                                        <option>病假</option>
+                                        <option>产假</option>
+                                        <option>年假</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">请假原因</label>
+                        <div class="layui-input-block">
+                            <textarea placeholder="请输入内容" name="Reason" lay-verify="required" lay-reqtext="请假原因不能为空" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <table class="layui-table record-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-footer">
+            <div class="ar">
+                <input type="button" class="layui-btn submit" id="submit" value="返回" lay-submit lay-filter="form-vacation-ok" />
+            </div>
+        </div>
+    </form>
+    <script src="../../content/layui/layui.all.js"></script>
+    <script src="../../content/wf/record.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var id = util.doQuery('id');
+            var instanceId = util.doQuery('instanceId');
+            init();
+            function init() {
+                util.ajaxService({
+                    url: 'api/vacation/' + id + '/info',
+                    type: 'get',
+                    success: function (o) {
+                        layui.form.val('form-vacation', o);
+                    }
+                });
+
+                layui.form.on('submit(form-vacation-ok)', function () {
+                    var user = util.getUser();
+                    var url = util.pending + user.ID;
+                    window.top.document.getElementById("ifrmContent").setAttribute('src', url);
+                    return false;
+                });
+            }
+            $.Record({ instanceId: instanceId });
+        });
+    </script>
+</body>
+</html>

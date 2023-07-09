@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resource\Smartflow.Bussiness.Core.hbm.xml" />
+    <None Remove="Resource\Smartflow.Bussiness.hbm.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resource\Smartflow.Bussiness.Core.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\Smartflow.Bussiness.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Smartflow.Common\Smartflow.Common.csproj" />
+    <ProjectReference Include="..\Smartflow.Core\Smartflow.Core.csproj" />
+  </ItemGroup>
+
+</Project>

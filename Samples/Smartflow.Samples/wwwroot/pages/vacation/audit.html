@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="../../content/layui/css/layui.css" rel="stylesheet" />
+    <link href="../../content/common.css" rel="stylesheet" />
+    <script src="../../content/jquery.min.js"></script>
+    <script src="../../content/layui/layui.all.js"></script>
+    <script src="../../content/base64.min.js"></script>
+    <script src="../../content/common.js"></script>
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-item layui-bg-gray" style="padding:10px 20px;padding-bottom:0px;height:100%">
+        <form class="layui-form" lay-filter="form-vacation">
+            <div class="layui-form-item">
+                <textarea placeholder="审批内容" name="Reason" lay-verify="required" lay-reqtext="审批内容不能为空" class="layui-textarea"></textarea>
+            </div>
+            <div class="layui-form-item" id="layui-form-button" style="text-align:right;">
+                <button class="layui-btn" lay-submit type="button" lay-filter="form-vacation-ok">确定</button>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            var form = layui.form;
+            var user = util.getUser();
+            form.on('submit(form-vacation-ok)', function () {
+                var form = layui.form;
+                var data = form.val('form-vacation');
+                var arg = util.getArgs();
+                var requestContent =Object.assign(arg, {
+                    Message: data.Reason,
+                });
+                util.ajaxService({
+                    dataType: 'text',
+                    url: util.buildArgs('api/vacation/{userId}/{id}/accept', { userId: user.ID, id: requestContent.id }),
+                    data: JSON.stringify(requestContent),
+                    success: function () {
+                      util.refreshTabPage();
+                      util.closePage();
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

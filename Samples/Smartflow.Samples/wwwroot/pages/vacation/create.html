@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="../../content/layui/css/layui.css" rel="stylesheet" />
+    <link href="../../content/common.css" rel="stylesheet" />
+    <script src="../../content/jquery.min.js"></script>
+    <script src="../../content/layui/layui.all.js"></script>
+    <script src="../../content/base64.min.js"></script>
+    <script src="../../content/common.js"></script>
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-item layui-bg-gray" style="padding:10px 20px;padding-bottom:0px;height:100%">
+        <form class="layui-form" lay-filter="form-vacation">
+            <div class="layui-card layui-height">
+                <div class="layui-card-header">请假申请</div>
+                <div class="layui-card-body">
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label">申请人</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="Name" id="txtApply" lay-verify="required" autocomplete="off" class="layui-input">
+                                    <input type="hidden"  id="hidUID" name="UID"/>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label">请假时长</label>
+                                <div class="layui-input-block">
+                                    <select class="layui-select" name="Day" id="ddlDay">
+                                        <option value="1">1天</option>
+                                        <option value="2">2天</option>
+                                        <option value="3">3天</option>
+                                        <option value="4">4天</option>
+                                        <option value="5">5天</option>
+                                        <option value="6">6天</option>
+                                        <option value="7">7天</option>
+                                        <option value="8">8天</option>
+                                        <option value="9">9天</option>
+                                        <option value="10">10天</option>
+                                        <option value="11">11天</option>
+                                        <option value="12">12天</option>
+                                        <option value="13">13天</option>
+                                        <option value="14">14天</option>
+                                        <option value="15">15天</option>
+                                        <option value="16">16天</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label">请假类型 </label>
+                                <div class="layui-input-block">
+                                    <select name="VacationType" lay-filter="vaction_type" lay-verify="required" style="width:100%;">
+                                        <option value=""></option>
+                                        <option>事假</option>
+                                        <option>病假</option>
+                                        <option>产假</option>
+                                        <option>年假</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <label class="layui-form-label">请假原因</label>
+                                <div class="layui-input-block">
+                                    <textarea placeholder="先在“流程模板定义”菜单》确定启用哪个流程模板-》在列表中单选选中已启用流程模板-》点击编辑按钮-》双击 任务节点-》点右边参与者-》查看本节点配置的参与角色-》根据角色-》去用户清单查询该角色下的用户，然后使有该角色下的账号登录系统，该用户将收到任务。" name="Reason" lay-verify="required" lay-reqtext="请假原因不能为空" class="layui-textarea"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item" id="layui-form-button" style="text-align:right;">
+                        <button class="layui-btn" lay-submit type="button" lay-filter="form-vacation-create">提交</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            var form = layui.form;
+            var user = util.getUser();
+            form.render('select');
+            $("#txtApply").val(user.Name);
+            $("#hidUID").val(user.ID);
+            form.on('submit(form-vacation-create)', function () {
+                var form = layui.form;
+                var data = form.val('form-vacation');
+                util.ajaxService({
+                    dataType:'text',
+                    url: 'api/vacation/persist',
+                    data: JSON.stringify(data),
+                    success: function () {
+                        alert("操作成功");
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

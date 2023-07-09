@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="../content/layui/css/layui.css" rel="stylesheet" />
+    <link href="../content/task.css" rel="stylesheet" />
+    <script src="../content/jquery.min.js"></script>
+    <script src="../content/layui/layui.all.js"></script>
+    <script src="../content/base64.min.js"></script>
+    <script src="../content/common.js"></script>
+</head>
+<body>
+    <div id="body" class="layui-table-container p10" style="margin: 30px 50px; background-color: #fafafa;"  v-cloak>
+        <div class="list">
+            <div class="list-container">
+                <template v-if="categories.length>0">
+                    <component v-for="(itm,index) in categories" :key="index" v-on:refresh="reload" :ref="itm.Code" :is="itm.Url" :nodes="nodes"></component>
+                </template>
+                <template v-else>
+                    <div style="font-size: 48px; color: rgb(191 191 191); text-align: center; line-height: 200px;">无任务待办信息</div>
+                </template>
+            </div>
+        </div>
+    </div>
+    <script src="../content/vue@2.6.14.js"></script>
+    <script src="../components/pending/base.mixin.pending.js"></script>
+    <script src="../components/filters.js"></script>
+    <script src="../components/pending/transition.js"></script>
+    <script src="../components/pending/tm.js"></script>
+    <script src="../content/task.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+﻿.layui-tab {
+    width: 880px;
+}
+
+.layui-tab-item {
+    height: 550px;
+}
+
+.tab-container {
+    padding: 0px 10px;
+}
+
+iframe {
+    height: 100%;
+    width: 100%;
+}

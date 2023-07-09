@@ -1,0 +1,182 @@
+﻿@import url('./common.css');
+
+body {
+    font-family: "Lucida Grande", Lucida Sans Unicode,Hiragino Sans GB, WenQuanYi Micro Hei, Verdana, Aril, sans-serif;
+}
+
+.smartflow_main {
+    height: 100%;
+    overflow: hidden;
+}
+
+.smartflow_head {
+    height: 60px;
+    background-color: #259FE5;
+}
+
+.smartflow_title {
+    font-size: 20px;
+    color: #FFF;
+    vertical-align: middle;
+    display: block;
+    line-height: 60px;
+    padding-left: 20px;
+    float: left;
+}
+
+
+.smartflow_menu {
+    color: #FFF;
+    display: block;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.smartflow_menu_item {
+}
+
+.smartflow_more {
+    padding: 0 5px;
+    background-color: #1b93ce;
+    height: 30px;
+    padding-top: 7px;
+    /*border-radius: 2px 2px;*/
+    position: relative;
+}
+
+    .smartflow_more:hover {
+        background-color: #168bc3;
+    }
+
+.smartflow_menu_item:hover > ul {
+    display: block;
+}
+
+.smartflow_more i {
+    display: block;
+    width: 30px;
+    height: 2px;
+    background: #FFF;
+}
+
+    .smartflow_more i + i {
+        margin-top: 5px;
+    }
+
+.smartflow_drop {
+    position: absolute;
+    background-color: #1b93ce;
+    width: 40px;
+    z-index: 9999;
+    font-size: 14px;
+    padding: 0 5px;
+}
+
+.smartflow_drop_item {
+    text-align: center;
+    line-height: 25px;
+    height: 25px;
+    cursor: default;
+    -ms-user-select: none; /*IE10*/
+    -khtml-user-select: none; /*早期浏览器*/
+    user-select: none;
+}
+
+    .smartflow_drop_item + li {
+        border-top: solid 1px #fff;
+    }
+
+.smartflow_menu_item {
+    padding: 0 10px;
+}
+
+.smartflow_content {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.smartflow_left {
+    width: 200px;
+    float: left;
+    height: 100%;
+    /*background-color: #C5E0ED;*/
+    /*background-color: #2aa5ec;*/
+    background-color: #259fe5;
+}
+
+.smartflow_right {
+    height: 100%;
+    margin-left: 200px;
+    position: relative;
+}
+
+.menu_item {
+    background-color: #2194d6;
+}
+
+    .menu_item + div {
+        border-top: solid 1px #259FE5;
+    }
+
+.menu_sub_items {
+}
+
+.menu_sub_item {
+    height: 40px;
+    line-height: 40px;
+    text-align: left;
+    padding-left: 20px;
+    color: #fafafa;
+}
+
+    .menu_sub_item span {
+        color: #eef5f9;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .menu_sub_item:hover {
+        background-color: #A2D5ED;
+    }
+
+.menu_title {
+    color: #fff;
+    font-size: 16px;
+    text-decoration: none;
+    padding-left: 20px;
+    cursor: pointer;
+    height: 40px;
+    line-height: 40px;
+    background-color: #2aa5ec;
+}
+
+.smartflow_tab {
+    height: 40px;
+    line-height: 40px;
+    background-color: #2fabf3;
+    width: 100%;
+    color: #d3e9f5;
+    font-size: 16px;
+}
+
+.smartflow_tab_item {
+    padding: 0px 10px;
+    cursor: pointer;
+    border-right: solid 1px #2aa3e8;
+}
+
+.smartflow_tab_select {
+    background-color: #2194d6;
+    color: #FFF;
+}
+
+.smartflow_tab_content {
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}

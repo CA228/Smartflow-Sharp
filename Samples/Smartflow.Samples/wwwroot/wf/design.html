@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <title>Smartflow-Sharp工作流程设计工具</title>
+    <link href="../content/layui/css/layui.css" rel="stylesheet" />
+    <link href="../content/wf/icon/iconfont.css" rel="stylesheet" />
+    <link href="../content/wf/design/smartflow.css" rel="stylesheet" />
+    <link href="../content/wf/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+    <script src="../content/jquery.min.js"></script>
+    <script src="../content/wf/design/svg.js"></script>
+    <script src="../content/layui/layui.all.js"></script>
+    <script src="../content/wf/design/smartflow.js"></script>
+    <script src="../content/wf/ztree/jquery.ztree.all.min.js"></script>
+    <script src="../content/base64.min.js"></script>
+    <script src="../content/common.js"></script>
+</head>
+<body>
+    <div class="container_tools">
+        <ul class="tools_menu clearfix" id="menus">
+            <li command="saveas">
+                <span class="iconfont iconsave7" title="另存为"></span>
+            </li>
+            <li command="save">
+                <span class="iconfont iconsave5" title="保存"></span>
+            </li>
+            <li command="select">
+                <span class="iconfont iconshubiaojiantou" title="选择"></span>
+            </li>
+            <li command="join">
+                <span class="iconfont iconline icon-line" title="连线"></span>
+            </li>
+            <li command="node">
+                <span class="iconfont iconweibiaoti-zhuanhuan-" title="节点"></span>
+            </li>
+            <li command="decision">
+                <span class="iconfont iconlingxing icon-decision" title="判断节点"></span>
+            </li>
+        </ul>
+    </div>
+    <div class="container container_right" id="attributes_tabs">
+        <div id="workflow-help" class="attributes_tab">
+            <table class="attribute_tab_table">
+                <tr>
+                    <td class="attribute_tab_table_column">方向</td>
+                    <td class="attribute_tab_table_content">流程设计工具支持上下左右</td>
+                </tr>
+                <tr>
+                    <td class="attribute_tab_table_column">连线</td>
+                    <td class="attribute_tab_table_content">先点击左边线条图标，然后选中节点，按下鼠标左键拖动到另一节点，然后再松手</td>
+                </tr>
+                <tr>
+                    <td class="attribute_tab_table_column">折线</td>
+                    <td class="attribute_tab_table_content">先连线，连线完成后，按住Ctrl+Shift键，然后鼠标双击线条，就会出圆点，可以随意拖动</td>
+                </tr>
+                <tr>
+                    <td class="attribute_tab_table_column">移动</td>
+                    <td class="attribute_tab_table_content">先点击左边鼠标箭头，然后选择节点元素，按下鼠标左键进行移动</td>
+                </tr>
+                <tr>
+                    <td class="attribute_tab_table_column">编辑</td>
+                    <td class="attribute_tab_table_content">鼠标双击元素，编辑右边面板</td>
+                </tr>
+                <tr>
+                    <td class="attribute_tab_table_column">删除</td>
+                    <td class="attribute_tab_table_content">按住键盘中Ctrl+Alt键，然后鼠标双击元素，元素就会被删除</td>
+                </tr>
+            </table>
+        </div>
+        <div id="workflow-node" class="attributes_tab hide">
+            <fieldset class="layui-elem-field" lay-filter="attributes_node_info" id="attributes_node_info">
+                <legend>基础信息</legend>
+                <div class="layui-field-box">
+                    <form class="layui-form" lay-filter="form_node">
+                        <div class="layui-form-item">
+                            <input type="text" placeholder="节点名称" class="layui-input" id="node_name" />
+                        </div>
+                        <div class="layui-form-item">
+                            <input type="text" placeholder="节点编码" class="layui-input" id="node_id" />
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+            <fieldset class="layui-elem-field" lay-filter="attributes_actor" id="attributes_actor" style="border:none;cursor:default;">
+                <legend><span id="node_actor">参与者(点击选择参与者)</span></legend>
+            </fieldset>
+        </div>
+        <div id="workflow-line" class="attributes_tab hide">
+            <fieldset class="layui-elem-field" lay-filter="attributes_line_info" id="attributes_line_info">
+                <legend>基础信息</legend>
+                <div class="layui-field-box">
+                    <form class="layui-form" lay-filter="form_line">
+                        <div class="layui-form-item">
+                            <input type="text" placeholder="操作名称" class="layui-input" id="line_name" />
+                        </div>
+                        <div class="layui-form-item">
+                            <input type="text" placeholder="操作编码" class="layui-input" id="line_id" />
+                        </div>
+                        <div class="layui-form-item">
+                            <input type="text" placeholder="表单url" class="layui-input" id="line_url" />
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="container_ctr">
+        <div class="container_draw" id="drawing"></div>
+    </div>
+    <script type="text/html" id="smartflow_s_info">
+        <form class="layui-form" lay-filter="layui_flow_info" style="margin:10px;margin-right:30px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">流程名称</label>
+                <div class="layui-input-block">
+                    <input type="text" placeholder="流程名称" name="Name" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">业务类型</label>
+                <div class="layui-input-block" style="position:relative;">
+                    <input type="text" id="txtCategoryName" name="CategoryName" onclick="$('#zc').show()" class="layui-input" />
+                    <input type="hidden" id="hidCategoryCode" name="CategoryCode" />
+                    <div class="ztree-container" id="zc" onmouseleave="$('#zc').hide()">
+                        <div class="ztree" id="ztree"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="Memo" style="min-height:60px;"></textarea>
+                </div>
+            </div>
+        </form>
+    </script>
+    <script type="text/html" id="smartflow_e_info">
+        <form class="layui-form" lay-filter="layui_flow_info" style="margin:10px;margin-right:30px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">流程名称</label>
+                <div class="layui-input-block">
+                    <input type="text" placeholder="流程名称" name="Name" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="Memo" style="min-height:60px;"></textarea>
+                </div>
+            </div>
+        </form>
+    </script>
+    <script src="../content/wf/design/design.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var setting = design.Configuration({
+                node: 'workflow-node',
+                line: 'workflow-line',
+                help: 'workflow-help',
+                container: 'drawing',
+                categoryUrl: 'api/setting/category/list',
+                categoryId: 'ztree',
+                url: 'api/wf/template/{id}/info',
+                save: 'api/wf/template/persist',
+                saveAs: 'api/wf/template/saveas'
+            });
+            $("#menus li").click(function () {
+                var command = $(this).attr("command");
+                var instance = $.SMF.getInstanceComponent();
+                if ($.inArray(command, ['node', 'decision']) > -1) {
+                    instance.create(command);
+                } else {
+                    if (instance[command]) {
+                        instance[command]();
+                    } else {
+                        setting[command]();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
