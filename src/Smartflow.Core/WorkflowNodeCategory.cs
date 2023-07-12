@@ -31,13 +31,13 @@ namespace Smartflow.Core
         End,
 
         /// <summary>
-        /// 分叉
+        /// 分叉网关
         /// </summary>
         Fork,
 
         /// <summary>
-        /// 合并
+        /// 聚合网关
         /// </summary>
-        Merge
+        Join
     }
 }

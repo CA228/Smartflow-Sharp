@@ -49,6 +49,7 @@
 		<property name="Parallel" column="Parallel" type="Int32"  />
 		<property name="Type" column="Type" type="String" />
 		<property name="Creator" column="Creator" type="String" />
+		<property name="LineCode" column="LineCode" type="String" />
 	</class>
 
 	<class name="WorkflowTaskAuth" table="t_wf_task_auth">

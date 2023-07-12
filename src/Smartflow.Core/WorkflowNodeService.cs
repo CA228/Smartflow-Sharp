@@ -41,13 +41,13 @@ namespace Smartflow.Core
             return node;
         }
 
-        public Transition GetTransition(string json, Node n)
+        public Transition GetTransition(string props, Node el)
         {
             try
             {
-                DataTable resultSet = Newtonsoft.Json.JsonConvert.DeserializeObject<DataTable>(JsonToDataTableCharacter(json));
+                DataTable resultSet = Newtonsoft.Json.JsonConvert.DeserializeObject<DataTable>(JsonToDataTableCharacter(props));
                 Transition resultSelectTransition = null;
-                List<Transition> transitions = n.Transitions.ToList();
+                List<Transition> transitions = el.Transitions.ToList();
                 if (resultSet.Rows.Count > 0)
                 {
                     foreach (Transition transition in transitions)
@@ -76,6 +76,13 @@ namespace Smartflow.Core
         public IDictionary<long, IList<Node>> GetAllTemplateNodes()
         {
             return CacheFactory.Instance.GetAllTemplateNodes();
+        }
+
+        public IList<Transition> GetPreviousTransitions(IList<Node> nodes,Node el)
+        {
+            IList<Transition> transitions = new List<Transition>();
+            nodes.ToList().ForEach(tr => transitions.AddRange(tr.Transitions));
+            return transitions.Where(t => t.Destination == el.Id).ToList();
         }
     }
 }

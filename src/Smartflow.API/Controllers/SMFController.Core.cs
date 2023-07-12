@@ -27,7 +27,7 @@ namespace Smartflow.API.Controllers
         /// <param name="start">启动参数</param>
         /// <returns>任务</returns>
         [Route("api/smf/start"), HttpPost]
-        public WorkflowStartTask Start(WorkflowStart start)
+        public WorkflowStartTask Start(WorkflowStartInfo start)
         {
             return WorkflowEngine.Instance.Start(start);
         }

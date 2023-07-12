@@ -21,6 +21,8 @@ namespace Smartflow.Core
         /// </summary>
         public virtual int Parallel { get; set; }
 
+        public virtual string LineCode { get; set; }
+
         public virtual string Type { get; set; }
         
         public virtual string Creator { get; set; }

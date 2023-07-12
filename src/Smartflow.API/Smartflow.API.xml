@@ -9,7 +9,7 @@
             工作流核心API
             </summary>
         </member>
-        <member name="M:Smartflow.API.Controllers.SMFController.Start(Smartflow.Core.WorkflowStart)">
+        <member name="M:Smartflow.API.Controllers.SMFController.Start(Smartflow.Core.WorkflowStartInfo)">
             <summary>
             启动流程
             </summary>

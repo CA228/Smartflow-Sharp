@@ -1,19 +1,19 @@
 ﻿using Smartflow.Core;
-using Smartflow.Core.Elements;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+using Smartflow.Core.Dispatch;
 
 namespace Smartflow.Core
 {
-    public class WorkflowCoreService : IWorkflowBasicCoreService, IWorkflowCoreService
+    public class WorkflowCoreService : AbstractWorkflow,IWorkflowCoreService
     {
-        public AbstractWorkflow AbsWorkflowService => WorkflowGlobalServiceProvider.Resolve<AbstractWorkflow>();
-
         public void Go(WorkflowContext context)
         {
-            new WorkflowJumpService(this).Go(context);
+            WorkflowInstance instance = WorkflowInstance.GetWorkflowInstance(context.Id);
+            WorkflowTask task = this.TaskService.GetTaskById(context.TaskId);
+            task.Status = 1;
+            TaskService.Persist(task);
+
+
+            DispatchTaskStrategy.CreatetDispatchTaskStrategy(new DispatchCore(instance, task, context)).Dispatch();
         }
     }
 }

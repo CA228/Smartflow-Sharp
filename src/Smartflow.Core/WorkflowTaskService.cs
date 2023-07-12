@@ -13,8 +13,6 @@ namespace Smartflow.Core
 {
     public class WorkflowTaskService : IWorkflowTaskService
     {
-        private readonly IWorkflowNodeService nodeService = WorkflowGlobalServiceProvider.Resolve<IWorkflowNodeService>();
-     
         public WorkflowTask Persist(WorkflowTask task)
         {
             using ISession session = DbFactory.OpenSession();
@@ -32,39 +30,13 @@ namespace Smartflow.Core
                     .FirstOrDefault();
         }
 
-        public void CreateTask(WorkflowInstance instance, IList<Node> nodes, string nodeCode, string props, string transitionId, string publisher, bool parallel,long parentId, IList<WorkflowSubprocess> children = null, IList<string> users = null, IList<string> roles = null)
-        {
-            Node current = nodes.Where(e => e.Id == nodeCode).FirstOrDefault();
-            Transition transition = current.Transitions.Where(c => c.Id == transitionId).FirstOrDefault();
-            Node to = nodes.Where(e => e.Id == transition.Destination).FirstOrDefault();
-           
-            //结束节点，直接终止执行
-            if (to.NodeType == WorkflowNodeCategory.End) return;
-
-            WorkflowTask task = CreateTask(to, instance.Id, publisher, parentId, false, to.NodeType == WorkflowNodeCategory.Decision?1:0);
-
-            if (children != null)
-            {
-                foreach (WorkflowSubprocess subprocess in children)
-                {
-                    this.CreateSubprocess(instance, task.Id, publisher, subprocess, parallel);
-                }
-            }
-
-            ChainFactory.Chain()
-                .Add(new WorkflowTaskActorHandler(task.Id, to, users, roles))
-                .Add(new WorkflowTaskMailHandler(instance.CategoryCode, task.Id))
-                .Done();
-            
-            this.CreateBranchTask(instance, nodes, task, to,publisher, props);
-        }
-
-        protected WorkflowTask CreateTask(Node to, string instanceId, string publisher, long parentId, bool parallel,int status=0)
+        public WorkflowTask CreateTask(Node to,string lineCode, string instanceId, string publisher, long parentId, bool parallel,int status=0)
         {
             return this.Persist(new WorkflowTask
             {
                 CreateTime = DateTime.Now,
                 Name = to.Name,
+                LineCode=lineCode,
                 Code = to.Id,
                 InstanceId = instanceId,
                 Type = to.NodeType.ToString(),
@@ -75,15 +47,6 @@ namespace Smartflow.Core
             });
         }
 
-        protected void CreateBranchTask(WorkflowInstance instance, IList<Node> nodes, WorkflowTask afterTask, Node to,string creator, string props)
-        {
-            if (to.NodeType == WorkflowNodeCategory.Decision)
-            {
-                Transition selTransition = nodeService.GetTransition(props, to);
-                this.CreateTask(instance, nodes, to.Id, props, selTransition.Id, creator, false,afterTask.Id);
-            }
-        }
-
         public IList<WorkflowTask> GetUserTaskListByUserId(string userId)
         {
             using ISession session = DbFactory.OpenSession();
@@ -92,24 +55,14 @@ namespace Smartflow.Core
                   .SetParameter("userId", userId).List<WorkflowTask>();
         }
 
-        public void CreateSubprocess(WorkflowInstance instance, long taskId, string publisher, WorkflowSubprocess subprocess, bool parallel)
-        {
-            Node node = CacheFactory.Instance.GetNodeById(subprocess.TemplateId, subprocess.Code);
-            WorkflowTask afterTask = this.CreateTask(node, instance.Id, publisher, taskId, parallel,0);
-            ChainFactory.Chain()
-                            .Add(new WorkflowTaskActorHandler(afterTask.Id, node, subprocess.Users, subprocess.Roles))
-                            .Add(new WorkflowTaskMailHandler(instance.CategoryCode, afterTask.Id))
-                            .Done();
-        }
-
         public void CreateParallelProcess(WorkflowInstance instance, string publisher, WorkflowSubprocess subprocess)
         {
-            IList<WorkflowTask> workflowTasks = GetTaskListByInstanceId(subprocess.Code, subprocess.InstanceId);
+            IList<WorkflowTask> workflowTasks = GetTaskListByInstanceId(subprocess.InstanceId).Where(c=>c.Code.Equals(subprocess.Code)).ToList();
             if (workflowTasks.Count > 0)
             {
                 Node clone = CacheFactory.Instance.GetNodeById(subprocess.TemplateId, subprocess.Code);
                 WorkflowTask task = workflowTasks[0];
-                WorkflowTask afterTask = this.CreateTask(clone, task.InstanceId, publisher, task.ParentId, true,0);
+                WorkflowTask afterTask = this.CreateTask(clone,String.Empty, task.InstanceId, publisher, task.ParentId, true,0);
                 this.ChangeParallel(task.ParentId);
                 ChainFactory.Chain()
                              .Add(new WorkflowTaskActorHandler(afterTask.Id, clone, subprocess.Users, subprocess.Roles))
@@ -127,12 +80,12 @@ namespace Smartflow.Core
             tx.Commit();
         }
 
-        public IList<WorkflowTask> GetTaskListByInstanceId(string code, string instanceId)
+        public IList<WorkflowTask> GetTaskListByInstanceId(string instanceId)
         {
             using ISession session = DbFactory.OpenSession();
             return session
                     .Query<WorkflowTask>()
-                    .Where(e => e.Code == code && e.InstanceId == instanceId).ToList();
+                    .Where(e => e.InstanceId == instanceId).ToList();
         }
     }
 }

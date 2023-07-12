@@ -20,7 +20,5 @@ namespace Smartflow.Core
         WorkflowTemplate GetWorkflowTemplateById(long id);
 
         decimal GetWorkflowTemplateVersionByCategoryCode(string categoryCode);
-
-     
     }
 }

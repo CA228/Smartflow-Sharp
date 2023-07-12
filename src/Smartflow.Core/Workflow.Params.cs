@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Smartflow.Core
 {
-    public class WorkflowStart
+    public class WorkflowStartInfo
     {
         public string BusinessId { get; set; }
         public string Creator { get; set; }

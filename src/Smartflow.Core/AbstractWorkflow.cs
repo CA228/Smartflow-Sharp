@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Smartflow.Core
 {
-    public abstract class AbstractWorkflow
+    public class AbstractWorkflow
     {
         public IWorkflowNodeService NodeService => WorkflowGlobalServiceProvider.Resolve<IWorkflowNodeService>();
 
@@ -12,6 +12,5 @@ namespace Smartflow.Core
         public IWorkflowRecordService RecordService => WorkflowGlobalServiceProvider.Resolve<IWorkflowRecordService>();
 
         public IWorkflowTaskService TaskService => WorkflowGlobalServiceProvider.Resolve<IWorkflowTaskService>();
-
     }
 }

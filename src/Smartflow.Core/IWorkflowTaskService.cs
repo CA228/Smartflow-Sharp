@@ -8,13 +8,11 @@ namespace Smartflow.Core
         WorkflowTask Persist(WorkflowTask task);
 
         WorkflowTask GetTaskById(long id);
-        
-        IList<WorkflowTask> GetTaskListByInstanceId(string code,string instanceId);
+
+        IList<WorkflowTask> GetTaskListByInstanceId(string instanceId);
 
         IList<WorkflowTask> GetUserTaskListByUserId(string userId);
 
-        void CreateSubprocess(WorkflowInstance instance, long taskId,string publisher, WorkflowSubprocess subprocess, bool parallel);
-
-        void CreateTask(WorkflowInstance instance, IList<Node> nodes, string nodeCode,string props,string transitionId,string publisher,bool parallel,long parentId, IList<WorkflowSubprocess> children, IList<string> users, IList<string> roles);
+        WorkflowTask CreateTask(Node to,string lineCode, string instanceId, string publisher, long parentId, bool parallel, int status = 0);
     }
 }

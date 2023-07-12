@@ -8,6 +8,6 @@ namespace Smartflow.Core
 {
     public interface IWorkflowService 
     {
-        WorkflowStartTask Start(WorkflowStart start);
+        WorkflowStartTask Start(WorkflowStartInfo start);
     }
 }
