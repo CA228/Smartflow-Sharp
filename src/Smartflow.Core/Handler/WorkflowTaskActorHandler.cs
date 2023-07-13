@@ -1,15 +1,13 @@
 ﻿using Smartflow.Core.Chain;
 using Smartflow.Core.Elements;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Smartflow.Core.Handlers
+namespace Smartflow.Core.Handler
 {
     public class WorkflowTaskActorHandler : IHandler
     {
         private readonly IWorkflowTaskAuthService authService = WorkflowGlobalServiceProvider.Resolve<IWorkflowTaskAuthService>();
-        private readonly IWorkflowTaskAssignService assginService = WorkflowGlobalServiceProvider.Resolve<IWorkflowTaskAssignService>();
+        private readonly IWorkflowTaskAssignService assignService = WorkflowGlobalServiceProvider.Resolve<IWorkflowTaskAssignService>();
 
         private Node To { get; set; }
 
@@ -31,7 +29,7 @@ namespace Smartflow.Core.Handlers
         {
             IList<WorkflowTaskAuth> auths = GetTaskAuths(To, TaskId, Users, Roles);
 
-            assginService?.Assign(To, auths);
+            assignService?.Assign(To, auths);
 
             if (auths.Count > 0)
             {

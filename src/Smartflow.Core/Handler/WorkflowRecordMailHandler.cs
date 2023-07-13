@@ -4,7 +4,7 @@ using Smartflow.Core.Chain;
 using Smartflow.Core.Internals;
 using Smartflow.Core.Mail;
 
-namespace Smartflow.Core.Handlers
+namespace Smartflow.Core.Handler
 {
     public class WorkflowRecordMailHandler : IHandler
     {

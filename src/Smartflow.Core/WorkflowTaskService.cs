@@ -7,7 +7,7 @@ using NHibernate;
 using Smartflow.Common;
 using Smartflow.Core.Cache;
 using Smartflow.Core.Chain;
-using Smartflow.Core.Handlers;
+using Smartflow.Core.Handler;
 
 namespace Smartflow.Core
 {

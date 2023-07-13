@@ -21,10 +21,5 @@ namespace Smartflow.Core.Internals
         {
             return System.Activator.CreateInstance(createType);
         }
-
-        public static Object CreateInstance(string typeName)
-        {
-            return Assembly.GetExecutingAssembly().CreateInstance(typeName);
-        }
     }
 }

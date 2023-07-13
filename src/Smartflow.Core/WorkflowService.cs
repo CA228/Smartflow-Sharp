@@ -18,7 +18,7 @@ namespace Smartflow.Core
             WorkflowTemplate workflowTemplate = TemplateService.GetWorkflowTemplateByCategoryCode(start.CategoryCode);
             IList<Node> nodes = CacheFactory.Instance.GetNodesByTemplateId(workflowTemplate.Id);
             var startNode = nodes.Where(n => n.NodeType == WorkflowNodeCategory.Start).FirstOrDefault();
-            
+
             WorkflowInstance instance = new WorkflowInstance
             {
                 BusinessId = start.BusinessId,
@@ -28,11 +28,11 @@ namespace Smartflow.Core
                 Id = instanceId,
                 TemplateId = workflowTemplate.Id
             };
-            
-            CreateInstance(instance);
 
+            CreateInstance(instance);
+            
             DispatchTaskStrategy.CreatetDispatchTaskStrategy(new StartDispatch(instance, startNode, start)).Dispatch();
-           
+            
             return new WorkflowStartTask
             {
                 InstanceId = instance.Id,

@@ -2,7 +2,7 @@
 using Smartflow.Core.Elements;
 using System;
 
-namespace Smartflow.Core.Handlers
+namespace Smartflow.Core.Handler
 {
     public class WorkflowRecordHandler : IHandler
     {
