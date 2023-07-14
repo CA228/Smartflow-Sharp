@@ -32,8 +32,7 @@ namespace Smartflow.Core
                         nodes.Add(parseService.Parse(entry));
                     }
                 });
-
-                node.Transitions.AddRange(nodes.Where(transition => (transition is Transition)).Cast<Transition>());
+                node.Transitions.AddRange(nodes.Where(transition => (transition is Transition)).Cast<Transition>().OrderBy(e => e.Order));
                 node.Groups.AddRange(nodes.Where(group => (group is Group)).Cast<Group>());
                 node.Actors.AddRange(nodes.Where(actor => (actor is Actor)).Cast<Actor>());
                 node.Organizations.ToList().AddRange(nodes.Where(org => (org is Elements.Organization)).Cast<Elements.Organization>());

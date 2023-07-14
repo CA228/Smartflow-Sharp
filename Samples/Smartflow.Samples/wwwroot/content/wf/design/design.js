@@ -47,6 +47,15 @@
                 $('#line_id').val(nx.id);
             }
         },
+        line_order: {
+            field: 'order',
+            parse: function (id) {
+                return $.SMF.getLineById(id);
+            },
+            invoke: function (nx) {
+                $('#line_order').val(nx.order);
+            }
+        },
         line_url: {
             field: 'url',
             parse: function (id) {
@@ -196,7 +205,7 @@
         }
         else if (category === 'line') {
             Configuration.show([$this.option.line]);
-            var controls = ['line_url','line_name','line_id'];
+            var controls = ['line_url', 'line_name', 'line_id', 'line_order'];
             $.each(controls, function (i, propertyName) {
                 if (Configuration.controlSelectors[propertyName].invoke) {
                     Configuration.controlSelectors[propertyName].invoke(nx, $this);

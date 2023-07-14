@@ -22,14 +22,6 @@ namespace Smartflow.Core
         {
         }
 
-        private IWorkflowCoreService CoreService
-        {
-            get
-            {
-                return WorkflowGlobalServiceProvider.Resolve<IWorkflowCoreService>();
-            }
-        }
-
         public static WorkflowEngine Instance
         {
             get { return singleton; }
@@ -37,6 +29,6 @@ namespace Smartflow.Core
 
         public WorkflowStartTask Start(WorkflowStartInfo start) => workflowService.Start(start);
 
-        public void Submit(WorkflowContext context) => CoreService.Go(context);
+        public void Submit(WorkflowContext context) => workflowService.Submit(context);
     }
 }

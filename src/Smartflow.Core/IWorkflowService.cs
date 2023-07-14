@@ -9,5 +9,7 @@ namespace Smartflow.Core
     public interface IWorkflowService 
     {
         WorkflowStartTask Start(WorkflowStartInfo start);
+        
+        void Submit(WorkflowContext context);
     }
 }

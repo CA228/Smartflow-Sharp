@@ -11,6 +11,7 @@
         marker: 'marker',
         layout: 'layout',
         category: 'category',
+        order:'order',
         x: 'x',
         y: 'y',
         length: 'length',
@@ -540,7 +541,7 @@
         }
     });
 
-     Shape.isNotEmpty = function (value) {
+    Shape.isNotEmpty = function (value) {
          return !(value === null || value === undefined || value === '' || value ==='undefined');
     }
 
@@ -581,6 +582,8 @@
                 transition.setAttribute(config.to, N.id);
                 transition.setAttribute(config.layout, L.getPoints().join(" "));
                 transition.setAttribute(config.id, L.id);
+                transition.setAttribute(config.order, L.order);
+
                 if (Shape.isNotEmpty(L.url)) {
                     transition.setAttribute(config.url, L.url);
                 }
@@ -670,6 +673,7 @@
         this.y1 = 0;
         this.x2 = 0;
         this.y2 = 0;
+        this.order = 0;
         this.border = 2;
         this.expression = '';
         this.url = '';
@@ -1400,6 +1404,7 @@
                 id: 'value',
                 name: 'value',
                 direction: 'value',
+                order: 'value',
                 expression: 'text',
                 url: 'value',
                 marker: {

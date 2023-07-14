@@ -13,7 +13,8 @@ namespace Smartflow.Core
             {
                 Name = element.Attribute("name").Value,
                 Destination = element.Attribute("destination").Value,
-                Id = element.Attribute("id").Value
+                Id = element.Attribute("id").Value,
+                Order = element.Attribute("order").Value
             };
 
             if (element.HasElements)

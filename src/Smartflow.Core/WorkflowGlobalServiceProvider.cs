@@ -15,7 +15,6 @@ namespace Smartflow.Core
             globalServiceCollection.Add(typeof(WorkflowNodeService));
             globalServiceCollection.Add(typeof(WorkflowTaskService));
             globalServiceCollection.Add(typeof(WorkflowTransitionService));
-            globalServiceCollection.Add(typeof(WorkflowCoreService));
             globalServiceCollection.Add(typeof(WorkflowTemplateService));
             globalServiceCollection.Add(typeof(WorkflowRecordService)); 
             globalServiceCollection.Add(typeof(WorkflowTaskAuthService));

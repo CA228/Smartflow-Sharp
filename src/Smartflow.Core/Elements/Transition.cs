@@ -6,13 +6,20 @@ namespace Smartflow.Core.Elements
     {
         private string destination = string.Empty;
         private string expression = string.Empty;
+        private string order = string.Empty;
 
         public virtual string Destination
         {
             get { return destination; }
             set { destination = value; }
         }
-     
+
+        public virtual string Order
+        {
+            get { return order; }
+            set { order = value; }
+        }
+
         public virtual string Expression
         {
             get { return expression; }

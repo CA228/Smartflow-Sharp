@@ -1,5 +1,4 @@
-﻿using Smartflow.Core.Cache;
-using Smartflow.Core.Chain;
+﻿using Smartflow.Core.Chain;
 using Smartflow.Core.Elements;
 using Smartflow.Core.Handler;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace Smartflow.Core.Dispatch
 
         protected WorkflowContext Context { get; }
 
-        public DispatchCore(WorkflowInstance instance, WorkflowTask task, WorkflowContext context) : base(instance)
+        protected DispatchCore(WorkflowInstance instance, WorkflowTask task, WorkflowContext context) : base(instance)
         {
             this.Context = context;
             this.Task = task;
@@ -34,6 +33,11 @@ namespace Smartflow.Core.Dispatch
             WorkflowTask afterTask=base.CreateTask(to, transition.Id, Context.Submiter, Context.Parallel, Task.Id, Context.Children, Context.Users, Context.Roles);
 
             base.DispatchBranchTask(Context.Props,to, afterTask);
+        }
+
+        public static DispatchCore CreateInstance(WorkflowInstance instance, WorkflowTask task, WorkflowContext context)
+        {
+            return new DispatchCore(instance, task, context);
         }
     }
 }

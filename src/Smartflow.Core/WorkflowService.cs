@@ -30,9 +30,9 @@ namespace Smartflow.Core
             };
 
             CreateInstance(instance);
-            
-            DispatchTaskStrategy.CreatetDispatchTaskStrategy(new StartDispatch(instance, startNode, start)).Dispatch();
-            
+
+            StartDispatch.CreateInstance(instance, startNode, start).Dispatch();
+
             return new WorkflowStartTask
             {
                 InstanceId = instance.Id,
@@ -46,6 +46,15 @@ namespace Smartflow.Core
             using ISession session = DbFactory.OpenSession();
             session.Save(instance);
             session.Flush();
+        }
+
+        public void Submit(WorkflowContext context)
+        {
+            WorkflowInstance instance = WorkflowInstance.GetWorkflowInstance(context.Id);
+            WorkflowTask task = this.TaskService.GetTaskById(context.TaskId);
+            task.Status = 1;
+            TaskService.Persist(task);
+            DispatchCore.CreateInstance(instance, task, context).Dispatch();
         }
     }
 }
