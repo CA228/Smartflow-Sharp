@@ -33,7 +33,7 @@ namespace Smartflow.Samples.Controllers
                 UID = input.UID,
                 Reason = input.Reason
             };
-            WorkflowStartTask startTask = await _workflowService.StartAsync(new Start
+            WorkflowStartTask startTask = await _workflowService.StartAsync(new WorkflowStart
             {
                 BusinessId = vacation.NID,
                 Creator = vacation.UID,
@@ -55,7 +55,7 @@ namespace Smartflow.Samples.Controllers
         public async Task Accept(string userId, string id, RequestContent requestContent)
         {
             var info = _vacationService.GetVacationById(id);
-            WorkflowContext workflowContext = new WorkflowContext
+            WorkflowSubmit workflowSubmit = new WorkflowSubmit
             {
                 Id = requestContent.InstanceId,
                 LineId = requestContent.LineId,
@@ -64,14 +64,14 @@ namespace Smartflow.Samples.Controllers
                 Submiter = userId,
                 Props = Newtonsoft.Json.JsonConvert.SerializeObject(info)
             };
-            await _workflowService.SubmitAsync(workflowContext);
+            await _workflowService.SubmitAsync(workflowSubmit);
         }
 
         [Route("api/vacation/{userId}/{id}/reject"), HttpPost]
         public async Task Reject(string userId, string id, RequestContent requestContent)
         {
             var info = _vacationService.GetVacationById(id);
-            WorkflowContext workflowContext = new WorkflowContext
+            WorkflowSubmit workflowSubmit = new WorkflowSubmit
             {
                 Id = requestContent.InstanceId,
                 LineId = requestContent.LineId,
@@ -80,14 +80,14 @@ namespace Smartflow.Samples.Controllers
                 Submiter = userId,
                 Props = Newtonsoft.Json.JsonConvert.SerializeObject(info)
             };
-            await _workflowService.SubmitAsync(workflowContext);
+            await _workflowService.SubmitAsync(workflowSubmit);
         }
 
         [Route("api/vacation/{userId}/{id}/cancel"), HttpPost]
         public async Task Cancel(string userId, string id, RequestContent requestContent)
         {
             var info = _vacationService.GetVacationById(id);
-            WorkflowContext workflowContext = new WorkflowContext
+            WorkflowSubmit workflowSubmit = new WorkflowSubmit
             {
                 Id = requestContent.InstanceId,
                 LineId = requestContent.LineId,
@@ -96,7 +96,7 @@ namespace Smartflow.Samples.Controllers
                 Submiter = userId,
                 Props = Newtonsoft.Json.JsonConvert.SerializeObject(info)
             };
-            await _workflowService.SubmitAsync(workflowContext);
+            await _workflowService.SubmitAsync(workflowSubmit);
         }
 
         [Route("api/pending/{userId}/vacation/list"), HttpGet]

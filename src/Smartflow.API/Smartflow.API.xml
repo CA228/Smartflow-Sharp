@@ -9,7 +9,7 @@
             工作流核心API
             </summary>
         </member>
-        <member name="M:Smartflow.API.Controllers.SMFController.Start(Smartflow.Core.WorkflowStartInfo)">
+        <member name="M:Smartflow.API.Controllers.SMFController.Start(Smartflow.Core.WorkflowStartInput)">
             <summary>
             启动流程
             </summary>
@@ -23,7 +23,7 @@
             <param name="userId">用户Id</param>
             <returns>任务清单</returns>
         </member>
-        <member name="M:Smartflow.API.Controllers.SMFController.Submit(Smartflow.Core.WorkflowContext)">
+        <member name="M:Smartflow.API.Controllers.SMFController.Submit(Smartflow.Core.WorkflowSubmitInput)">
             <summary>
             提交任务
             </summary>

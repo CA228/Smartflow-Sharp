@@ -12,13 +12,10 @@ namespace Smartflow.Core
 {
     public class WorkflowService : AbstractWorkflow, IWorkflowService
     {
-        public WorkflowStartTask Start(WorkflowStartInfo start)
+        public WorkflowStartTask Start(WorkflowStartInput start)
         {
             string instanceId = Guid.NewGuid().ToString();
             WorkflowTemplate workflowTemplate = TemplateService.GetWorkflowTemplateByCategoryCode(start.CategoryCode);
-            IList<Node> nodes = CacheFactory.Instance.GetNodesByTemplateId(workflowTemplate.Id);
-            var startNode = nodes.Where(n => n.NodeType == WorkflowNodeCategory.Start).FirstOrDefault();
-
             WorkflowInstance instance = new WorkflowInstance
             {
                 BusinessId = start.BusinessId,
@@ -31,8 +28,9 @@ namespace Smartflow.Core
 
             CreateInstance(instance);
 
+            IList<Node> nodes = CacheFactory.Instance.GetNodesByTemplateId(workflowTemplate.Id);
+            var startNode = nodes.Where(n => n.NodeType == WorkflowNodeCategory.Start).FirstOrDefault();
             StartDispatch.CreateInstance(instance, startNode, start).Dispatch();
-
             return new WorkflowStartTask
             {
                 InstanceId = instance.Id,
@@ -48,13 +46,13 @@ namespace Smartflow.Core
             session.Flush();
         }
 
-        public void Submit(WorkflowContext context)
+        public void Submit(WorkflowSubmitInput input)
         {
-            WorkflowInstance instance = WorkflowInstance.GetWorkflowInstance(context.Id);
-            WorkflowTask task = this.TaskService.GetTaskById(context.TaskId);
+            WorkflowInstance instance = WorkflowInstance.GetWorkflowInstance(input.Id);
+            WorkflowTask task = this.TaskService.GetTaskById(input.TaskId);
             task.Status = 1;
             TaskService.Persist(task);
-            DispatchCore.CreateInstance(instance, task, context).Dispatch();
+            DispatchCore.CreateInstance(instance, task, input).Dispatch();
         }
     }
 }

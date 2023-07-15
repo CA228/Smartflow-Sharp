@@ -9,35 +9,34 @@ namespace Smartflow.Core.Dispatch
     {
         protected WorkflowTask Task { get; }
 
-        protected WorkflowContext Context { get; }
+        protected WorkflowSubmitInput Input { get; }
 
-        protected DispatchCore(WorkflowInstance instance, WorkflowTask task, WorkflowContext context) : base(instance)
+        protected DispatchCore(WorkflowInstance instance, WorkflowTask task, WorkflowSubmitInput input) : base(instance)
         {
-            this.Context = context;
+            this.Input = input;
             this.Task = task;
         }
 
-        public  void Dispatch()
+        public void Dispatch()
         {
             Node current = Nodes.Where(e => e.Id == Task.Code).FirstOrDefault();
-            Transition transition = current.Transitions.Where(c => c.Id == Context.LineId).FirstOrDefault();
-            Node to = Nodes.Where(n => n.Id == transition.Destination).FirstOrDefault();
-            
+            Transition transition = current.Transitions.Where(c => c.Id == Input.LineId).FirstOrDefault();
             ChainFactory.Chain()
-                  .Add(new WorkflowRecordHandler(Instance.Id, Context.Submiter, current, transition.Name, Context.Message))
-                  .Add(new WorkflowRecordMailHandler(Instance.Creator, Context.Message))
+                  .Add(new WorkflowRecordHandler(Instance.Id, Input.Submiter, current, transition.Name, Input.Message))
+                  .Add(new WorkflowRecordMailHandler(Instance.Creator, Input.Message))
                   .Done();
 
+            if (Input.Close == 1) return;
+            Node to = Nodes.Where(n => n.Id == transition.Destination).FirstOrDefault();
             if (to.NodeType == WorkflowNodeCategory.End) return;
             
-            WorkflowTask afterTask=base.CreateTask(to, transition.Id, Context.Submiter, Context.Parallel, Task.Id, Context.Children, Context.Users, Context.Roles);
-
-            base.DispatchBranchTask(Context.Props,to, afterTask);
+            WorkflowTask afterTask=base.CreateTask(to, transition.Id, Input.Submiter, Input.Parallel, Task.Id, Input.Children, Input.Users, Input.Roles);
+            base.DispatchBranchTask(Input.Props,to, afterTask);
         }
 
-        public static DispatchCore CreateInstance(WorkflowInstance instance, WorkflowTask task, WorkflowContext context)
+        public static IDispatch CreateInstance(WorkflowInstance instance, WorkflowTask task, WorkflowSubmitInput input)
         {
-            return new DispatchCore(instance, task, context);
+            return new DispatchCore(instance, task, input);
         }
     }
 }

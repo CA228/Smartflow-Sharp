@@ -27,8 +27,8 @@ namespace Smartflow.Core
             get { return singleton; }
         }
 
-        public WorkflowStartTask Start(WorkflowStartInfo start) => workflowService.Start(start);
+        public WorkflowStartTask Start(WorkflowStartInput start) => workflowService.Start(start);
 
-        public void Submit(WorkflowContext context) => workflowService.Submit(context);
+        public void Submit(WorkflowSubmitInput input) => workflowService.Submit(input);
     }
 }

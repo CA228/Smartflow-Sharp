@@ -8,12 +8,12 @@ namespace Smartflow.BussinessService.Interfaces
     public interface IWorkflowService
     {
         [Post("/api/smf/start")]
-        Task<WorkflowStartTask> StartAsync([Body(BodySerializationMethod.Serialized)]Start process);
+        Task<WorkflowStartTask> StartAsync([Body(BodySerializationMethod.Serialized)] WorkflowStart start);
 
         [Get("/api/smf/task/{userId}/list")]
         Task<IList<WorkflowTask>> GetUserTaskListByUserIdAsync(string userId);
 
         [Post("/api/smf/submit")]
-        Task SubmitAsync([Body(BodySerializationMethod.Serialized)] WorkflowContext context);
+        Task SubmitAsync([Body(BodySerializationMethod.Serialized)] WorkflowSubmit submit);
     }
 }

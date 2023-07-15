@@ -14,16 +14,16 @@ namespace Smartflow.BussinessService.Services
             return await service.GetUserTaskListByUserIdAsync(userId);
         }
 
-        public async Task<WorkflowStartTask> StartAsync(Start info)
+        public async Task<WorkflowStartTask> StartAsync(WorkflowStart info)
         {
             IWorkflowService service = RestServiceExtensions.For<IWorkflowService>();
             return await service.StartAsync(info);
         }
 
-        public async Task SubmitAsync([Body(BodySerializationMethod.Serialized)] WorkflowContext context)
+        public async Task SubmitAsync([Body(BodySerializationMethod.Serialized)] WorkflowSubmit submit)
         {
             IWorkflowService service = RestServiceExtensions.For<IWorkflowService>();
-            await service.SubmitAsync(context);
+            await service.SubmitAsync(submit);
         }
     }
 }

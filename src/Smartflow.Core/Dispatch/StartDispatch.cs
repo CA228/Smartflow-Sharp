@@ -8,11 +8,11 @@ namespace Smartflow.Core.Dispatch
 {
     public class StartDispatch : DispatchAbstractCore, IDispatch
     {
-        private  WorkflowStartInfo Start { get; }
+        private  WorkflowStartInput Start { get; }
         
         private Node Destination { get; }
 
-        protected StartDispatch(WorkflowInstance instance,Node destination, WorkflowStartInfo start):base(instance)
+        protected StartDispatch(WorkflowInstance instance,Node destination, WorkflowStartInput start):base(instance)
         {
             this.Start = start;
             this.Destination = destination;
@@ -33,7 +33,7 @@ namespace Smartflow.Core.Dispatch
             base.DispatchBranchTask(Start.Props,destination, afterTask);
         }
     
-        public static StartDispatch CreateInstance(WorkflowInstance instance, Node destination, WorkflowStartInfo start)
+        public static IDispatch CreateInstance(WorkflowInstance instance, Node destination, WorkflowStartInput start)
         {
             return new StartDispatch(instance, destination, start);
         }

@@ -27,7 +27,7 @@ namespace Smartflow.API.Controllers
         /// <param name="start">启动参数</param>
         /// <returns>任务</returns>
         [Route("api/smf/start"), HttpPost]
-        public WorkflowStartTask Start(WorkflowStartInfo start)
+        public WorkflowStartTask Start(WorkflowStartInput start)
         {
             return WorkflowEngine.Instance.Start(start);
         }
@@ -48,7 +48,7 @@ namespace Smartflow.API.Controllers
         /// </summary>
         /// <param name="context">提交实体</param>
         [Route("api/smf/submit"), HttpPost]
-        public void Submit(WorkflowContext context)
+        public void Submit(WorkflowSubmitInput context)
         {
             WorkflowEngine.Instance.Submit(context);
         }
