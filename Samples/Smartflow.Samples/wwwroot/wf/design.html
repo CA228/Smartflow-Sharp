@@ -27,7 +27,7 @@
             <li command="select">
                 <span class="iconfont iconshubiaojiantou" title="选择"></span>
             </li>
-            <li command="join">
+            <li command="line">
                 <span class="iconfont iconline icon-line" title="连线"></span>
             </li>
             <li command="node">
@@ -35,6 +35,12 @@
             </li>
             <li command="decision">
                 <span class="iconfont iconlingxing icon-decision" title="判断节点"></span>
+            </li>
+            <li command="fork">
+                <span class="iconfont iconchangfangxing2 icon-fork" title="分叉"></span>
+            </li>
+            <li command="join">
+                <span class="iconfont iconyuanxing1" title="聚合"></span>
             </li>
         </ul>
     </div>
@@ -169,13 +175,17 @@
             $("#menus li").click(function () {
                 var command = $(this).attr("command");
                 var instance = $.SMF.getInstanceComponent();
-                if ($.inArray(command, ['node', 'decision']) > -1) {
+                if ($.inArray(command, ['node','fork','join', 'decision']) > -1) {
                     instance.create(command);
                 } else {
-                    if (instance[command]) {
-                        instance[command]();
+                    if (command === 'line') {
+                        instance.join();
                     } else {
-                        setting[command]();
+                        if (instance[command]) {
+                            instance[command]();
+                        } else {
+                            setting[command]();
+                        }
                     }
                 }
             });

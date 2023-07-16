@@ -1,9 +1,6 @@
 ﻿using Smartflow.Bussiness.Models;
 using Smartflow.Core.Elements;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Smartflow.API.DTOs
 {

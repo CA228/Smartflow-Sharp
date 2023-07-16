@@ -316,8 +316,8 @@
             case "fork":
                 instance = new Fork();
                 break;
-            case "merge":
-                instance = new Merge();
+            case "join":
+                instance = new Join();
                 break;
             default:
                 instance = new Node();
@@ -1364,6 +1364,267 @@
                 && Draw.findById(this.$id, 'to').length > 0);
         }
     });
+
+    function Join() {
+       Join.base.Constructor.call(this, "聚合", "join");
+       this.tickness = 10;
+     }
+
+    Join.extend(Circle, {
+         draw: function () {
+             var dw = this.drawInstance.draw;
+             var g = dw.group()
+                 /*.add(path)*/
+                 .add(dw.path("M10,0 a10 10 0 1 0 0 -0.1").fill(this.drawInstance.drawOption.backgroundColor));
+
+             dw.defs().add(g);
+             var start = dw
+                 .use(g)
+                 .move(this.x, this.y);
+
+
+             this.$id = start.id();
+             Draw._proto_NC[this.$id] = this;
+             Join.base.Parent.prototype.draw.call(this);
+         },
+         bindEvent: function (n) {
+            Join.base.Parent.prototype.bindEvent.call(this, n);
+             //  this.off('dblclick');
+         },
+         validate: function () {
+             return Draw.findById(this.$id, 'from').length > 0
+                 && Draw.findById(this.$id, 'to').length > 1;
+         },
+         move: function (element, d) {
+             var self = this;
+             self.x = Draw.getClientX(d) - self.disX - self.cx;
+             self.y = Draw.getClientY(d) - self.disY - self.cy;
+             element.move(self.x, self.y);
+             if (self.brush) {
+                 self.brush.attr({
+                     x: element.x() + element.width() / 2,
+                     y: element.y() + element.height() / 2
+                 });
+             }
+             Circle.base.Parent.prototype.move.call(self);
+         },
+         bound: function (mX, mY) {
+             var r = 15,
+                 c = 5,
+                 cx = this.x + r,
+                 cy = this.y,
+                 z = r * 2;
+             var tickness = this.tickness;
+             var direction = {
+                 bottom: {
+                     x1: cx - r,
+                     y1: cy + r,
+                     x2: cx - r,
+                     y2: cy + r - tickness,
+                     x3: cx + z - r,
+                     y3: cy + r - tickness,
+                     x4: cx - r + z,
+                     y4: cy + r,
+                     check: function (moveX, moveY) {
+                         var center = {
+                             x: cx + c,
+                             y: cy + r - c
+                         };
+
+                         return (this.x1 <= moveX &&
+                             this.x3 >= moveX &&
+                             this.y1 >= moveY &&
+                             this.y2 <= moveY) ? center : false;
+                     }
+
+                 },
+                 top: {
+                     x1: cx - r,
+                     y1: cy - r,
+                     x2: cx - r,
+                     y2: cy - r + tickness,
+                     x3: cx + z - r,
+                     y3: cy - r,
+                     x4: cx + z - r,
+                     y4: cy - r + tickness,
+                     check: function (moveX, moveY) {
+
+                         var center = {
+                             x: cx + c,
+                             y: cy - r + c
+                         };
+
+                         return (this.x1 <= moveX &&
+                             this.x3 >= moveX &&
+                             this.y1 <= moveY &&
+                             this.y2 >= moveY) ? center : false;
+                     }
+                 },
+                 left: {
+                     x1: cx - r,
+                     y1: cy - r + tickness,
+                     x2: cx - r,
+                     y2: cy + r - tickness,
+                     x3: cx - r + tickness + 10,
+                     y3: cy - r + tickness,
+                     x4: cx - r + tickness,
+                     y4: cy + r - tickness,
+                     check: function (moveX, moveY) {
+
+                         var center = {
+                             x: cx - r + c * 2,
+                             y: cy
+                         };
+
+                         return this.x1 <= moveX &&
+                             this.x3 >= moveX &&
+                             this.y1 <= moveY &&
+                             this.y2 >= moveY ? center : false;
+
+                     }
+                 },
+                 right: {
+                     x1: cx + r,
+                     y1: cy - r + tickness,
+                     x2: cx + r,
+                     y2: cy + r - tickness,
+                     x3: cx + r - tickness,
+                     y3: cy - r + tickness,
+                     x4: cx + r - tickness,
+                     y4: cy + r - tickness,
+                     check: function (moveX, moveY) {
+
+                         var center = {
+                             x: cx + r,
+                             y: cy
+                         };
+
+                         return (this.x1 >= moveX &&
+                             this.x3 <= moveX &&
+                             this.y1 <= moveY &&
+                             this.y2 >= moveY) ? center : false;
+                     }
+                 }
+             }
+             for (var propertName in direction) {
+                 var _o = direction[propertName],
+                     check = _o.check(mX, mY);
+                 if (check) {
+                     return check;
+                 }
+             }
+             return false;
+         }
+     });
+
+    function Fork() {
+         Fork.base.Constructor.call(this, "分叉", "fork");
+         this.name = "分叉";
+         this.w = 80;
+         this.h = 20;
+         this.x = 10;
+         this.y = 10;
+         this.cx = 40;
+         this.cy = 10;
+     }
+
+    Fork.extend(Shape, {
+         draw: function () {
+             var n = this,
+                 dw = n.drawInstance;
+             var color = n.isSelect ? dw.drawOption.color : dw.drawOption.backgroundColor;
+             color = n.isCurrent ? dw.drawOption.executeColor : color;
+             var rect = dw.draw.rect(n.w, n.h)
+                 .attr({ fill: color, x: n.x, y: n.y });
+             n.$id = rect.id();
+             Draw._proto_NC[n.$id] = n;
+             return Fork.base.Parent.prototype.draw.call(this);
+         },
+         bound: function (moveX, moveY) {
+             var x = this.x,
+                 y = this.y,
+                 w = this.w,
+                 h = this.h,
+                 tickness = this.tickness - 10,
+                 xt = x + w,
+                 yt = y + h;
+
+             var direction = {
+                 bottom: function (moveX, moveY) {
+                     var center = {
+                         x: x + w / 2,
+                         y: yt
+                     };
+                     return (x + tickness <= moveX
+                         && xt - tickness >= moveX
+                         && moveY >= yt - tickness
+                         && moveY <= yt) ? center : false;
+                 },
+                 top: function (moveX, moveY) {
+                     var center = {
+                         x: x + w / 2,
+                         y: y
+                     };
+                     return (x + tickness <= moveX && xt - tickness >= moveX
+                         && moveY >= y
+                         && moveY <= y + tickness) ? center : false;
+                 },
+                 left: function (moveX, moveY) {
+                     var center = {
+                         x: x,
+                         y: y + h / 2
+                     };
+
+                     return (
+                         x <= moveX
+                         && x + tickness >= moveX
+                         && moveY >= y
+                         && moveY <= yt
+                     ) ? center : false;
+
+                 },
+                 right: function (moveX, moveY) {
+
+                     var center = {
+                         x: xt,
+                         y: y + h / 2
+                     };
+
+                     return (
+                         xt - tickness <= moveX
+                         && xt >= moveX
+                         && moveY >= y
+                         && moveY <= yt
+                     ) ? center : false;
+                 }
+             };
+
+             for (var propertName in direction) {
+                 var _check = direction[propertName](moveX, moveY);
+                 if (_check) {
+                     return _check;
+                 }
+             }
+
+             return false;
+         },
+         move: function (element, d) {
+             var self = this;
+             self.x = Draw.getClientX(d) - self.disX - self.cx;
+             self.y = Draw.getClientY(d) - self.disY - self.cy;
+
+             element.attr({
+                 x: self.x,
+                 y: self.y
+             });
+
+             Fork.base.Parent.prototype.move.call(this);
+         },
+         validate: function () {
+             return Draw.findById(this.$id, 'to').length == 1
+                 && Draw.findById(this.$id, 'from').length > 1;
+         }
+     });
 
     function XML(xml, support) {
         this.xml = xml;
