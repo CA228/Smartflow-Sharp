@@ -14,7 +14,6 @@
     <div class="layui-container layui-table-container p10">
         <table class="layui-hide" id="template-table" lay-filter="template-table"></table>
     </div>
-
     <script type="text/html" id="col-checkbox">
         <input type="checkbox" name="Status" value="{{d.Status}}" key="{{d.Id}}" title="启用" lay-filter="form-status" {{ d.Status == 1 ? 'checked' : '' }}>
     </script>

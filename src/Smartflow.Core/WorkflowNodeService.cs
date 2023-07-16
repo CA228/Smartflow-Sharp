@@ -40,6 +40,7 @@ namespace Smartflow.Core
             return node;
         }
 
+
         public Transition GetTransition(string props, Node el)
         {
             try

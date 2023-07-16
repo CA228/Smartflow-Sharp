@@ -8,30 +8,29 @@ namespace Smartflow.Core.Internals
 {
     internal class ServiceContainer
     {
-        private static readonly Dictionary<string, Type> innerHandleMap = new Dictionary<string, Type>();
+        private static readonly Dictionary<string, Type> innerHandlerMap = new Dictionary<string, Type>();
 
         static ServiceContainer()
         {
-            innerHandleMap.Add("start", typeof(WorkflowNodeService));
-            innerHandleMap.Add("end", typeof(WorkflowNodeService));
-            innerHandleMap.Add("decision", typeof(WorkflowNodeService));
-            innerHandleMap.Add("node", typeof(WorkflowNodeService));
-
-            innerHandleMap.Add("group", typeof(WorkflowGroupService));
-            innerHandleMap.Add("transition", typeof(WorkflowTransitionService));
-            innerHandleMap.Add("actor", typeof(WorkflowActorService));
-            innerHandleMap.Add("organization", typeof(WorkflowOrganizationService));
+            innerHandlerMap.Add("start", typeof(WorkflowNodeService));
+            innerHandlerMap.Add("end", typeof(WorkflowNodeService));
+            innerHandlerMap.Add("decision", typeof(WorkflowNodeService));
+            innerHandlerMap.Add("node", typeof(WorkflowNodeService));
+            innerHandlerMap.Add("group", typeof(WorkflowGroupService));
+            innerHandlerMap.Add("transition", typeof(WorkflowTransitionService));
+            innerHandlerMap.Add("actor", typeof(WorkflowActorService));
+            innerHandlerMap.Add("organization", typeof(WorkflowOrganizationService));
         }
 
         public static Object Resolve(string name)
         {
-            Type innerType = innerHandleMap[name];
+            Type innerType = innerHandlerMap[name];
             return Utils.CreateInstance(innerType);
         }
 
         public static bool Contains(string name)
         {
-            return innerHandleMap.ContainsKey(name);
+            return innerHandlerMap.ContainsKey(name);
         }
     }
 }

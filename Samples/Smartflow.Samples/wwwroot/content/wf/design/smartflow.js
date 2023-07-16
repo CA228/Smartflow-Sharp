@@ -15,7 +15,8 @@
         x: 'x',
         y: 'y',
         length: 'length',
-        url: 'url'
+        url: 'url',
+        rule:'rule'
     };
 
     Array.prototype.remove = function (dx, to) {
@@ -500,7 +501,7 @@
         this.action = [];
         this.actor = [];
         this.carbon = [];
-        this.rule = [];
+        this.rule = '';
         this.tickness = 20;
     }
 
@@ -552,7 +553,11 @@
         node.setAttribute(config.name, self[config.name]);
         node.setAttribute(config.layout, self.x + ' ' + self.disX + ' ' + self.y + ' ' + self.disY);
         node.setAttribute(config.category, self.category);
-      
+
+        if (Shape.isNotEmpty(self.rule)) {
+            node.setAttribute(config.rule, self.rule);
+        }
+
         var attrObject = {
             group: self.group,
             organization: self.organization,
@@ -569,7 +574,6 @@
                 node.appendChild(attr);
             });
         }
-
       
         var elements = Draw.findById(self.$id, config.from);
         $.each(elements, function () {
@@ -1377,6 +1381,7 @@
             name: 'value',
             layout: 'value',
             category: 'value',
+            rule: 'value',
             group: {
                 type: 'array',
                 id: 'value',

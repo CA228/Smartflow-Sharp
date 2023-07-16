@@ -64,6 +64,7 @@ namespace Smartflow.Core
                 WorkflowTask task = workflowTasks[0];
                 WorkflowTask afterTask = this.CreateTask(clone,String.Empty, task.InstanceId, publisher, task.ParentId, true,0);
                 this.ChangeParallel(task.ParentId);
+
                 ChainFactory.Chain()
                              .Add(new WorkflowTaskActorHandler(afterTask.Id, clone, subprocess.Users, subprocess.Roles))
                              .Add(new WorkflowTaskMailHandler(instance.CategoryCode, afterTask.Id))

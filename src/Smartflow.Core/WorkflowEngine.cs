@@ -20,6 +20,7 @@ namespace Smartflow.Core
 
         private WorkflowEngine()
         {
+
         }
 
         public static WorkflowEngine Instance

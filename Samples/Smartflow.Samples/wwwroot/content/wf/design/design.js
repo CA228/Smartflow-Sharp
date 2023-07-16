@@ -11,6 +11,17 @@
                 return $.SMF.getNodeById(id);
             }
         },
+        node_send_start_user: {
+            type: 'checkbox',
+            field: 'rule',
+            parse: function (id) {
+                return $.SMF.getNodeById(id);
+            },
+            invoke: function (nx) {
+                $('#node_send_start_user').prop('checked', 'node_send_start_user' === nx.rule);
+                layui.form.render('checkbox');
+            }
+        },
         node_name: {
             field: 'name',
             parse: function (id) {
@@ -171,6 +182,12 @@
         for (var propertyName in Configuration.controlSelectors) {
             var selector = '#' + propertyName,
                 sel = Configuration.controlSelectors[propertyName];
+           // if (sel.type === 'checkbox') {
+             //   layui.form.on('checkbox(node_send_start_user)', function (data) {
+               //     var result = Configuration.findElementById.call($this, this);
+              //      result.element.rule = data.elem.checked ? 'node_send_start_user' : '';
+               // });
+           // }
             if (sel.type === 'box') {
                 $(selector).click(function () {
                     var result = Configuration.findElementById.call($this, this);
@@ -196,7 +213,7 @@
             category = nx.category.toLowerCase();
         if (category === 'node') {
             Configuration.show([$this.option.node]);
-            var controls = ['node_name','node_id'];
+            var controls = ['node_name', 'node_id'];
             $.each(controls, function (i, propertyName) {
                 if (Configuration.controlSelectors[propertyName].invoke) {
                     Configuration.controlSelectors[propertyName].invoke(nx, $this);

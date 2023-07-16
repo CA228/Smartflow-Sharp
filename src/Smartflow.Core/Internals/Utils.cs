@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-
-using Smartflow;
-using Smartflow.Core.Elements;
+using System.Xml.Linq;
 
 namespace Smartflow.Core.Internals
 {
@@ -20,6 +14,11 @@ namespace Smartflow.Core.Internals
         public static Object CreateInstance(Type createType)
         {
             return System.Activator.CreateInstance(createType);
+        }
+
+        public static bool CheckAttributes(XElement ele,string attrName)
+        {
+            return ele.Attributes().Where(c => c.Name == attrName).Count() > 0;
         }
     }
 }
