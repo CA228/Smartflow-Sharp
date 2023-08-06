@@ -8,7 +8,9 @@
         name: 'name',
         to: 'destination',
         expression: 'expression',
-        marker: 'marker',
+        horizontal: 'horizontal',
+        vertical: 'vertical',
+        anchor: 'anchor',
         layout: 'layout',
         category: 'category',
         order:'order',
@@ -16,12 +18,28 @@
         y: 'y',
         length: 'length',
         url: 'url',
-        rule:'rule'
+        rule: 'rule',
+        x3: 'x3',
+        y3: 'y3',
+        textRect:'textRect'
     };
 
     Array.prototype.remove = function (dx, to) {
         this.splice(dx, (to || 1));
-    }
+     }
+
+    Array.prototype.insert = function (pos, item) {
+         this.splice(pos, 0, item);
+     }
+
+    Array.prototype.contains = function (va) {
+         for (var i = 0; i < this.length; i++) {
+             if (this[i] == va) {
+                 return true;
+             }
+         }
+         return false;
+     }
 
     Function.prototype.extend = function (Parent, Override) {
         function F() { }
@@ -40,9 +58,8 @@
         this.draw = SVG(option.container);
         this.support = (!!window.ActiveXObject || "ActiveXObject" in window);
         this.drawOption = $.extend({
-            backgroundColor: '#f06',
-            color: 'green',
-            executeColor: 'blue'
+            backgroundColor: '#000',
+            strokeColor: '#000'
         }, option);
         this.source = undefined;
         this._shared = undefined;
@@ -50,12 +67,13 @@
         this._init();
     }
 
-    Draw._proto_Cc = {};
-
     Draw.id = 31;
     Draw._proto_NC = {};
     Draw._proto_LC = {};
+    Draw._proto_LC_QC = [];
+    Draw._proto_LC_TC = {};
     Draw._proto_RC = [];
+    Draw._proto_Cc = {};
 
     Draw.remove = function (elements) {
         for (var i = 0; i < elements.length; i++) {
@@ -94,20 +112,9 @@
         return elements;
      }
     Draw.genId = function (id) {
-        return Shape.isNotEmpty(id) ? id : this.id++;
+        return Shape.isNotEmpty(id) && 0 != id && '0' != id ? id : this.id++;
     }
 
-    Draw.duplicateCheck = function (from, to) {
-        var result = false;
-        for (var i = 0, len = Draw._proto_RC.length; i < len; i++) {
-            var r = Draw._proto_RC[i];
-            if (r.from === from && r.to === to) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-     }
     Draw.getEvent = function (evt) {
         var n = evt.target;
         if (n.nodeName === 'svg') {
@@ -117,6 +124,14 @@
             return (evt.target.correspondingUseElement || evt.target);
         }
     }
+
+    Draw.angle = function (a, b) {
+         var dffx = b.x - a.x;
+         var diffy = b.y - a.y;
+         var angle = Math.atan2(diffy, dffx) * (180 / Math.PI);
+         //console.log(angle);
+         return Math.abs(Math.floor(angle));
+     }
 
     Draw.getPosition = function (layout) {
         var pos = layout.split(' ');
@@ -132,7 +147,41 @@
             dw = self.draw;
 
         self.draw.mouseup(function (e) {
-            self.draw.off('mousemove');
+            if (Draw._proto_LC_QC.length === 0) {
+                dw.off('mousemove');
+            }
+        });
+        self.draw.dblclick(function (evt) {
+            if (Draw._proto_LC_QC.length > 0) {
+                var node = Draw.getEvent(evt),
+                    check = (node != null);
+                if (check) {
+                    var nodeName = node.nodeName,
+                        nodeId = node.id;
+                    if ((nodeName == 'rect' || nodeName == 'use') && self.source) {
+                        var nt = Draw._proto_NC[nodeId],
+                            nf = Draw._proto_NC[self.source.id];
+                        var x = Draw.getClientX(evt),
+                            y = Draw.getClientY(evt);
+                        if (!nt.check(nf) && nt.bound(x, y)) {
+                            var c = self._end.call(self, node, evt);
+                            var l = Draw._proto_LC_QC.shift();
+                            if (!c) {
+                                delete self._shared;
+                                delete self.source;
+                                l.addArrowTriangle();
+                                l.addAnchor();
+                            } else {
+                                l.remove();
+                            }
+                        }
+                    }
+                } else {
+                    var instance = Draw._proto_LC_QC[0];
+                    instance.coords.push([Draw.getClientX(evt), Draw.getClientY(evt)]);
+                    instance.plot(instance.coords);
+                }
+            }
         });
 
         self._initEvent();
@@ -140,6 +189,7 @@
             .add(dw.path("M0 0 50 -25 100 0 50 25z").fill("#f06"));
         dw.defs().add(self._decision);
     }
+
     Draw.prototype._initEvent = function () {
         var self = this;
         self.draw.each(function () {
@@ -153,26 +203,27 @@
                     break;
             }
         });
-    }
+     }
 
     Draw.getClientX = function (evt) {
         return evt.offsetX;
     }
-    Draw.getClientY = function (evt) {
+
+     Draw.getClientY = function (evt) {
         return evt.offsetY;
-    }
+     }
+
     Draw.prototype._drag = function (evt, o) {
         var self = this,
             nx = Draw._proto_NC[self.id()];
         evt.preventDefault();
-        nx.disX = Draw.getClientX(evt) - self.x() - nx.cx;
-        nx.disY = Draw.getClientY(evt) - self.y() - nx.cy;
+        nx.disX = Draw.getClientX(evt) - self.x();
+        nx.disY = Draw.getClientY(evt) - self.y();
         o.draw.on('mousemove', function (d) {
             d.preventDefault();
             nx.move(self, d);
         });
      }
-
     Draw.prototype._start = function (node, evt) {
 
         var nodeName = node.nodeName,
@@ -203,36 +254,59 @@
         return false;
     }
     Draw.prototype._join = function (evt) {
-        if (this._shared) {
-            this._shared.x2 = Draw.getClientX(evt);
-            this._shared.y2 = (this._shared.y1 > Draw.getClientY(evt)) ? Draw.getClientY(evt) + 5 : Draw.getClientY(evt) - 5;
-            this._shared.move();
-        }
-    }
+         if (this._shared) {
+             var last = this._shared.last2();
+             var x = Draw.getClientX(evt);
+             var y = Draw.getClientY(evt);
+             var dffx = x - last.x;
+             var diffy = y - last.y;
+             var a = Math.atan2(diffy, dffx) * (180 / Math.PI);
+             var aw = 360 - a + 90;
+             var tx = aw > 0 ? 360 + aw : aw;
+             var ta = tx % 360;
+             var abs = ta / 360 * 24;
+             var dir = Math.floor(abs);
+             var offset = 5;
+             var lrt = [17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6];
+             var lt = [17, 16, 15, 14, 13, 12];
+             var bl = [23, 22, 21, 20, 19, 18];
+             if (lrt.contains(dir)) {
+                 this._shared.y2 = y + offset;
+                 this._shared.x2 = lt.contains(dir) ? x + offset : x - offset;
+             } else {
+                 this._shared.x2 = bl.contains(dir) ? x + offset : x - offset;
+                 this._shared.y2 = y - offset;
+             }
+             this._shared.move();
+         }
+     }
+
     Draw.prototype._end = function (node, evt) {
-        var self = this,
-            nodeId = node.id;
-        var to = SVG.get(nodeId),
-            from = SVG.get(self.source.id),
-            instance = self._shared,
-            l = SVG.get(instance.$id);
+         var self = this,
+             nodeId = node.id;
+         var to = SVG.get(nodeId),
+             from = SVG.get(self.source.id),
+             instance = self._shared;
 
-        self.source.to = nodeId;
-        instance.move(evt);
+         self.source.to = nodeId;
+         instance.move(evt);
 
-        var last = instance.last();
-        var first = instance.first();
+         var totalPoints = instance.getPoints();
+         var last = instance.last();
+         var first = instance.first();
+         Draw._proto_RC.push({
+             id: instance.$id,
+             from: self.source.id,
+             to: nodeId,
+             ox2: last.x - to.x(),
+             oy2: last.y - to.y(),
+             ox1: first.x - from.x(),
+             oy1: first.y - from.y()
+         });
 
-        Draw._proto_RC.push({
-            id: instance.$id,
-            from: self.source.id,
-            to: nodeId,
-            ox2: last.x - to.x(),
-            oy2: last.y - to.y(),
-            ox1: first.x - from.x(),
-            oy1: first.y - from.y()
-        });
-    }
+         return totalPoints.length === 2 && last.x == first.x && last.y === first.y;
+     }
+
     Draw.prototype.join = function () {
         var self = this;
         this._initEvent();
@@ -243,45 +317,12 @@
                     self.draw.on('mousemove', function (e) {
                         self._join.call(self, e);
                     });
+                    self.draw.off('mousedown');
                 }
             }
         });
+     }
 
-        this.draw.on('mouseup', function (evt) {
-            var node = Draw.getEvent(evt),
-                check = (node != null);
-            if (check) {
-                var nodeName = node.nodeName,
-                    nodeId = node.id;
-                if ((nodeName == 'rect' || nodeName == 'use') && self.source) {
-
-                    var nt = Draw._proto_NC[nodeId],
-                        nf = Draw._proto_NC[self.source.id];
-
-                    var x = Draw.getClientX(evt),
-                        y = Draw.getClientY(evt);
-
-                    check = (
-                        nodeId !== self.source.id
-                        && !nt.check(nf)
-                        && !Draw.duplicateCheck(self.source.id, nodeId)
-                        && nt.bound(x, y)
-                    );
-              
-                    if (check) {
-                        self._end.call(self, node, evt);
-                    }
-                }
-            }
-            if (!check) {
-                if (self._shared) {
-                    self._shared.remove();
-                }
-            }
-            self._shared = undefined;
-            self.source = undefined;
-        });
-    }
     Draw.prototype.select = function () {
         this._initEvent();
         this.draw.off('mousedown');
@@ -300,7 +341,8 @@
                     break;
             }
         });
-    }
+     }
+
     Draw.prototype.create = function (category, after) {
         var instance;
         switch (category) {
@@ -345,7 +387,7 @@
             docXml.async = false;
         }
         return docXml;
-    };
+    }
 
     Draw.prototype.serialize = function (doc) {
         return this.support ? doc.xml : new XMLSerializer().serializeToString(doc);
@@ -357,7 +399,7 @@
         var root = doc.createElement(config.root);
         doc.appendChild(root);
         $.each(Draw._proto_NC, function () {
-            if (this.category !== 'marker') {
+            if (![config.anchor, config.textRect, config.horizontal,config.vertical].contains(this.category)) {
                 this.export(doc, root);
             }
         });
@@ -369,7 +411,7 @@
 
         $.each(Draw._proto_NC, function () {
             var self = this;
-            if (!self.validate()) {
+            if (self.validate&&!self.validate() ) {
                 validateCollection.push(false);
             }
         });
@@ -377,13 +419,10 @@
         return !(validateCollection.length > 0 || Draw._proto_RC.length === 0);
      }
 
-    Draw.prototype.import = function (structure, links, record) {
+    Draw.prototype.import = function (structure) {
         var dwInstance = this,
             root = new XML(structure, dwInstance.support).root;
-
         var data = root.workflow.nodes;
-        var recordArray = record || [];
-
         function findUID(destination) {
             var id;
             for (var i = 0, len = data.length; i < len; i++) {
@@ -395,58 +434,40 @@
             }
             return id;
         }
-        function findRecord(id, destination) {
-            for (var i = 0; i < recordArray.length; i++) {
-                var record = recordArray[i];
-                if (record[destination] == id) {
-                    return true;
-                }
-            }
-            return false;
-        }
 
         $.each(data, function () {
             var node = this;
             node.category = node.category.toLowerCase();
             var instance = dwInstance.create(node.category, true);
-            $.extend(instance, node, Draw.getPosition(node.layout));
-            instance.id = Draw.genId(instance.id);
+            $.extend(instance,Draw.getPosition(node.layout));
             instance.draw();
+            $.extend(instance, node);
+            instance.updateContent && instance.updateContent(node.name);
+            instance.id = Draw.genId(node.id);
             node.$id = instance.$id;
         });
+
         $.each(data, function () {
             var self = this;
-
             self.transition = (self.transition || []);
             $.each(self.transition, function () {
-
                 var transition = new Line();
                 transition.drawInstance = dwInstance;
-
-                var markerArray = (this.marker || []);
-                if (!!this.marker) {
-                    delete this.marker;
-                }
-
                 $.extend(transition, this);
-                transition.isSelect = findRecord(transition.id, 'ID');
+                //temp 
+                transition.x3 = parseFloat(transition.x3);
+                transition.y3 = parseFloat(transition.y3);
                 transition.draw(this.layout);
-
                 var destinationId = findUID(transition.destination),
                     destination = SVG.get(destinationId),
                     from = SVG.get(self.$id);
-
                 var last = transition.last(),
                     first = transition.first();
-
-                $.each(markerArray, function () {
-                    var marker = new Marker(parseFloat(this.x), parseFloat(this.y), transition);
-                    marker.length = this.length;
-                    marker.drawInstance = transition.drawInstance;
-                    marker.draw();
-                    transition.markerArray.push(marker);
-                });
-
+                transition.addText();
+                transition.addAnchor();
+                transition.addArrowTriangle();
+                transition.id = Draw.genId(this.id);
+                transition.updateContent(this.name);
                 Draw._proto_RC.push({
                     id: transition.$id,
                     from: self.$id,
@@ -456,18 +477,18 @@
                     ox1: first.x - from.x(),
                     oy1: first.y - from.y()
                 });
-
             });
         });
+
+        Draw._proto_LC_QC = [];
     }
 
-    function Element(name, category) {
-        this.$id = undefined;
-        this.id = undefined;
-        this.brush = undefined;
+    function Element(id,name, category,dw) {
+        this.$id = id;
+        this.id = 0;
         this.name = name;
         this.category = category;
-        this.drawInstance = undefined;
+        this.drawInstance = dw;
     }
 
     Element.prototype = {
@@ -494,8 +515,8 @@
         }
     }
 
-    function Shape(name, category) {
-        Shape.base.Constructor.call(this, name, category);
+    function Shape(id, name, category, dw) {
+        Shape.base.Constructor.call(this, id, name, category, dw);
         this.group = [];
         this.organization = [];
         this.action = [];
@@ -553,11 +574,9 @@
         node.setAttribute(config.name, self[config.name]);
         node.setAttribute(config.layout, self.x + ' ' + self.disX + ' ' + self.y + ' ' + self.disY);
         node.setAttribute(config.category, self.category);
-
         if (Shape.isNotEmpty(self.rule)) {
             node.setAttribute(config.rule, self.rule);
         }
-
         var attrObject = {
             group: self.group,
             organization: self.organization,
@@ -578,13 +597,17 @@
         var elements = Draw.findById(self.$id, config.from);
         $.each(elements, function () {
             if (this.from === self.$id) {
-                var
+                const
                     L = Draw._proto_LC[this.id],
-                    N = Draw._proto_NC[this.to];
-                var transition = doc.createElement(config.transition);
-                transition.setAttribute(config.name, L.name);
+                    N = Draw._proto_NC[this.to],
+                    LT = Draw._proto_LC_TC[this.id];
+
+                const transition = doc.createElement(config.transition);
+                transition.setAttribute(config.name, LT.name);
                 transition.setAttribute(config.to, N.id);
                 transition.setAttribute(config.layout, L.getPoints().join(" "));
+                transition.setAttribute(config.x3, LT.x);
+                transition.setAttribute(config.y3, LT.y);
                 transition.setAttribute(config.id, L.id);
                 transition.setAttribute(config.order, L.order);
 
@@ -592,18 +615,10 @@
                     transition.setAttribute(config.url, L.url);
                 }
                 if (self.category === 'decision') {
-                    var expression = doc.createElement(config.expression);
+                    const expression = doc.createElement(config.expression);
                     expression.appendChild(doc.createCDATASection(L.expression));
                     transition.appendChild(expression);
                 }
-
-                $.each(L.markerArray, function () {
-                    var marker = doc.createElement(config.marker);
-                    marker.setAttribute(config.x, this.x);
-                    marker.setAttribute(config.y, this.y);
-                    marker.setAttribute(config.length, this.length);
-                    transition.appendChild(marker);
-                });
                 node.appendChild(transition);
             }
         });
@@ -611,65 +626,141 @@
         root.appendChild(node);
     }
 
-    function Marker(x, y, line) {
+    function Anchor(x, y, line) {
         this.x = x;
         this.y = y;
         this.r = 10;
-        this.cx = 40;
-        this.cy = 10;
         this.disX = 0;
         this.disY = 0;
         this.border = 2;
-        this.length = 0;
         this.line = line;
-        Marker.base.Constructor.call(this, "标记位", config.marker);
     }
 
-    Marker.extend(Shape, {
+    Anchor.extend(Shape, {
         draw: function () {
-            var self = this,
-                dw = self.drawInstance.draw;
-
-            var color = self.drawInstance.drawOption.backgroundColor;
-            var circle = dw.circle(self.r).fill(color);
-
-            circle.move(self.x, self.y);
-            self.$id = circle.id();
-
+            const self = this,
+                parentGroup = SVG.get(self.line.$id).parent();
+            const circle = parentGroup.circle(self.r).fill("#33f1ea").attr({ opacity: 0, cursor: 'move' });
+            Anchor.base.Constructor.call(this, circle.id(), "标记位", config.anchor, self.line.drawInstance);
+            circle.attr({ cx: self.x, cy: self.y });
             Draw._proto_NC[self.$id] = self;
             return Shape.base.Parent.prototype.draw.call(this);
         },
         move: function (element, evt) {
             var self = this;
-            self.x = Draw.getClientX(evt) - self.disX - self.cx;
-            self.y = Draw.getClientY(evt) - self.disY - self.cy;
-            element.move(self.x, self.y);
-            self.line.setPointArray();
+            self.x = Draw.getClientX(evt);
+            self.y = Draw.getClientY(evt);
+            element.attr({ cx: self.x, cy: self.y });
+            self.line.redraw();
+        },
+        adjust: function (x, y) {
+            const self = this;
+            const el = SVG.get(self.$id);
+            el.attr({ cx: x, cy: y });
+        },
+        remove: function (i) {
+            this.line.anchors.remove(i);
+            SVG.get(this.$id).remove();
+        },
+        removeElement: function () {
+            SVG.get(this.$id).remove();
         },
         bindEvent: function (el) {
             this.mousedown(function (evt) {
                 el.drawInstance._drag.call(this, evt, el.drawInstance);
             });
-        },
-        validate: function () {
-            return true;
-        },
-        bound: function (mX, mY) {
-            var self = this;
-            return {
-                x: self.x + self.r,
-                y: self.y + self.r
-            };
-        },
-        math: function (sx, sy) {
-            var x = this.x,
-                y = this.y,
-                zx = sx,
-                zy = y;
-            var a = Math.ceil(Math.abs(x - sx)),
-                b = Math.ceil(Math.abs(sy - zy));
-            return Math.ceil(Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)));
+            this.mouseup(function () {
+                var self = Draw._proto_NC[this.id()];
+                var points = self.line.getPoints();
+                var index = self.line.checkSegmentRepeat(points);
+                if (index > -1) {
+                    let point = points[index],
+                        xy = self.line.parseXY(point),
+                        mka = self.line.anchors;
+                    for (let i = 0; i < mka.length; i++) {
+                        let m = mka[i];
+                        if (xy.x == m.x && xy.y == m.y) {
+                            m.remove(i);
+                            break;
+                        }
+                    }
+                    points.remove(index);
+                    self.line.plot(points);
+                }
+            })
         }
+    });
+
+    function TextRect(x, y,l) {
+         this.x = x;
+         this.y = y;
+         this.w = 140;
+         this.h = 40;
+         this.disX = 0;
+         this.disY = 0;
+         this.L = l;
+     }
+
+    TextRect.extend(Shape, {
+        draw: function () {
+            const n = this,
+                text='line',
+                dw = n.drawInstance;
+            var rect = dw.draw.rect(n.w, n.h).attr({ opacity: 0.1, fill: '#fafafa', x: n.x, y: n.y });
+            n.brush = dw.draw.text(text);
+            n.brush.attr({
+                x: n.x + rect.width() / 2,
+                y: n.y + rect.height() / 2
+            });
+            TextRect.base.Constructor.call(this, rect.id(), text, config.textRect, dw);
+            Draw._proto_NC[n.$id] = n;
+            return TextRect.base.Parent.prototype.draw.call(this);
+        },
+        updateContent: function (text) {
+            this.name = text;
+            this.brush.text(text);
+            var size = SVG.get(this.brush.id()).bbox();
+            var e=SVG.get(this.$id);
+            if (this.w < size.width) {
+                e.x(size.x)
+                 .size(size.width, this.h);
+            }
+        },
+        move: function (element, d) {
+            var self = this;
+            self.x = Draw.getClientX(d) - self.disX;
+            self.y = Draw.getClientY(d) - self.disY;
+            element.attr({
+                x: self.x,
+                y: self.y
+            });
+            if (self.brush) {
+                self.brush.attr({
+                    x: (element.x() + (element.width() / 2)),
+                    y: element.y() + (element.height() / 2)
+                });
+            }
+            TextRect.base.Parent.prototype.move.call(this);
+        },
+        bindEvent: function () {
+            this.off('dblclick').on('dblclick', function (evt) {
+                evt.preventDefault();
+                var n = Draw._proto_NC[this.id()];
+                var instance = Draw._proto_LC[n.L];
+                instance.exclusionSelect();
+                instance.drawInstance.drawOption['dblClick']
+                    && instance.drawInstance.
+                        drawOption['dblClick'].call(this, instance);
+                return false;
+            });
+        },
+        remove: function () {
+            var $this = this;
+            var n = Draw._proto_NC[$this.$id];
+            n.brush.remove();
+            SVG.get(n.$id).remove();
+            delete Draw._proto_NC[n.$id];
+        },
     });
 
     function Line() {
@@ -677,65 +768,276 @@
         this.y1 = 0;
         this.x2 = 0;
         this.y2 = 0;
+        this.x3 = 0;
+        this.y3 = 0;
+
+        this.vs = 89;
+        this.ve = 91;
+        this.hs = 180;
+        this.he = 179;
+        this.hzs = 0;
+        this.hze = 1;
+
+
+        this.outline = 10;
         this.order = 0;
         this.border = 2;
         this.expression = '';
         this.url = '';
         this.points = [];
-        Line.base.Constructor.call(this, "line", "line");
-        this.markerArray = [];
-
+        this.anchors = [];
+        this.triangle =null;
+        this.coords = [];
     }
+
+    Line.Group = [];
+
+    Line.findById = function (id) {
+        for (let i = 0; i < this.Group.length; i++) {
+            let group = this.Group[i];
+            if (group.id === id) {
+                return group.$id;
+            }
+        }
+        return -1;
+     }
 
     Line.extend(Element, {
         constructor: Line,
         draw: function (points) {
-            var self = this,
+            const self = this,
                 dw = self.drawInstance;
-
-            var L = (!!points) ? dw.draw.polyline(points) :
-                dw.draw.polyline([[self.x1, self.y1], [self.x2, self.y2]]);
-
-            L.fill("none").stroke({ width: self.border, color: dw.drawOption.backgroundColor });
-
-            L.marker('end', 10, 10, function (add) {
-                add.path('M0,0 L0,6 L6,3 z').fill(dw.drawOption.backgroundColor);
-                this.attr({
-                    refX: 5,
-                    refY: 2.9,
-                    orient: 'auto',
-                    stroke: 'none',
-                    markerUNits: 'strokeWidth'
-                });
+            const inner = self.drawLine(points, dw.draw.group());
+            const L = self.drawLine(points, inner.parent());
+            inner.stroke({ width: self.outline }).attr({ opacity: 0 });
+            L.stroke({
+                width: self.border,
+                color: dw.drawOption.backgroundColor
+            }).attr({
+                "vector-effect": "non-scaling-stroke",
+                "shape-rendering": "auto"
             });
-
-            self.$id = L.id();
+            self.coords.push([self.x1, self.y1]);
+            self.coords.push([self.x2, self.y2]);
+            self.$inner = inner.id();
+            Line.Group.push({
+                id: inner.id(),
+                $id: L.id()
+            });
+            Line.base.Constructor.call(this, L.id(), "line", "line", dw);
             Draw._proto_LC[self.$id] = this;
+            Draw._proto_LC_QC.unshift(this);
+            if (!!!points) {
+                self.x3 = L.x();
+                self.y3 = L.y();
+                self.addText();
+            }
+            self.initEvent.call(inner, self);
             return Line.base.Parent.prototype.draw.call(self);
         },
-        bindEvent: function () {
+        drawLine: function (points, l) {
+            const self = this;
+            const L = (!!points) ? l.polyline(points) : l.polyline([[self.x1, self.y1], [self.x2, self.y2]]);
+            L.fill("none");
+            return L;
+        },
+        initEvent: function () {
             this.off('dblclick').on('dblclick', function (evt) {
                 evt.preventDefault();
-                var instance = Draw._proto_LC[this.id()];
+                var instance = Draw._proto_LC[this.id()] ? Draw._proto_LC[this.id()] : Draw._proto_LC[Line.findById(this.id())];
+                instance.exclusionSelect();
                 if (evt.ctrlKey && evt.altKey) {
                     Draw.removeById(instance.$id);
                     this.off('dblclick');
                     instance.remove();
-                } else if (evt.ctrlKey && evt.shiftKey) {
-                    var marker = new Marker(Draw.getClientX(evt), Draw.getClientY(evt), instance);
-                    marker.drawInstance = instance.drawInstance;
-                    marker.draw();
-                    var first = instance.first();
-                    marker.length = marker.math(first.x, first.y);
-                    instance.markerArray.push(marker);
-                    instance.setPointArray();
-                } else {
+                }
+                else if (evt.ctrlKey && evt.shiftKey) {
+                    var mx = Draw.getClientX(evt), my = Draw.getClientY(evt);
+                    var points = instance.getPoints();
+                    var insertIndex = instance.checkSegment(points, mx, my);
+                    if (insertIndex > -1) {
+                        points.insert(insertIndex, mx + ',' + my);
+                        instance.plot(points);
+                        instance.addAnchor();
+                    }
+                }
+                else {
+                    if (!Draw._proto_LC_TC[instance.$id]) {
+                        var tr = new TextRect(Draw.getClientX(evt), Draw.getClientY(evt));
+                        tr.drawInstance = instance.drawInstance;
+                        tr.id = Draw.genId(tr.id);
+                        tr.draw();
+                        Draw._proto_LC_TC[instance.$id] = tr;
+                    }
                     instance.drawInstance.drawOption['dblClick']
                         && instance.drawInstance.
                             drawOption['dblClick'].call(this, instance);
                 }
                 return false;
             });
+        },
+        bindEvent: function (o) {
+            o.initEvent.call(this, o);
+            this.parent().on('mouseover', function (evt) {
+                evt.preventDefault();
+                let children = this.children();
+                $.each(children, function () {
+                    if (this.type === 'circle') {
+                        this.attr({ opacity: 1 });
+                    } 
+                });
+                return false;
+            });
+            this.parent().on('mouseout', function (evt) {
+                evt.preventDefault();
+                let children = this.children();
+                $.each(children, function () {
+                    if (this.type === 'circle') {
+                        this.attr({ opacity: 0 });
+                    } else if (this.type === 'rect') {
+                        this.attr({ visibility: 'hidden' });
+                    }
+                });
+                return false;
+            });
+        },
+        checkSegment: function (points, mx, my) {
+            for (var i = 0; i < points.length; i++) {
+                var p = points[i];
+                var nextIndex = i + 1;
+                if (nextIndex < points.length) {
+                    let s = this.parseXY(p),
+                        a = Draw.angle(s, { x: mx, y: my }),
+                        b = Draw.angle(s, this.parseXY(points[nextIndex]));
+                    if (a === b) {
+                        return nextIndex;
+                    }
+                }
+            }
+            return -1;
+        },
+        checkSegmentTwo: function (mx, my) {
+            let points = this.getPoints();
+            for (var i = 0; i < points.length; i++) {
+                var p = points[i];
+                var nextIndex = i + 1;
+                if (nextIndex < points.length) {
+                    let s = this.parseXY(p),
+                        n = this.parseXY(points[nextIndex]),
+                        a = Draw.angle(s, { x: mx, y: my }),
+                        b = Draw.angle(s, n);
+                    if (a === b) {
+                        return { x: s.x, y: s.y, x1: n.x, y1: n.y, angle: a, start: i, end: nextIndex };
+                    }
+                }
+            }
+            return -1;
+        },
+        checkSegmentRepeat: function (points) {
+            for (var i = 0; i < points.length; i++) {
+                var p = points[i];
+                var nextIndex = i + 1;
+                var nextSecordIndex = i + 2;
+                if (nextIndex < points.length && nextSecordIndex < points.length) {
+                    let s = this.parseXY(p),
+                        a = Draw.angle(s, this.parseXY(points[nextIndex])),
+                        b = Draw.angle(s, this.parseXY(points[nextSecordIndex]));
+                    if (a === b) {
+                        return nextIndex;
+                    }
+                }
+            }
+            return -1;
+        },
+        addText: function () {
+            var tr = new TextRect(this.x3, this.y3, this.$id);
+            tr.drawInstance = this.drawInstance;
+            tr.id = Draw.genId(tr.id);
+            tr.draw();
+            Draw._proto_LC_TC[this.$id] = tr;
+        },
+        addArrowTriangle: function () {
+            var self = this,
+                dw = self.drawInstance,
+                L = SVG.get(self.$id);
+            L.marker('end', 10, 10, function (add) {
+               add.path('M0,0 L0,6 L6,3 z').fill(dw.drawOption.backgroundColor);
+               this.attr({
+                    refX: 6.7,
+                    refY: 3,
+                    orient: 'auto',
+                    stroke: 'none',
+                    markerUNits: 'strokeWidth'
+               });
+                self.triangle = this;
+           });
+        },
+        addAnchor: function () {
+            const self = this;
+            const points = self.getPoints();
+            let arr = self.anchors;
+            if (arr.length > 0) {
+                for (let i = 0; i < arr.length; i++) {
+                    arr[i].removeElement();
+                }
+            }
+            self.anchors.length = 0;
+            points.shift();
+            points.pop();
+            if (points.length > 0) {
+                $.each(points, function () {
+                    let p = self.parseXY(this);
+                    const anchor = new Anchor(p.x, p.y, self);
+                    anchor.drawInstance = self.drawInstance;
+                    anchor.draw();
+                    self.anchors.push(anchor);
+                });
+                self.redraw();
+            }
+        },
+        addHV: function (x, y) {
+            var self = this;
+            if (!self.h) {
+                var h = new Horizontal(x, y, self);
+                h.drawInstance = self.drawInstance;
+                h.draw();
+                self.h = h;
+            }
+            if (!self.v) {
+                var v = new Vertical(x, y, self);
+                v.drawInstance = self.drawInstance;
+                v.draw();
+                self.v = v;
+            }
+        },
+        updateContent: function (text) {
+            this.name = text;
+            if (Draw._proto_LC_TC[this.$id]) {
+                Draw._proto_LC_TC[this.$id].updateContent(text);
+            } else {
+                this.addText();
+            }
+        },
+        exclusionSelect: function () {
+            let c= SVG.get(this.$id);
+            c.stroke('red');
+            this.triangle.stroke('red');
+            this.resetArrowTriangle('red');
+            for (let id in Draw._proto_LC) {
+                if (this.$id!== id) {
+                    let L = Draw._proto_LC[id];
+                    SVG.get(L.$id).stroke('#000000');
+                    L.triangle.stroke('#000000');
+                    L.resetArrowTriangle('#000000');
+                }
+            }
+        },
+        resetArrowTriangle: function (color) {
+            let children = this.triangle.children()
+            for (let i = 0; i < children.length; i++) {
+                let child = children[i];
+                child.fill(color);
+            }
         },
         move: function (evt) {
             var self = this,
@@ -749,21 +1051,24 @@
                     self.y2 = position.y;
                 }
             }
-            instance.plot([[self.x1, self.y1], [self.x2, self.y2]]);
+            self.coords.pop();
+            self.coords.push([self.x2, self.y2]);
+            instance && instance.plot(self.coords);
         },
         remove: function () {
             var $this = this,
                 L = SVG.get($this.$id);
-            var marker = L.attr('marker-end'),
-                arrowId = /#[a-zA-Z0-9]+/.exec(marker)[0];
-            SVG.get(arrowId).remove();
-            SVG.get($this.$id).remove();
-            $.each($this.markerArray, function () {
-                SVG.get(this.$id).remove();
+            L.parent().remove();
+            $.each($this.anchors, function () {
                 delete Draw._proto_NC[this.$id];
             });
-
+            if (Draw._proto_LC_TC[$this.$id]) {
+                var tr = Draw._proto_LC_TC[$this.$id];
+                tr.remove();
+                delete Draw._proto_LC_TC[$this.$id];
+            }
             delete Draw._proto_LC[$this.$id];
+            $this.anchors.length = 0;
         },
         first: function () {
             var pointArray = this.getPoints();
@@ -774,11 +1079,26 @@
                 y: parseInt(xy[1])
             };
         },
+        parseXY: function (point) {
+            var xy = point.split(",");
+            return {
+                x: parseInt(xy[0]),
+                y: parseInt(xy[1])
+            };
+        },
         last: function () {
             var pointArray = this.getPoints();
             var point = pointArray[pointArray.length - 1];
             var xy = point.split(",");
-
+            return {
+                x: parseInt(xy[0]),
+                y: parseInt(xy[1])
+            };
+        },
+        last2: function () {
+            var pointArray = this.getPoints();
+            var point = pointArray.length >= 2 ? pointArray[pointArray.length - 2] : pointArray[0];
+            var xy = point.split(",");
             return {
                 x: parseInt(xy[0]),
                 y: parseInt(xy[1])
@@ -803,40 +1123,25 @@
 
             return points.split(" ");
         },
-        setPointArray: function () {
+        redraw: function () {
             var $this = this,
                 pointArray = [],
                 first = $this.first(),
                 last = $this.last();
-
             pointArray.push([first.x, first.y].join(','));
-            $this.sort();
-            $.each($this.markerArray, function () {
-                pointArray.push([this.x + this.r / 2,
-                this.y + this.r / 2].join(','));
+            $.each($this.anchors, function () {
+                pointArray.push([this.x, this.y].join(','));
             });
             pointArray.push([last.x, last.y].join(','));
             $this.plot(pointArray);
         },
         plot: function (pointArray) {
-            var el = SVG.get(this.$id);
-            el.plot(pointArray.join(" "));
-            Line.update(this);
-        },
-        sort: function () {
-            var $this = this,
-                len = $this.markerArray.length - 1;
-            for (var i = 0; i < len; i++) {
-                for (var j = 0; j < len - i; j++) {
-                    var b = $this.markerArray[j],
-                        a = $this.markerArray[j + 1];
-                    if (b.length > a.length) {
-                        var tempObject = b;
-                        $this.markerArray[j] = a;
-                        $this.markerArray[j + 1] = tempObject;
-                    }
-                }
-            }
+            const L = Draw._proto_LC[this.$id],
+                e = SVG.get(L.$id),
+                i = SVG.get(L.$inner);
+            let s = Array.from(new Set(pointArray));
+            i.plot(s.join(" "));
+            e.plot(s.join(" "));
         }
     });
 
@@ -879,35 +1184,35 @@
 
     function Node() {
         this.w = 140;
-        this.h = 40;
+        this.h = 70;
         this.x = 10;
         this.y = 10;
-        this.cx = 40;
-        this.cy = 10;
         this.disX = 0;
         this.disY = 0;
-        Node.base.Constructor.call(this, "node", "node");
-        this.name = "节点";
     }
 
     Node.extend(Shape, {
         draw: function () {
             var n = this,
-                dw = n.drawInstance;
+                dw = n.drawInstance,
+                text = '节点';
 
-            var color =  dw.drawOption.backgroundColor;
-
+            var strokeColor = dw.drawOption.strokeColor;
             var rect = dw.draw.rect(n.w, n.h)
-                .attr({ fill: color, x: n.x, y: n.y });
+                .attr({ fill: '#fafafa', x: n.x, y: n.y, stroke: strokeColor });
 
-            n.brush = dw.draw.text(n.name);
+            n.brush = dw.draw.text(text);
             n.brush.attr({
                 x: n.x + rect.width() / 2,
-                y: n.y + rect.height() / 2 + n.vertical()
+                y: n.y + rect.height() / 2 
             });
-            n.$id = rect.id();
+            Node.base.Constructor.call(this, rect.id(), text, "node", dw);
             Draw._proto_NC[n.$id] = n;
             return Node.base.Parent.prototype.draw.call(this);
+        },
+        updateContent: function (text) {
+            this.name = text;
+            this.brush.text(text);
         },
         bound: function (moveX, moveY) {
             var x = this.x,
@@ -981,40 +1286,32 @@
         },
         move: function (element, d) {
             var self = this;
-            self.x = Draw.getClientX(d) - self.disX - self.cx;
-            self.y = Draw.getClientY(d) - self.disY - self.cy;
-
+            self.x = Draw.getClientX(d) - self.disX;
+            self.y = Draw.getClientY(d) - self.disY;
             element.attr({
                 x: self.x,
                 y: self.y
             });
-
             if (self.brush && this.category === 'node') {
                 self.brush.attr({
                     x: (element.x() + (element.width() / 2)),
-                    y: element.y() + (element.height() / 2) + self.vertical()
+                    y: element.y() + (element.height() / 2)
                 });
             }
-
             Node.base.Parent.prototype.move.call(this);
         },
         validate: function () {
           //return Draw.findById(this.$id, 'to').length > 0&& Draw.findById(this.$id, 'from').length > 0;
             return true;
-        },
-        vertical: function () {
-            return (this.drawInstance.support || window.navigator.userAgent.indexOf("Edge") > -1) ? 4 : 0;
         }
     });
 
-    function Circle(name, category) {
-        this.x = 10;
-        this.y = 10;
-        this.cx = 40;
-        this.cy = 10;
-        this.disX = 0;
-        this.disY = 0;
-        Circle.base.Constructor.call(this, name, category);
+    function Circle(x,y,disX,disY,id,name,category,dw) {
+        this.x = x;
+        this.y = y;
+        this.disX = disX;
+        this.disY = disY;
+        Circle.base.Constructor.call(this,id, name, category,dw);
     }
 
     Circle.extend(Shape, {
@@ -1023,8 +1320,8 @@
         },
         move: function (element, d) {
             var self = this;
-            self.x = Draw.getClientX(d) - self.disX - self.cx;
-            self.y = Draw.getClientY(d) - self.disY - self.cy;
+            self.x = Draw.getClientX(d) - self.disX;
+            self.y = Draw.getClientY(d) - self.disY;
             element.move(self.x, self.y);
             if (self.brush) {
                 self.brush.attr({
@@ -1035,8 +1332,7 @@
             Circle.base.Parent.prototype.move.call(self);
         },
         validate: function () {
-            return (Draw.findById(this.$id, 'to').length > 0
-                && Draw.findById(this.$id, 'from').length > 0);
+            return true;
         },
         bound: function (mX, mY) {
             var r = 25,
@@ -1149,32 +1445,22 @@
     });
 
     function Decision() {
-        Decision.base.Constructor.call(this);
-        this.name = '分支节点';
-        this.category = 'decision';
-
         this.x = 10;
         this.y = 10;
-        this.cx = 40;
-        this.cy = 10;
         this.disX = 0;
         this.disY = 0;
     }
 
     Decision.extend(Shape, {
         draw: function () {
-            var dw = this.drawInstance.draw;
-            var color =  this.drawInstance.drawOption.backgroundColor;
-
+            const dw = this.drawInstance,color = dw.drawOption.backgroundColor;
             this.drawInstance._decision
                 .node
                 .firstElementChild
                 .instance.attr({ fill: color });
-
-            var el = dw.use(this.drawInstance._decision)
-                .move(this.x, this.y);
-
-            this.$id = el.id();
+            const el = dw.draw.use(this.drawInstance._decision);
+            Decision.base.Constructor.call(this, el.id(), '分支节点', 'decision', dw);
+            el.move(this.x, this.y);
             Draw._proto_NC[this.$id] = this;
             Decision.base.Parent.prototype.draw.call(this);
         },
@@ -1183,15 +1469,13 @@
         },
         move: function (element, d) {
             var self = this;
-
-            self.x = Draw.getClientX(d) - self.disX - self.cx;
-            self.y = Draw.getClientY(d) - self.disY - self.cy;
+            self.x = Draw.getClientX(d) - self.disX;
+            self.y = Draw.getClientY(d) - self.disY;
             element.attr({ x: self.x, y: self.y });
             Decision.base.Parent.prototype.move.call(this);
         },
         validate: function () {
-            return (Draw.findById(this.$id, 'from').length > 1
-                && Draw.findById(this.$id, 'to').length > 0);
+            return true;
         },
         bound: function (mX, mY) {
 
@@ -1292,30 +1576,26 @@
     });
 
     function Start() {
-        Start.base.Constructor.call(this, "开始", "start");
     }
 
     Start.extend(Circle, {
         draw: function () {
-            var dw = this.drawInstance.draw;
+            var dw = this.drawInstance;
             /*var path = dw.path("M0,0 a30 30 0 1 0 0 -0.1").
                 fill("#eee").
                 stroke({
                     width: 1,
                     color: "#ccc"
                 });*/
-
-            var g = dw.group()
+            var strokeColor = dw.drawOption.strokeColor;
+            var g = dw.draw.group()
                 /*.add(path)*/
-                .add(dw.path("M10,0 a20 20 0 1 0 0 -0.1").fill("green"));
-
-            dw.defs().add(g);
-            var start = dw
-                .use(g)
-                .move(this.x, this.y);
-
-
-            this.$id = start.id();
+                .add(dw.draw.path("M10,0 a20 20 0 1 0 0 -0.1").fill("#fafafa"));
+            dw.draw.defs().add(g);
+            var start = dw.draw.use(g);
+            Start.base.Constructor.call(this, this.x, this.y, this.disX, this.disY, start.id(), "开始", "start", dw);
+            start.move(this.x, this.y)
+                .attr("stroke", strokeColor);
             Draw._proto_NC[this.$id] = this;
             Start.base.Parent.prototype.draw.call(this);
         },
@@ -1330,31 +1610,27 @@
     });
 
     function End() {
-        End.base.Constructor.call(this);
-        this.category = "end";
-        this.name = "结束";
     }
 
     End.extend(Circle, {
         constructor: End,
         draw: function () {
-            var dw = this.drawInstance.draw/*,
+            var dw = this.drawInstance/*,
                 path = dw.path("M0,0 a30 30 0 1 0 0 -0.1")
                     .stroke({ width: 1, color: "#ccc" })
                     .fill("#eee")*/;
-
-            var group = dw.group()
+            var strokeColor = dw.drawOption.strokeColor;
+            var group = dw.draw.group()
                 //.add(path)
-                .add(dw.path("M10,0 a20 20 0 1 0 0 -0.1")
-                    .fill("red"));
-
-            dw.defs().add(group);
-            var end = dw.use(group).move(this.x, this.y);
-
-            this.$id = end.id();
+                .add(dw.draw.path("M10,0 a20 20 0 1 0 0 -0.1").fill(strokeColor));
+            dw.draw.defs().add(group);
+            var end = dw.draw.use(group);
+            End.base.Constructor.call(this, this.x,this.y, this.disX, this.disY,end.id(), '结束', 'end', dw);
+            end.move(this.x, this.y);
             Draw._proto_NC[this.$id] = this;
             End.base.Parent.prototype.draw.call(this);
         },
+        
         bindEvent: function (n) {
             End.base.Parent.prototype.bindEvent.call(this, n);
             //this.off('dblclick');
@@ -1366,27 +1642,24 @@
     });
 
     function Join() {
-       Join.base.Constructor.call(this, "聚合", "join");
-       this.tickness = 10;
-     }
+    }
 
     Join.extend(Circle, {
-         draw: function () {
-             var dw = this.drawInstance.draw;
-             var g = dw.group()
-                 /*.add(path)*/
-                 .add(dw.path("M10,0 a10 10 0 1 0 0 -0.1").fill(this.drawInstance.drawOption.backgroundColor));
-
-             dw.defs().add(g);
-             var start = dw
-                 .use(g)
-                 .move(this.x, this.y);
-
-
-             this.$id = start.id();
-             Draw._proto_NC[this.$id] = this;
-             Join.base.Parent.prototype.draw.call(this);
-         },
+        draw: function () {
+            const dw = this.drawInstance;
+            const g = dw.draw.group()
+                .add(dw.draw.path("M10,0 a10 10 0 1 0 0 -0.1").fill(dw.drawOption.backgroundColor));
+            dw.draw.defs().add(g);
+            var n = dw.draw.use(g);
+            this.init(n, dw);
+            n.move(this.x, this.y);
+            Draw._proto_NC[this.$id] = this;
+            Join.base.Parent.prototype.draw.call(this);
+        },
+         init: function (n, dw) {
+            Join.base.Constructor.call(this, this.x, this.y, this.disX, this.disY, n.id(), '聚合', 'join', dw);
+            this.tickness = 10;
+        },
          bindEvent: function (n) {
             Join.base.Parent.prototype.bindEvent.call(this, n);
              //  this.off('dblclick');
@@ -1397,8 +1670,8 @@
          },
          move: function (element, d) {
              var self = this;
-             self.x = Draw.getClientX(d) - self.disX - self.cx;
-             self.y = Draw.getClientY(d) - self.disY - self.cy;
+             self.x = Draw.getClientX(d) - self.disX;
+             self.y = Draw.getClientY(d) - self.disY;
              element.move(self.x, self.y);
              if (self.brush) {
                  self.brush.attr({
@@ -1518,27 +1791,28 @@
      });
 
     function Fork() {
-         Fork.base.Constructor.call(this, "分叉", "fork");
-         this.name = "分叉";
          this.w = 80;
          this.h = 20;
          this.x = 10;
          this.y = 10;
-         this.cx = 40;
-         this.cy = 10;
      }
 
     Fork.extend(Shape, {
          draw: function () {
-             var n = this,
-                 dw = n.drawInstance;
-             var color = n.isSelect ? dw.drawOption.color : dw.drawOption.backgroundColor;
-             color = n.isCurrent ? dw.drawOption.executeColor : color;
+            var n = this,
+                text ='分叉',
+                dw = n.drawInstance;
+             var strokeColor = dw.drawOption.strokeColor;
              var rect = dw.draw.rect(n.w, n.h)
-                 .attr({ fill: color, x: n.x, y: n.y });
-             n.$id = rect.id();
-             Draw._proto_NC[n.$id] = n;
-             return Fork.base.Parent.prototype.draw.call(this);
+                .attr({ fill: '#fafafa', x: n.x, y: n.y, stroke: strokeColor });
+            n.brush = dw.draw.text(text);
+            n.brush.attr({
+                x: n.x + rect.width() / 2,
+                y: n.y + rect.height() / 2 
+            });
+            Fork.base.Constructor.call(this, rect.id(), text, 'fork', dw);
+            Draw._proto_NC[n.$id] = n;
+            return Fork.base.Parent.prototype.draw.call(this);
          },
          bound: function (moveX, moveY) {
              var x = this.x,
@@ -1610,12 +1884,16 @@
          },
          move: function (element, d) {
              var self = this;
-             self.x = Draw.getClientX(d) - self.disX - self.cx;
-             self.y = Draw.getClientY(d) - self.disY - self.cy;
-
+             self.x = Draw.getClientX(d) - self.disX;
+             self.y = Draw.getClientY(d) - self.disY;
              element.attr({
                  x: self.x,
                  y: self.y
+             });
+
+             self.brush.attr({
+                x: element.x() + (element.width() / 2),
+                 y: element.y() + (element.height() / 2)
              });
 
              Fork.base.Parent.prototype.move.call(this);
@@ -1669,16 +1947,12 @@
                 layout: 'value',
                 id: 'value',
                 name: 'value',
+                x3: 'value',
+                y3:'value',
                 direction: 'value',
                 order: 'value',
                 expression: 'text',
-                url: 'value',
-                marker: {
-                    type: 'array',
-                    length: 'value',
-                    x: 'value',
-                    y: 'value'
-                }
+                url: 'value'
             }
         }
     };
@@ -1709,7 +1983,17 @@
                             break;
                         }
                     }
-                } else {
+                }
+                else if (valueType == 'float') {
+                    for (var i = 0, len = node.attributes.length; i < len; i++) {
+                        var attr = node.attributes[i];
+                        if (attr.name === propertyName) {
+                            nodeWrap[propertyName] = parseFloat(attr[nodeAttribute[propertyName]]);
+                            break;
+                        }
+                    }
+                }
+                else {
                     nodeWrap[propertyName] = XML.value(node);
                 }
 
@@ -1760,7 +2044,7 @@
     }
 
     XML.prototype.parse = function (workflow, nodes) {
-        var $this = this, nodeArray = [];
+        var nodeArray = [];
         var nodeAttribute = XML.style.struct;
         $.each(nodes, function () {
             nodeArray.push(

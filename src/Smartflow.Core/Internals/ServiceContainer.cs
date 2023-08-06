@@ -20,6 +20,8 @@ namespace Smartflow.Core.Internals
             innerHandlerMap.Add("transition", typeof(WorkflowTransitionService));
             innerHandlerMap.Add("actor", typeof(WorkflowActorService));
             innerHandlerMap.Add("organization", typeof(WorkflowOrganizationService));
+            innerHandlerMap.Add("fork", typeof(WorkflowNodeService));
+            innerHandlerMap.Add("join", typeof(WorkflowNodeService));
         }
 
         public static Object Resolve(string name)

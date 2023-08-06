@@ -200,8 +200,10 @@
                     var obj = Configuration.controlSelectors[this.id];
                     var text = $(this).val();
                     result.element[obj.field] = text;
-                    if (result.element.brush && obj.field==='name') {
+                    if (result.element.brush && obj.field === 'name') {
                         result.element.brush.text(text);
+                    } else if (obj.field==='name' && this.id === 'line_name') {
+                        result.element.updateContent(text);
                     }
                 });
             }
@@ -360,7 +362,7 @@
         var instance = $.SMF.getInstanceComponent();
         if (instance.validate()) {
             var id = util.doQuery('id');
-            var template = id == null?'smartflow_s_info': 'smartflow_e_info';
+            var template = id ? 'smartflow_e_info' : 'smartflow_s_info';
             this.prompt(template, instance,'save');
         } else {
             alert('流程图不符合流程定义规则');

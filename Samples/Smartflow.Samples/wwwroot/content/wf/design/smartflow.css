@@ -160,8 +160,7 @@
 .attribute_tab_table_column {width: 50px;vertical-align: middle;font-weight:bold;color:#282424;font-size:16px;}
 .attribute_tab_table_content {vertical-align: top;text-align: justify;}
 svg, text,path {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; -khtml-user-select: none; user-select: none;}
-circle { opacity: 0.4;}
-text {font-size: 12px;text-anchor: middle;dominant-baseline: middle;pointer-events: none;fill:#FFF;font-weight: 600;letter-spacing: 1px;}
+text {font-size: 12px;text-anchor: middle;dominant-baseline: middle;pointer-events: none;font-weight: 600;letter-spacing: 1px;}
 .layui-form-select dl {max-height: 80px;}
 .ztree-container {
     left: 0;
