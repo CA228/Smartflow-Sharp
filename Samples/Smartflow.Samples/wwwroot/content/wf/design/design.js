@@ -11,17 +11,6 @@
                 return $.SMF.getNodeById(id);
             }
         },
-        node_send_start_user: {
-            type: 'checkbox',
-            field: 'rule',
-            parse: function (id) {
-                return $.SMF.getNodeById(id);
-            },
-            invoke: function (nx) {
-                $('#node_send_start_user').prop('checked', 'node_send_start_user' === nx.rule);
-                layui.form.render('checkbox');
-            }
-        },
         node_name: {
             field: 'name',
             parse: function (id) {
@@ -74,6 +63,15 @@
             },
             invoke: function (nx) {
                 $('#line_url').val(nx.url);
+            }
+        },
+        line_expression: {
+            field: 'expression',
+            parse: function (id) {
+                return $.SMF.getLineById(id);
+            },
+            invoke: function (nx) {
+                $('#line_expression').val(nx.expression);
             }
         }
     };
@@ -224,7 +222,7 @@
         }
         else if (category === 'line') {
             Configuration.show([$this.option.line]);
-            var controls = ['line_url', 'line_name', 'line_id', 'line_order'];
+            var controls = ['line_url', 'line_name', 'line_id', 'line_order','line_expression'];
             $.each(controls, function (i, propertyName) {
                 if (Configuration.controlSelectors[propertyName].invoke) {
                     Configuration.controlSelectors[propertyName].invoke(nx, $this);
@@ -233,14 +231,6 @@
         }
         else {
             Configuration.show([$this.option.help]);
-            if (category === 'decision') {
-                Configuration.open(nx, {
-                    title: '属性',
-                    width: '900px',
-                    height: '680px',
-                    url: './condition.html'
-                });
-            }
         }
     };
 

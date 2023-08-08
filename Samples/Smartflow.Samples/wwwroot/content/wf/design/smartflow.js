@@ -670,24 +670,22 @@
                 el.drawInstance._drag.call(this, evt, el.drawInstance);
             });
             this.mouseup(function () {
-                var self = Draw._proto_NC[this.id()];
-                var points = self.line.getPoints();
-                var index = self.line.checkSegmentRepeat(points);
-                if (index > -1) {
-                    let point = points[index],
-                        xy = self.line.parseXY(point),
-                        mka = self.line.anchors;
-                    for (let i = 0; i < mka.length; i++) {
-                        let m = mka[i];
-                        if (xy.x == m.x && xy.y == m.y) {
-                            m.remove(i);
-                            break;
-                        }
-                    }
-                    points.remove(index);
-                    self.line.plot(points);
+                const self = Draw._proto_NC[this.id()], L = self.line;
+                let adjustArray = L.autoSegment();
+                let points = L.getPoints();
+                for (var s = 0; s < adjustArray.length; s++) {
+                    let st = adjustArray[s];
+                    L.anchors[st.ei - 1].adjust(st.x, st.y);
                 }
-            })
+                let index = L.repeat(points);
+                if (index > -1) {
+                    let mka = L.anchors,
+                        i = index - 1;
+                    mka[i].remove(i);
+                    points.remove(index);
+                    L.plot(points);
+                }
+            });
         }
     });
 
@@ -773,11 +771,10 @@
 
         this.vs = 89;
         this.ve = 91;
-        this.hs = 180;
+        this.hs = 181;
         this.he = 179;
         this.hzs = 0;
-        this.hze = 1;
-
+        this.hze = 2;
 
         this.outline = 10;
         this.order = 0;
@@ -933,7 +930,7 @@
             }
             return -1;
         },
-        checkSegmentRepeat: function (points) {
+        repeat: function (points) {
             for (var i = 0; i < points.length; i++) {
                 var p = points[i];
                 var nextIndex = i + 1;
@@ -948,6 +945,56 @@
                 }
             }
             return -1;
+        },
+        HVSegment: function (points) {
+            const self = this;
+            let pi = [];
+            for (let i = 0; i < points.length; i++) {
+                let p = points[i],
+                    nextIndex = i + 1;
+                if (nextIndex < points.length) {
+                    let s = self.parseXY(p),
+                        n = self.parseXY(points[nextIndex]),
+                        angle = Draw.angle(s, n);
+                    if (self.vs <= angle && angle <= self.ve) {
+                        pi.push({ type: 'v', start: i, end: nextIndex });
+                    } else if ((self.hs <= angle && angle <= self.he) || (self.hzs <= angle && angle <= self.hze)) {
+                        pi.push({ type: 'h', start: i, end: nextIndex });
+                    }
+                }
+            }
+            return pi;
+        },
+        autoSegment: function () {
+            const self = this;
+            let points = self.getPoints();
+            let pi = self.HVSegment(points);
+            let adjArr = [];
+            if (pi.length > 0) {
+                let total = points.length - 1;
+                for (let i = 0; i < pi.length; i++) {
+                    let p = pi[i],
+                        start = self.parseXY(points[p.start]),
+                        end = self.parseXY(points[p.end]);
+                    if (p.type === 'v') {
+                        let x = total === p.end ? end.x : start.x;
+                        let y = end.y;
+                        points[p.end] = x + ',' + y;
+                        if (total !== p.end) {
+                            adjArr.push({ x: x, y: y, ei: p.end });
+                        }
+                    } else if (p.type === 'h') {
+                        let x = end.x;
+                        let y = total === p.end ? end.y : start.y;
+                        points[p.end] = x + ',' + y;
+                        if (total !== p.end) {
+                            adjArr.push({ x: x, y: y, ei: p.end });
+                        }
+                    }
+                }
+                self.plot(points);
+            }
+            return adjArr;
         },
         addText: function () {
             var tr = new TextRect(this.x3, this.y3, this.$id);
@@ -1301,8 +1348,7 @@
             Node.base.Parent.prototype.move.call(this);
         },
         validate: function () {
-          //return Draw.findById(this.$id, 'to').length > 0&& Draw.findById(this.$id, 'from').length > 0;
-            return true;
+             return true;
         }
     });
 
@@ -1457,7 +1503,7 @@
             this.drawInstance._decision
                 .node
                 .firstElementChild
-                .instance.attr({ fill: color });
+                .instance.attr({ fill: '#fafafa', stroke: color });
             const el = dw.draw.use(this.drawInstance._decision);
             Decision.base.Constructor.call(this, el.id(), '分支节点', 'decision', dw);
             el.move(this.x, this.y);

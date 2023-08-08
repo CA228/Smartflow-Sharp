@@ -87,12 +87,6 @@
     <Content Update="wwwroot\wf\actorSelect.html">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\wf\condition.html">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\wf\decision.html">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
     <Content Update="wwwroot\wf\design.html">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
