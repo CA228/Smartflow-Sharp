@@ -1,14 +1,19 @@
-﻿(function () {
+﻿(function (initialize) {
 
-    function Main(option) {
-        this.settings = $.extend({}, option);
-        this._initEvent();
+    function Page(option) {
+        this.setting = $.extend({}, option);
+        this.user = util.getUser();
+        this.init();
     }
 
-    Main.prototype._initEvent = function () {
+    Page.prototype.init = function () {
+        this.bind();
+        this.loadMenu();
+        this.loadTab();
+    }
 
-        var $this = this;
-
+    Page.prototype.loadMenu = function () {
+        var self = this;
         $(".menu_title").click(function () {
             var element = $(this).parent().children('ul').first();
             if (element.is(":hidden")) {
@@ -24,38 +29,76 @@
                 }
             });
         });
-
-        //默认展开节点
         $("#menu div.menu_title:eq(0)").trigger('click');
-
         $(".menu_sub_items li span").click(function () {
             var url = $(this).attr("url"),
+                id = $(this).attr("id"),
                 text = $(this).text();
-            $($this.settings.iframeContent).attr("src", url);
+            self.addTab({ url: url, id: id, name: text });
         });
+    }
 
-        $("#smartflow_menu_items li i").click(function () {
-            var command = $(this).attr("command");
-            switch (command) {
-                case "exit":
-                    window.localStorage.clear();
-                    window.top.location.href = $this.settings.login;
-                    break;
-                case "pending":
-                    var user = util.getUser();
-                    var url = util.pending + user.ID;
-                    document.getElementById("ifrmContent").setAttribute('src', url);
-                    break;
-                default:
-                    break;
+    Page.prototype.bind = function () {
+        var $this = this;
+        $.each($this.setting.event, function (propertyName, fn) {
+            var selector = '#' + propertyName;
+            $(selector).click(function () {
+                $this.setting.event[propertyName].call($this);
+            });
+        });
+    }
+
+    Page.prototype.loadTab = function () {
+        var $this = this;
+        var url = util.pending + $this.user.ID;
+        $this.addTab({
+            id: 'smf-home',
+            name: '<i class="layui-icon"></i>&nbsp;首页',
+            url: url
+        });
+        layui.element.tabChange('smf-tabs', 'ztt-home');
+    }
+
+    Page.prototype.addTab = function (o) {
+        var element = layui.element;
+        var selector = "li[lay-id=" + o.id + "]";
+        var total = $("li[lay-id]").length;
+        if (total < 10) {
+            if ($(selector).length == 0) {
+                var template = $('#iframe-template-content').html();
+                // var contact = o.Url.lastIndexOf('?') == -1 ? '?' : '&';
+                // var url = o.Url + contact + 'categoryId=' + o.ID;
+                var url = o.url;
+                var content = template.replace(/{{url}}/igm, url);
+                element.tabAdd('smf-tabs', {
+                    title: o.name
+                    , content: content
+                    , id: o.id
+                });
             }
-        });
-
-        $("#smartflow_menu_items li i[command=pending]").trigger('click');
+            element.tabChange('smf-tabs', o.id);
+        } 
     }
 
-    $.Main = function (option) {
-        return new Main(option);
+    Page.prototype.delTab = function (id) {
+        var element = layui.element;
+        element.tabDelete('smf-tabs', id);
     }
 
-})();
+    initialize(function (option) {
+        return new Page(option);
+    });
+
+})(function (initialize) {
+    initialize({
+        event: {
+            logout: function () {
+                util.cleanCache();
+                window.top.location.href = '/pages/login.html';
+            },
+            refresh: function () {
+                util.refreshTabPage();
+            }
+        }
+    });
+})

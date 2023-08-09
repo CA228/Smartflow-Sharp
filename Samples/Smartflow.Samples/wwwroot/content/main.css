@@ -92,7 +92,7 @@ body {
 
 .smartflow_content {
     position: absolute;
-    top: 60px;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
@@ -179,4 +179,38 @@ body {
     bottom: 0;
     right: 0;
     left: 0;
+}
+
+
+.layui-tab-card {
+    border-top: none;
+    border-left: none;
+}
+.layui-tab-card > .layui-tab-title li {
+    margin-left: 0px;
+}
+.layui-tab-card > .layui-tab-title {
+    background-color: #fff;
+    margin-right: 120px;
+    z-index: 99;
+}
+.layui-tab-content {
+    padding: 0;
+}
+.layui-tool-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 41px;
+    border: solid 1px #e6e6e6;
+    width: 60px;
+    text-align: center;
+    line-height: 41px;
+    box-sizing: border-box;
+    cursor: pointer;
+    user-select: none;
+    border-top: none;
+    border-right: none;
+    font-size: 14px;
+    font-weight: bold;
 }

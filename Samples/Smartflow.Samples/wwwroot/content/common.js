@@ -48,7 +48,7 @@
             delete: '确定删除'
         },
         refreshTabPage: function () {
-            var content = window.top.$('#ifrmContent');
+            var content = window.top.$('div.layui-show>iframe');
             if (content.length > 0) {
                 var r = content.get(0).contentWindow.location;
                 var url = util.refreshUrl(r.origin + r.pathname, r);
@@ -98,6 +98,9 @@
                 arr.push(p + '=' + obj[p]);
             }
             return arr.join('&');
+        },
+        cleanCache: function () {
+            window.localStorage.clear();
         },
         create: function (option) {
             var url = util.prefix + option.url;

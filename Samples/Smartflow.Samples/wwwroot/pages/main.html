@@ -8,50 +8,57 @@
     <script src="../content/layui/layui.all.js"></script>
     <script src="../content/base64.min.js"></script>
     <script src="../content/common.js"></script>
-    <script src="../content/main.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $.Main({
-                iframeContent: '#ifrmContent',
-                login: './login.html'
-            });
-        });
-    </script>
+    <style type="text/css">
+        .layui-tab-item{
+            height:100%;
+        }
+        li[lay-id=smf-home]>.layui-tab-close {
+            display: none;
+        }
+    </style>
+ 
 </head>
 <body class="smartflow_main">
-    <div class="smartflow_head">
-        <span class="smartflow_title">Smartflow-Sharp 工作流管理平台</span>
-        <div class="smartflow_menu fr">
-            <ul class="smartflow_menu_items clearfix" id="smartflow_menu_items">
-                <li class="smartflow_menu_item fr">
-                    <i class="layui-icon layui-icon-logout" command="exit" style="cursor:pointer;"></i>
-                </li>
-                <li class="smartflow_menu_item fr">
-                    <i class="layui-icon  layui-icon-dialogue" command="pending" style="cursor:pointer;"></i>
-                </li>
-            </ul>
-        </div>
-    </div>
     <div class="smartflow_content">
         <div class="smartflow_left clearfix" id="menu">
+            <div class="smartflow_head">
+                <span class="smartflow_title">Smartflow-Sharp</span>
+            </div>
+
             <div class="menu_item">
                 <div class="menu_title">业务管理</div>
                 <ul class="menu_sub_items hide">
                     <li class="menu_sub_item">
-                        <span url="./vacation/create.html">请假申请</span>
+                        <span url="./vacation/create.html" id="vac">请假申请</span>
                     </li>
                     <li class="menu_sub_item">
-                        <span url="./users.html">用户清单</span>
+                        <span url="./users.html" id="user-list">用户清单</span>
                     </li>
                     <li class="menu_sub_item">
-                        <span url="/wf/list.html">流程模板定义</span>
+                        <span url="/wf/list.html" id="template">流程模板定义</span>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="smartflow_right">
-            <iframe style="width:100%;height:100%;" id="ifrmContent" src="about:blank" frameborder="0"></iframe>
+            <div class="smf-content" style="height:100%">
+                <div class="layui-tab layui-tab-card" lay-filter="smf-tabs" style="margin-top: 0px; height: 100%" lay-allowclose="true">
+                    <ul class="layui-tab-title">
+                    </ul>
+                    <div class="layui-tool-button" id="refresh" style="right:60px;">
+                        <span title="刷新当前选项卡"><i class="layui-icon layui-icon-refresh"></i></span>
+                    </div>
+                    <div class="layui-tool-button" id="logout">
+                        <span title="退出"><i class="layui-icon layui-icon-logout"></i></span>
+                    </div>
+                    <div class="layui-tab-content" style=" position: absolute; top: 40px; left: 0px; right: 0px; bottom: 0px; "></div>
+                </div>
+            </div>
         </div>
     </div>
+    <script type="text/html" id="iframe-template-content">
+        <iframe style="width:100%;height:100%;" src="{{url}}" frameborder="0"></iframe>
+    </script>
+    <script src="../content/main.js"></script>
 </body>
 </html>

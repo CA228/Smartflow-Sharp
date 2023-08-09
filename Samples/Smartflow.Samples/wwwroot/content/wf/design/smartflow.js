@@ -899,9 +899,9 @@
             });
         },
         checkSegment: function (points, mx, my) {
-            for (var i = 0; i < points.length; i++) {
-                var p = points[i];
-                var nextIndex = i + 1;
+            for (let i = 0; i < points.length; i++) {
+                let p = points[i];
+                let nextIndex = i + 1;
                 if (nextIndex < points.length) {
                     let s = this.parseXY(p),
                         a = Draw.angle(s, { x: mx, y: my }),
@@ -915,9 +915,9 @@
         },
         checkSegmentTwo: function (mx, my) {
             let points = this.getPoints();
-            for (var i = 0; i < points.length; i++) {
-                var p = points[i];
-                var nextIndex = i + 1;
+            for (let i = 0; i < points.length; i++) {
+                let p = points[i];
+                let nextIndex = i + 1;
                 if (nextIndex < points.length) {
                     let s = this.parseXY(p),
                         n = this.parseXY(points[nextIndex]),
@@ -931,15 +931,16 @@
             return -1;
         },
         repeat: function (points) {
-            for (var i = 0; i < points.length; i++) {
-                var p = points[i];
-                var nextIndex = i + 1;
-                var nextSecordIndex = i + 2;
+            for (let i = 0; i < points.length; i++) {
+                let p = points[i];
+                let nextIndex = i + 1;
+                let nextSecordIndex = i + 2;
                 if (nextIndex < points.length && nextSecordIndex < points.length) {
                     let s = this.parseXY(p),
                         a = Draw.angle(s, this.parseXY(points[nextIndex])),
                         b = Draw.angle(s, this.parseXY(points[nextSecordIndex]));
-                    if (a === b) {
+                    let amax = a + 1, amin = a - 1;
+                    if ((amin <= b && amax >= b) || a === b) {
                         return nextIndex;
                     }
                 }
@@ -1687,24 +1688,33 @@
         }
     });
 
-    function Join() {
+     function Join() {
+         this.xr = 30;
+         this.yr = 1;
     }
 
     Join.extend(Circle, {
         draw: function () {
             const dw = this.drawInstance;
             const g = dw.draw.group()
-                .add(dw.draw.path("M10,0 a10 10 0 1 0 0 -0.1").fill(dw.drawOption.backgroundColor));
+                .add(dw.draw.path("M10,0 a20 20 0 1 0 0 -0.1").fill("#fafafa").stroke('#000'));
             dw.draw.defs().add(g);
-            var n = dw.draw.use(g);
-            this.init(n, dw);
+            let n = dw.draw.use(g), text = '聚合';
+            n.brush = dw.draw.text(text);
+            n.brush.attr({
+                x: this.x + this.xr,
+                y: this.y + this.yr
+            });
+
+            this.brush = n.brush;
+
+            this.init(n, text, dw);
             n.move(this.x, this.y);
             Draw._proto_NC[this.$id] = this;
             Join.base.Parent.prototype.draw.call(this);
         },
-         init: function (n, dw) {
-            Join.base.Constructor.call(this, this.x, this.y, this.disX, this.disY, n.id(), '聚合', 'join', dw);
-            this.tickness = 10;
+        init: function (n, text, dw) {
+            Join.base.Constructor.call(this, this.x, this.y, this.disX, this.disY, n.id(), text, 'join', dw);
         },
          bindEvent: function (n) {
             Join.base.Parent.prototype.bindEvent.call(this, n);
@@ -1719,120 +1729,11 @@
              self.x = Draw.getClientX(d) - self.disX;
              self.y = Draw.getClientY(d) - self.disY;
              element.move(self.x, self.y);
-             if (self.brush) {
-                 self.brush.attr({
-                     x: element.x() + element.width() / 2,
-                     y: element.y() + element.height() / 2
-                 });
-             }
-             Circle.base.Parent.prototype.move.call(self);
-         },
-         bound: function (mX, mY) {
-             var r = 15,
-                 c = 5,
-                 cx = this.x + r,
-                 cy = this.y,
-                 z = r * 2;
-             var tickness = this.tickness;
-             var direction = {
-                 bottom: {
-                     x1: cx - r,
-                     y1: cy + r,
-                     x2: cx - r,
-                     y2: cy + r - tickness,
-                     x3: cx + z - r,
-                     y3: cy + r - tickness,
-                     x4: cx - r + z,
-                     y4: cy + r,
-                     check: function (moveX, moveY) {
-                         var center = {
-                             x: cx + c,
-                             y: cy + r - c
-                         };
-
-                         return (this.x1 <= moveX &&
-                             this.x3 >= moveX &&
-                             this.y1 >= moveY &&
-                             this.y2 <= moveY) ? center : false;
-                     }
-
-                 },
-                 top: {
-                     x1: cx - r,
-                     y1: cy - r,
-                     x2: cx - r,
-                     y2: cy - r + tickness,
-                     x3: cx + z - r,
-                     y3: cy - r,
-                     x4: cx + z - r,
-                     y4: cy - r + tickness,
-                     check: function (moveX, moveY) {
-
-                         var center = {
-                             x: cx + c,
-                             y: cy - r + c
-                         };
-
-                         return (this.x1 <= moveX &&
-                             this.x3 >= moveX &&
-                             this.y1 <= moveY &&
-                             this.y2 >= moveY) ? center : false;
-                     }
-                 },
-                 left: {
-                     x1: cx - r,
-                     y1: cy - r + tickness,
-                     x2: cx - r,
-                     y2: cy + r - tickness,
-                     x3: cx - r + tickness + 10,
-                     y3: cy - r + tickness,
-                     x4: cx - r + tickness,
-                     y4: cy + r - tickness,
-                     check: function (moveX, moveY) {
-
-                         var center = {
-                             x: cx - r + c * 2,
-                             y: cy
-                         };
-
-                         return this.x1 <= moveX &&
-                             this.x3 >= moveX &&
-                             this.y1 <= moveY &&
-                             this.y2 >= moveY ? center : false;
-
-                     }
-                 },
-                 right: {
-                     x1: cx + r,
-                     y1: cy - r + tickness,
-                     x2: cx + r,
-                     y2: cy + r - tickness,
-                     x3: cx + r - tickness,
-                     y3: cy - r + tickness,
-                     x4: cx + r - tickness,
-                     y4: cy + r - tickness,
-                     check: function (moveX, moveY) {
-
-                         var center = {
-                             x: cx + r,
-                             y: cy
-                         };
-
-                         return (this.x1 >= moveX &&
-                             this.x3 <= moveX &&
-                             this.y1 <= moveY &&
-                             this.y2 >= moveY) ? center : false;
-                     }
-                 }
-             }
-             for (var propertName in direction) {
-                 var _o = direction[propertName],
-                     check = _o.check(mX, mY);
-                 if (check) {
-                     return check;
-                 }
-             }
-             return false;
+             self.brush.attr({
+                x: self.x + self.xr,
+                y: self.y + self.yr
+            });
+            Circle.base.Parent.prototype.move.call(self);
          }
      });
 
