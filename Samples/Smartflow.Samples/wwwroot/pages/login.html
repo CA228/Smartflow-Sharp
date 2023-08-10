@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Smartflow-Sharp工作流管理平台</title>
+    <title>Smartflow-Sharp</title>
     <link href="../content/login.css" rel="stylesheet" />
     <script src="../content/jquery.min.js"></script>
     <script src="../content/common.js"></script>
@@ -11,7 +11,6 @@
             $("#btnLogin").click(function () {
                 var userName = $.trim($("#userName").val());
                 if (userName) {
-
                     $.ajax({
                         type: 'get',
                         url: '/api/user/' + userName+'/info',
@@ -31,7 +30,7 @@
 </head>
 <body>
     <div class="login">
-        <div class="message">Smartflow-Sharp工作流管理平台</div>
+        <div class="message">Smartflow-Sharp</div>
         <div id="darkbannerwrap"></div>
         <form method="post">
             <input name="action" value="login" type="hidden" />

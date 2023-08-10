@@ -19,7 +19,6 @@ namespace Smartflow.API.Controllers
         private readonly WorkflowBridgeService _workflowBridgeService;
         private readonly IOrganizationService _organizationService;
         private readonly IQuery<IList<Category>> _categoryService;
-
         public SettingController(WorkflowBridgeService workflowBridgeService, IOrganizationService organizationService, IQuery<IList<Category>> categoryService)
         {
             _workflowBridgeService = workflowBridgeService;
