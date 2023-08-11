@@ -665,6 +665,10 @@
         removeElement: function () {
             SVG.get(this.$id).remove();
         },
+        hide: function () {
+            var n = this, el = SVG.get(n.$id);
+            el.attr({ opacity: 0 });
+        },
         bindEvent: function (el) {
             this.mousedown(function (evt) {
                 el.drawInstance._drag.call(this, evt, el.drawInstance);
@@ -688,6 +692,253 @@
             });
         }
     });
+
+    function Horizontal(x, y, line) {
+         this.w = 40;
+         this.h = 10;
+         this.x = x;
+         this.y = y;
+         this.si = 0;
+         this.ei = 0;
+         this.sx = 0;
+         this.sy = 0;
+         this.ex = 0;
+         this.ey = 0;
+         this.disX = 0;
+         this.disY = 0;
+         this.line = line;
+     }
+
+    Horizontal.extend(Shape, {
+         draw: function () {
+             var n = this,
+                 dw = n.drawInstance,
+                 parentGroup = SVG.get(n.line.$id).parent();
+             var strokeColor = dw.drawOption.strokeColor;
+             var rect = parentGroup.rect(n.w, n.h)
+                 .attr({
+                     fill: '#33f1ea',
+                     x: n.x,
+                     y: n.y,
+                     stroke: strokeColor,
+                     visibility: 'hidden',
+                     cursor: 'n-resize'
+                 });
+
+             Horizontal.base.Constructor.call(this, rect.id(), '水平移动标记位', config.horizontal, dw);
+             Draw._proto_NC[n.$id] = n;
+             return Shape.base.Parent.prototype.draw.call(this);
+         },
+         move: function (el, evt) {
+             var n = this, p = n.line.getPoints();
+             n.y = Draw.getClientY(evt) - n.h;
+             el.attr({
+                 x: n.x,
+                 y: n.y
+             });
+             if (n.si === 0) {
+                 let s = n.line.first();
+                 //p.insert(n.si + 1, (s.x + 30) + ',' + s.y);
+                 p.insert(n.si + 1, (s.x + 30) + ',' + n.y);
+                 n.si = n.si + 1;
+                 n.ei += 1;
+                 n.line.plot(p);
+             }
+             if (n.ei === (p.length - 1)) {
+                 let e = n.line.last();
+                 p.insert(n.ei, (e.x - 30) + ',' + n.y);
+                 //let r = n.ei + 1;
+                 //p.insert(r, (e.x - 30) + ',' + e.y);
+                 n.line.plot(p);
+             } else {
+                 n.ei = p.length <= n.ei ? n.ei - 1 : n.ei;
+             }
+             n.line.horizontal(n);
+         },
+        show: function (x, coord) {
+            const n = this,
+                el = SVG.get(n.$id);
+            n.sx = coord.x < coord.x1 ? coord.x + n.w : coord.x - n.w;
+            n.ex = coord.x < coord.x1 ? coord.x1 - n.w : coord.x1 + n.w;
+            n.sy = coord.y;
+            n.ey = coord.y1;
+
+            let angleCheck = coord.angle === 180 || coord.angle === 0;
+            let left = angleCheck && coord.x < coord.x1 && n.ex >= x && x >= n.sx;
+            let right = angleCheck && coord.x > coord.x1 && n.ex <= x && x <= n.sx;
+            if (left | right) {
+                n.si = coord.start;
+                n.ei = coord.end;
+                n.y = coord.y - n.h / 2;
+                n.x = x - n.w / 2;
+                el.attr({
+                    x: n.x,
+                    y: n.y,
+                    visibility: 'visible'
+                });
+            } else {
+                n.si = -1;
+                n.ei = -1;
+            }
+         },
+         hide: function () {
+             var n = this, el = SVG.get(n.$id);
+             el.attr({ visibility: 'hidden' });
+         },
+         adjust: function (points, coord) {
+             let len = points.length;
+             let si = coord.start, ei = coord.end;
+             let s = this.line.parseXY(points[si]);
+             let e = this.line.parseXY(points[ei]);
+             if (si !== 0) {
+                 points[si] = s.x + ',' + coord.y;
+             }
+             if (ei !== len - 1) {
+                 points[ei] = e.x + ',' + coord.y;
+             }
+             if (si != 0 || ei !== len - 1) {
+                 this.line.plot(points);
+             }
+         },
+         bindEvent: function (el) {
+             this.mousedown(function (evt) {
+                 const n = Draw._proto_NC[this.id()];
+                 n.hide();
+                 el.drawInstance._drag.call(this, evt, el.drawInstance);
+             });
+
+             this.mouseup(function (evt) {
+                 const id = this.id();
+                 let n = Draw._proto_NC[id],
+                     L = n.line;
+                 const pointArray = L.getPoints();
+                 let ci = L.repeat(pointArray);
+                 if (ci > -1) {
+                     pointArray.remove(ci);
+                     L.plot(pointArray);
+                 }
+             });
+         }
+     });
+
+    function Vertical(x, y, line) {
+         this.w = 10;
+         this.h = 40;
+         this.x = x;
+         this.y = y;
+         this.si = 0;
+         this.ei = 0;
+         this.sx = 0;
+         this.sy = 0;
+         this.ex = 0;
+         this.ey = 0;
+         this.disX = 0;
+         this.disY = 0;
+         this.line = line;
+     }
+
+    Vertical.extend(Shape, {
+         draw: function () {
+             var n = this,
+                 dw = n.drawInstance, parentGroup = SVG.get(n.line.$id).parent();
+             var strokeColor = dw.drawOption.strokeColor;
+             var rect = parentGroup.rect(n.w, n.h)
+                 .attr({
+                     fill: '#33f1ea', x: n.x, y: n.y,
+                     stroke: strokeColor,
+                     cursor: 'e-resize', visibility: 'hidden'
+                 });
+             Vertical.base.Constructor.call(this, rect.id(), '垂直移动标记位', config.vertical, dw);
+             Draw._proto_NC[n.$id] = n;
+             return Shape.base.Parent.prototype.draw.call(this);
+         },
+         move: function (el, evt) {
+             var n = this, p = n.line.getPoints();
+             n.x = Draw.getClientX(evt) - n.w / 2;
+             el.attr({
+                 x: n.x - n.w / 2,
+                 y: n.y
+             });
+             if (n.si === 0) {
+                 let s = n.line.first();
+                 p.insert(n.si + 1, n.x + ',' + (s.y + 30));
+                 n.si += 1;
+                 n.ei += 1;
+                 n.line.plot(p);
+             }
+             if (n.ei === (p.length - 1)) {
+                 let e = n.line.last();
+                 let dis = e.y > n.sy ? (e.y - 30) : e.y + 30;
+                 p.insert(n.ei, n.x + ',' + dis);
+                 n.line.plot(p);
+             } else {
+                 n.ei = p.length <= n.ei ? n.ei - 1 : n.ei;
+             }
+             n.line.vertical(n);
+         },
+         show: function (coord, y) {
+             const n = this, el = SVG.get(n.$id);
+             n.sx = coord.x;
+             n.ex = coord.x1;
+             n.sy = coord.y < coord.y1 ? coord.y + this.h : coord.y - this.h;
+             n.ey = coord.y < coord.y1 ? coord.y1 - this.h : coord.y1 + this.h;
+             let top = coord.angle === 90 && coord.y < coord.y1 && n.ey >= y && y >= n.sy;
+             let bottom = coord.angle === 90 && coord.y > coord.y1 && n.ey <= y && y <= n.sy;
+             if (top | bottom) {
+                 n.si = coord.start;
+                 n.ei = coord.end;
+                 n.x = coord.x - n.w / 2;
+                 n.y = y - n.h / 2;
+                 el.attr({
+                     x: n.x,
+                     y: n.y,
+                     visibility: 'visible'
+                 });
+             }
+             else {
+                 n.si = -1;
+                 n.ei = -1;
+             }
+         },
+         hide: function () {
+             var n = this, el = SVG.get(n.$id);
+             el.attr({ visibility: 'hidden' });
+         },
+         adjust: function (points, coord) {
+             let len = points.length;
+             let si = coord.start, ei = coord.end;
+             let s = this.line.parseXY(points[si]);
+             let e = this.line.parseXY(points[ei]);
+             if (si !== 0) {
+                 points[si] = s.x + ',' + coord.y;
+             }
+             if (ei !== len - 1) {
+                 points[ei] = s.x + ',' + e.y;
+             }
+             if (si != 0 || ei !== len - 1) {
+                 this.line.plot(points);
+             }
+         },
+         bindEvent: function (el) {
+             this.mousedown(function (evt) {
+                 const n = Draw._proto_NC[this.id()];
+                 n.hide();
+                 el.drawInstance._drag.call(this, evt, el.drawInstance);
+             });
+
+             this.mouseup(function (evt) {
+                 const id = this.id();
+                 let n = Draw._proto_NC[id],
+                     L = n.line;
+                 const pointArray = L.getPoints();
+                 let ci = L.repeat(pointArray);
+                 if (ci > -1) {
+                     pointArray.remove(ci);
+                     L.plot(pointArray);
+                 }
+             });
+         }
+     });
 
     function TextRect(x, y,l) {
          this.x = x;
@@ -769,10 +1020,12 @@
         this.x3 = 0;
         this.y3 = 0;
 
-        this.vs = 89;
-        this.ve = 91;
-        this.hs = 181;
-        this.he = 179;
+        this.vs = 88;
+        this.ve = 92;
+
+        this.hs = 178;
+        this.he = 182;
+
         this.hzs = 0;
         this.hze = 2;
 
@@ -830,6 +1083,7 @@
                 self.addText();
             }
             self.initEvent.call(inner, self);
+            self.addHV(self.x1, self.y1);
             return Line.base.Parent.prototype.draw.call(self);
         },
         drawLine: function (points, l) {
@@ -881,7 +1135,17 @@
                 $.each(children, function () {
                     if (this.type === 'circle') {
                         this.attr({ opacity: 1 });
-                    } 
+                    } else if (this.type === 'polyline') {
+                        const instance = Draw._proto_LC[this.id()] ? Draw._proto_LC[this.id()] : Draw._proto_LC[Line.findById(this.id())];
+                        let coord = instance.checkSegmentTwo(Draw.getClientX(evt), Draw.getClientY(evt));
+                        if (coord !== -1) {
+                            if (instance.vs <= coord.angle && coord.angle <= instance.ve) {
+                                instance.v.show(coord, Draw.getClientY(evt));
+                            } else if ((instance.hs <= coord.angle && coord.angle <= instance.he) || (instance.hzs <= coord.angle && coord.angle <= instance.hze)) {
+                                instance.h.show(Draw.getClientX(evt), coord);
+                            }
+                        }
+                    }
                 });
                 return false;
             });
@@ -890,12 +1154,29 @@
                 let children = this.children();
                 $.each(children, function () {
                     if (this.type === 'circle') {
-                        this.attr({ opacity: 0 });
+                        Draw._proto_NC[this.id()].hide();
                     } else if (this.type === 'rect') {
                         this.attr({ visibility: 'hidden' });
                     }
                 });
                 return false;
+            });
+
+            this.parent().on('mouseup', function (evt) {
+                const id = this.id();
+                let instance = Draw._proto_LC[id] ? Draw._proto_LC[id] : Draw._proto_LC[Line.findById(id)];
+                if (!!instance) {
+                    let n = Draw._proto_NC[id];
+                    instance = n.line;
+                }
+                if (instance) {
+                    const pointArray = instance.getPoints();
+                    let ci = instance.repeat(pointArray);
+                    if (ci > -1) {
+                        pointArray.remove(ci);
+                        instance.plot(pointArray);
+                    }
+                }
             });
         },
         checkSegment: function (points, mx, my) {
@@ -977,21 +1258,11 @@
                     let p = pi[i],
                         start = self.parseXY(points[p.start]),
                         end = self.parseXY(points[p.end]);
-                    if (p.type === 'v') {
-                        let x = total === p.end ? end.x : start.x;
-                        let y = end.y;
-                        points[p.end] = x + ',' + y;
-                        if (total !== p.end) {
-                            adjArr.push({ x: x, y: y, ei: p.end });
-                        }
-                    } else if (p.type === 'h') {
-                        let x = end.x;
-                        let y = total === p.end ? end.y : start.y;
-                        points[p.end] = x + ',' + y;
-                        if (total !== p.end) {
-                            adjArr.push({ x: x, y: y, ei: p.end });
-                        }
-                    }
+                    let x = p.type === 'v' ? (total === p.end ? end.x : start.x) : (total === p.end ? start.x : end.x);
+                    let y = p.type === 'v' ? (total === p.end ? start.y: end.y): (total === p.end ? end.y : start.y);
+                    let mi = total === p.end ? p.start : p.end;
+                    adjArr.push({ x: x, y: y, ei: mi });
+                    points[mi] = x + ',' + y;
                 }
                 self.plot(points);
             }
@@ -1087,6 +1358,21 @@
                 child.fill(color);
             }
         },
+        addHV: function (x, y) {
+            var self = this;
+            if (!self.h) {
+                var h = new Horizontal(x, y, self);
+                h.drawInstance = self.drawInstance;
+                h.draw();
+                self.h = h;
+            }
+            if (!self.v) {
+                var v = new Vertical(x, y, self);
+                v.drawInstance = self.drawInstance;
+                v.draw();
+                self.v = v;
+            }
+        },
         move: function (evt) {
             var self = this,
                 dw = self.drawInstance,
@@ -1163,6 +1449,32 @@
             pointArray.pop();
             pointArray.push([this.x2, this.y2].join(','));
             this.plot(pointArray);
+        },
+        horizontal: function (n) {
+            if (n.si === -1 && n.ei === -1) return;
+            const pointArray = this.getPoints();
+            let si = n.si, ei = n.ei, y = n.y;
+            let sxy = pointArray[si];
+            let exy = pointArray[ei];
+            let start = this.parseXY(sxy);
+            let end = this.parseXY(exy);
+            pointArray[si] = start.x + ',' + y;
+            pointArray[ei] = end.x + ',' + y;
+            this.plot(pointArray);
+            this.addAnchor();
+        },
+        vertical: function (n) {
+            if (n.si === -1 && n.ei === -1) return;
+            const pointArray = this.getPoints();
+            let si = n.si, ei = n.ei, x = n.x;
+            let sxy = pointArray[si];
+            let exy = pointArray[ei];
+            let start = this.parseXY(sxy);
+            let end = this.parseXY(exy);
+            pointArray[si] = x + ',' + start.y;
+            pointArray[ei] = x + ',' + end.y;
+            this.plot(pointArray);
+            this.addAnchor();
         },
         getPoints: function () {
             var self = this,
