@@ -1,16 +1,6 @@
 ﻿(function (initialize) {
 
     Configuration.controlSelectors = {
-        node_actor: {
-            title: '参与者',
-            type: 'box',
-            width: '900px',
-            height: '680px',
-            url: './actorSelect.html',
-            parse: function (id) {
-                return $.SMF.getNodeById(id);
-            }
-        },
         node_name: {
             field: 'name',
             parse: function (id) {
@@ -27,6 +17,48 @@
             },
             invoke: function (nx) {
                 $('#node_id').val(nx.id);
+            }
+        },
+        node_group: {
+            field: 'group',
+            parse: function (id) {
+                return $.SMF.getNodeById(id);
+            },
+            invoke: function (nx) {
+                const selector = '#node_group';
+                $(selector).val(null);
+                $.each(nx.group, function () {
+                    $(selector).append(new Option(this.name, this.id, true, true));
+                });
+                $(selector).trigger('change');
+            }
+        },
+        node_organization: {
+            field: 'organization',
+            parse: function (id) {
+                return $.SMF.getNodeById(id);
+            },
+            invoke: function (nx) {
+                const selector = '#node_organization';
+                $(selector).val(null);
+                $.each(nx.organization, function () {
+                    $(selector).append(new Option(this.name, this.id, true, true));
+                });
+                $(selector).trigger('change');
+            }
+        },
+        node_user: {
+            field: 'actor',
+            parse: function (id) {
+                return $.SMF.getNodeById(id);
+            },
+            invoke: function (nx) {
+                const selector = '#node_user';
+                $(selector).val(null);
+                $.each(nx.actor, function () {
+                    $(selector).append(new Option(this.name, this.id, true, true));
+                });
+                $(selector).trigger('change');
             }
         },
         line_name: {
@@ -95,48 +127,6 @@
         });
     };
 
-    Configuration.getDOMFrame = function (dom) {
-        var frameId = dom.find("iframe").attr('id');
-        return document.getElementById(frameId).contentWindow;
-    };
-
-    Configuration.open = function (nx, descriptor) {
-        var settings = {
-            type: 2,
-            title: descriptor.title,
-            area: [descriptor.width, descriptor.height],
-            shade: 0.8,
-            closeBtn: 1,
-            shadeClose: false,
-            content: [descriptor.url, 'no']
-        };
-
-        if (!!descriptor.btn) {
-            settings.btn = descriptor.btn;
-        }
-
-        if (!!descriptor.yes) {
-            settings.yes = function (index,dom) {
-                descriptor.yes.call(this, nx, index, dom);
-            }
-        }
-
-        settings.cancel = function (index, dom) {
-            var frameContent = Configuration.getDOMFrame(dom);
-            frameContent.setting.set(nx);
-            if (descriptor.invoke) {
-                descriptor.invoke(nx);
-            }
-        };
-
-        settings.success = function (dom, index) {
-            var frameContent = Configuration.getDOMFrame(dom);
-            frameContent.setting.load(nx);
-        };
-
-        layer.open(settings);
-    };
-
     function Configuration(option) {
         this.option = $.extend({}, option);
         this.init();
@@ -144,8 +134,8 @@
     }
 
     Configuration.prototype.init = function () {
-        var $this = this;
-        var id = util.doQuery('id');
+        const $this = this, sl = [];
+        let id = util.doQuery('id');
         $("#drawing").SMF({
             container: this.option.container,
             dblClick: function (nx) {
@@ -160,39 +150,111 @@
                 url: url,
                 type: 'Get',
                 success: function (serverData) {
-                    var instance = $.SMF.getInstanceComponent();
+                    const instance = $.SMF.getInstanceComponent();
                     instance.import(serverData.Source);
                 }
             });
         } else {
             $.each(['start', 'end'], function (i, value) {
-                var instance = $.SMF.getInstanceComponent();
+                const instance = $.SMF.getInstanceComponent();
                 instance.create(value, false);
             });
         }
+
+        sl.push({
+            field:'group',
+            id: 'node_group',
+            url: "api/setting/group/list"
+        });
+
+        sl.push({
+            field: 'user',
+            id: 'node_user',
+            url: "api/setting/user/list",
+            templateResult: function (item) {
+                if (item.loading) {
+                    return item.text;
+                }
+                return item.store.OrganizationName + '/' + item.text;
+            }
+        });
+
+        sl.push({
+            field: 'organization',
+            id: 'node_organization',
+            url: "api/setting/organization/list"
+        });
+
+        $.each(sl, function () {
+            $this.initSelect($.extend({
+                handleResult: function (data, params) {
+                    var r = [];
+                    if (data) {
+                        $.each(data, function () {
+                            r.push({ id: this.Id, text: this.Name, store: this })
+                        });
+                    }
+                    return {
+                        results: r
+                    };
+                }
+            }, this));
+        });
 
         //渲染所有表单
         layui.form.render();
     };
 
-    Configuration.prototype.bind = function () {
-        var $this = this;
-        for (var propertyName in Configuration.controlSelectors) {
-            var selector = '#' + propertyName,
-                sel = Configuration.controlSelectors[propertyName];
-           // if (sel.type === 'checkbox') {
-             //   layui.form.on('checkbox(node_send_start_user)', function (data) {
-               //     var result = Configuration.findElementById.call($this, this);
-              //      result.element.rule = data.elem.checked ? 'node_send_start_user' : '';
-               // });
-           // }
-            if (sel.type === 'box') {
-                $(selector).click(function () {
-                    var result = Configuration.findElementById.call($this, this);
-                    Configuration.open(result.element, result.descriptor);
+    Configuration.prototype.initSelect = function (group) {
+        const $this = this, url = util.smf + group.url;
+        const dropdownSelector = '#' + group.id;
+        const ajaxOption = {
+            url: url,
+            delay: 250,
+            method: 'get',
+            data: function (params) {
+                return {
+                    searchKey: params.term
+                };
+            },
+            processResults: group.handleResult,
+            cache: true
+        };
+        $(dropdownSelector).select2({
+            language: "zh-CN",
+            ajax: ajaxOption,
+            multiple: true,
+            placeholder: '请选择',
+            minimumInputLength: 1,
+            minimumResultsForSearch: Infinity,
+            templateResult: !!group.templateResult ? group.templateResult : function (item) {
+                if (item.loading) {
+                    return item.text;
+                }
+                return item.text;
+            },
+            templateSelection: function(item) {
+                return item.text;
+            } 
+        });
+
+        $(dropdownSelector).on("select2:select select2:unselect", function (e) {
+            const nx = $this.element, VK = [];
+            const sdata = $(this).select2('data');
+            if (sdata && sdata.length > 0) {
+                $.each(sdata, function () {
+                    VK.push({ id: this.id, name: this.text });
                 });
             }
-            else {
+            nx[group.field] = VK;
+        });
+    }
+
+    Configuration.prototype.bind = function () {
+        const $this = this;
+        for (let propertyName in Configuration.controlSelectors) {
+            let selector = '#' + propertyName;
+            if ($.inArray(propertyName, ['node_group', 'node_organization', 'node_user']) === -1) {
                 $(selector).keyup(function () {
                     var result = Configuration.findElementById.call($this, this);
                     var obj = Configuration.controlSelectors[this.id];
@@ -200,20 +262,20 @@
                     result.element[obj.field] = text;
                     if (result.element.brush && obj.field === 'name') {
                         result.element.brush.text(text);
-                    } else if (obj.field==='name' && this.id === 'line_name') {
+                    } else if (obj.field === 'name' && this.id === 'line_name') {
                         result.element.updateContent(text);
                     }
                 });
-            }
+            } 
         }
     };
 
     Configuration.prototype.selectTab = function (nx) {
-        var $this = this,
+        const $this = this,
             category = nx.category.toLowerCase();
         if (category === 'node') {
             Configuration.show([$this.option.node]);
-            var controls = ['node_name', 'node_id'];
+            const controls = ['node_name', 'node_id', 'node_group', 'node_user', 'node_organization'];
             $.each(controls, function (i, propertyName) {
                 if (Configuration.controlSelectors[propertyName].invoke) {
                     Configuration.controlSelectors[propertyName].invoke(nx, $this);
@@ -222,7 +284,7 @@
         }
         else if (category === 'line') {
             Configuration.show([$this.option.line]);
-            var controls = ['line_url', 'line_name', 'line_id', 'line_order','line_expression'];
+            const controls = ['line_url', 'line_name', 'line_id', 'line_order','line_expression'];
             $.each(controls, function (i, propertyName) {
                 if (Configuration.controlSelectors[propertyName].invoke) {
                     Configuration.controlSelectors[propertyName].invoke(nx, $this);
@@ -234,8 +296,8 @@
         }
     };
 
-    Configuration.prototype.prompt = function (elementId, instance,method) {
-        var ht = $("#" + elementId).html(),
+    Configuration.prototype.prompt = function (elementId, instance, method) {
+        const ht = $("#" + elementId).html(),
             $this = this;
         var id = util.doQuery('id');
         if (id) {
@@ -251,13 +313,13 @@
             content: ht,
             btnAlign: 'c',
             btn: ['确定'],
-            success: function (dom, index) {
+            success: function () {
                 var form = layui.form;
                 $this.loadCategory(function () {
                     form.render(null, 'layui_flow_info');
                 });
             },
-            yes: function (index, dom) {
+            yes: function () {
                 var form = layui.form,
                     formData = form.val('layui_flow_info'),
                     id = util.doQuery('id');

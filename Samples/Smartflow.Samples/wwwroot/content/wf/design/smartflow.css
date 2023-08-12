@@ -5,6 +5,7 @@
     box-sizing: border-box;
     background: url(./images/grid_15.png) repeat;
     height: 100%;
+    overflow: auto;
 }
 .container_right {
     float: right;
@@ -24,116 +25,13 @@
     line-height: 45px;
     text-align: center;
 }
-.container_draw {width: 100%;height: 100%;}
+.container_draw {height: 4000px; width: 4000px;}
 .container_process {background: url(./images/grid_15.png) repeat;height:100%;}
-
-.smartflow-table {
-    margin: 0;
-    padding: 0;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-.smartflow-list {
-    font-size: 14px;
-    color: #666666;
-}
-.smartflow-list li {
-        line-height: 25px;
-        cursor: pointer;
-    }
-.smartflow-table td input[type='text'] {
-    padding-left: 2px;
-}
-.layui-elem-field legend {
-    margin-left: 8px;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.smartflow-role-box {
-    height: 320px;
-    margin-top: 11px;
-    position: relative;
-}
-
-.smartflow-role-list {
-    position: absolute;
-    top: 31px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    border: solid 1px #e6e6e6;
-    padding: 10px 15px;
-}
-
-.smartflow-header {
-    text-align: right;
-    width: 150px;
-}
-
-.layui-tab-content {
-    padding: 5px;
-}
-
-.layui-field-title-mp {
-    margin: 0;
-    padding: 0;
-}
 
 .layui-btn {
     border-radius: initial !important;
     line-height: 28px !important;
     height: 28px !important;
-}
-
-.smartflow-table-tb {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-
-.layui-elem-field-h {
-    height: 330px;
-}
-
-.smartflow-input {
-    height: 30px;
-    min-height: 30px;
-}
-
-.smartflow-tree {
-    position: absolute;
-    width: 180px;
-    height: 200px;
-    z-index: 5;
-    background-color: #F2F2F2;
-    display: none;
-}
-
-.smartflow-search-input {
-    padding-right: 14px;
-}
-
-.smartflow-search-icon {
-    position: absolute;
-    right: 4px;
-    top: 8px;
-    cursor: pointer;
-}
-
-.smartflow-table-actor {
-    margin-bottom: 4px;
-    margin-top: 11px
-}
-
-.layui-table-view {
-    margin-top: 0 !important;
-}
-
-.table-actor-cm {
-    width: 60px;
-    text-align: center;
-    font-size: 14px;
-    color: #666666
 }
 
 .smartflow-textarea {
@@ -145,15 +43,7 @@
     border-radius: initial;
 }
 
-.smartflow-expression{
-    height:40px;
-}
-
-.smartflow_checkbox {height: 38px;line-height: 38px;}
-.smartflow_checkbox_box{vertical-align:middle;}
-.smartflow_checkbox_label{display:inline;vertical-align:middle;}
-.attributes_tab {padding-top: 10px;}
-.attributes_tab_node{padding:10px;}
+.attributes_tab {margin:10px;}
 .layui-layer, .layui-layer-btn0, .layui-layer-btn1 {border-radius: 0 !important;}
 .attribute_tab_table {margin-left: 10px;margin-right: 10px;font-size: 14px;color: #666666;}
 .attribute_tab_table td {line-height: 26px;border-bottom:solid 1px #eee;}
@@ -161,7 +51,6 @@
 .attribute_tab_table_content {vertical-align: top;text-align: justify;}
 svg, text,path {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; -khtml-user-select: none; user-select: none;}
 text {font-size: 12px;text-anchor: middle;dominant-baseline: middle;pointer-events: none;font-weight: 600;letter-spacing: 1px;}
-.layui-form-select dl {max-height: 80px;}
 .ztree-container {
     left: 0;
     right: 0;
@@ -173,14 +62,6 @@ text {font-size: 12px;text-anchor: middle;dominant-baseline: middle;pointer-even
     overflow: auto;
     display: none;
 }
-.container_ctr {
-    overflow: auto;
-}
-
-.container_draw {
-    height: 4000px;
-    width: 4000px;
-}
 
 .tools_menu img:hover {
     border: solid 1px #ad9d9d;
@@ -188,4 +69,11 @@ text {font-size: 12px;text-anchor: middle;dominant-baseline: middle;pointer-even
 
 .hide{
     display:none;
+}
+
+.smartflow-label {
+    text-align: left !important;
+    padding-left: 0px !important;
+    font-weight: 600;
+    font-size: 16px;
 }

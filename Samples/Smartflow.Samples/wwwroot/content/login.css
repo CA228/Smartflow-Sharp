@@ -13,10 +13,11 @@ body,html{
     height:100%;
     overflow:hidden;
 }
-body{
+body {
     /*background:url(./images/web_login_bg.jpg) no-repeat center;
     background-size: cover;*/
-    background-color:#B8DCED;
+    /*    background-color:#B8DCED;*/
+    background-color: #516787;
 }
 a{
     color:#27A9E3;

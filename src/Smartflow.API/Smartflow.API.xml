@@ -41,11 +41,17 @@
             配置信息API
             </summary>
         </member>
-        <member name="M:Smartflow.API.Controllers.SettingController.GetRoles">
+        <member name="M:Smartflow.API.Controllers.SettingController.GetRoles(System.String)">
             <summary>
             获取角色清单
             </summary>
             <returns>角色列表</returns>
+        </member>
+        <member name="M:Smartflow.API.Controllers.SettingController.GetUsers(System.String)">
+            <summary>
+            获取参与者清单
+            </summary>
+            <returns>参与者列表</returns>
         </member>
         <member name="M:Smartflow.API.Controllers.SettingController.GetRecordByInstanceId(System.String)">
             <summary>
@@ -54,7 +60,7 @@
             <param name="instanceId">实例Id</param>
             <returns>过程记录列表</returns>
         </member>
-        <member name="M:Smartflow.API.Controllers.SettingController.GetOrganization">
+        <member name="M:Smartflow.API.Controllers.SettingController.GetOrganization(System.String)">
             <summary>
             获取单位清单
             </summary>

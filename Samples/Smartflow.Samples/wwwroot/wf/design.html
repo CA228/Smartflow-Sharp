@@ -2,12 +2,15 @@
 <html>
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
-    <title>Smartflow-Sharp工作流程设计工具</title>
+    <title>Smartflow-Sharp业务流程设计器</title>
     <link href="../content/layui/css/layui.css" rel="stylesheet" />
     <link href="../content/wf/icon/iconfont.css" rel="stylesheet" />
     <link href="../content/wf/design/smartflow.css" rel="stylesheet" />
+    <link href="../content/wf/select2/css/select2.min.css" rel="stylesheet" />
     <link href="../content/wf/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
     <script src="../content/jquery.min.js"></script>
+    <script src="../content/wf/select2/js/select2.full.min.js"></script>
+    <script src="../content/wf/select2/js/i18n/zh-CN.js"></script>
     <script src="../content/wf/design/svg.js"></script>
     <script src="../content/layui/layui.all.js"></script>
     <script src="../content/wf/design/smartflow.js"></script>
@@ -74,46 +77,76 @@
             </table>
         </div>
         <div id="workflow-node" class="attributes_tab hide">
-            <fieldset class="layui-elem-field" lay-filter="attributes_node_info" id="attributes_node_info">
-                <legend>基础信息</legend>
-                <div class="layui-field-box">
-                    <form class="layui-form" lay-filter="form_node">
-                        <div class="layui-form-item">
-                            <input type="text" placeholder="节点名称" class="layui-input" id="node_name" />
-                        </div>
-                        <div class="layui-form-item">
-                            <input type="text" placeholder="节点编码" class="layui-input" id="node_id" />
-                        </div>
-                    </form>
+            <form class="layui-form" lay-filter="form_node">
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">节点编码</label>
+                    <div>
+                        <input type="text" autocomplete="off" placeholder="节点名称" class="layui-input" id="node_name" />
+                    </div>
                 </div>
-            </fieldset>
-            <fieldset class="layui-elem-field" lay-filter="attributes_actor" id="attributes_actor" style="border:none;cursor:default;">
-                <legend><span id="node_actor">参与者(点击选择参与者)</span></legend>
-            </fieldset>
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">节点编码</label>
+                    <div>
+                        <input type="text" autocomplete="off" placeholder="节点编码" class="layui-input" id="node_id" />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">参与单位</label>
+                    <div>
+                        <select id="node_organization" class="layui-input select2" style="width:100%;height:38px;" lay-ignore></select>
+                     </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">参与角色</label>
+                    <div>
+                        <select id="node_group" class="layui-input select2" style="width:100%;height:38px;" lay-ignore></select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">参与人</label>
+                    <div>
+                        <select id="node_user" class="layui-input select2" style="width:100%;height:38px;" lay-ignore></select>
+                     </div>
+                </div>
+            </form>
         </div>
         <div id="workflow-line" class="attributes_tab hide">
-            <fieldset class="layui-elem-field" lay-filter="attributes_line_info" id="attributes_line_info">
-                <legend>基础信息</legend>
-                <div class="layui-field-box">
-                    <form class="layui-form" lay-filter="form_line">
-                        <div class="layui-form-item">
-                            <input type="text" placeholder="操作名称" class="layui-input" id="line_name" />
-                        </div>
-                        <div class="layui-form-item">
-                            <input type="text" placeholder="操作编码" class="layui-input" id="line_id" />
-                        </div>
-                        <div class="layui-form-item">
-                            <input type="text" placeholder="顺序" class="layui-input" id="line_order" />
-                        </div>
-                        <div class="layui-form-item">
-                            <input type="text" placeholder="表单url" class="layui-input" id="line_url" />
-                        </div>
-                        <div class="layui-form-item">
-                            <input type="text" placeholder="表达式" class="layui-input" id="line_expression" />
-                        </div>
-                    </form>
+            <form class="layui-form" lay-filter="form_line">
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">操作名称</label>
+                    <div>
+                        <input type="text" placeholder="操作名称" class="layui-input" id="line_name" />
+                    </div>
                 </div>
-            </fieldset>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">操作编码</label>
+                    <div>
+                        <input type="text" placeholder="操作编码" class="layui-input" id="line_id" />
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">操作顺序</label>
+                    <div>
+                        <input type="text" placeholder="顺序" class="layui-input" id="line_order" />
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">表单</label>
+                    <div>
+                        <input type="text" placeholder="表单url" class="layui-input" id="line_url" />
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">表达式</label>
+                    <div>
+                        <input type="text" placeholder="表达式" class="layui-input" id="line_expression" />
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
     <div class="container_ctr">
@@ -124,7 +157,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">流程名称</label>
                 <div class="layui-input-block">
-                    <input type="text" placeholder="流程名称" name="Name" class="layui-input" />
+                    <input type="text" autocomplete="off" placeholder="流程名称" name="Name" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
@@ -140,7 +173,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">备注</label>
                 <div class="layui-input-block">
-                    <textarea class="layui-textarea" name="Memo" style="min-height:60px;"></textarea>
+                    <textarea class="layui-textarea" autocomplete="off" name="Memo" style="min-height:60px;"></textarea>
                 </div>
             </div>
         </form>
@@ -164,7 +197,7 @@
     <script src="../content/wf/design/design.js"></script>
     <script type="text/javascript">
         $(function () {
-            var setting = design.Configuration({
+            const setting = design.Configuration({
                 node: 'workflow-node',
                 line: 'workflow-line',
                 help: 'workflow-help',
@@ -178,7 +211,7 @@
             $("#menus li").click(function () {
                 var command = $(this).attr("command");
                 var instance = $.SMF.getInstanceComponent();
-                if ($.inArray(command, ['node','fork','join', 'decision']) > -1) {
+                if ($.inArray(command, ['node', 'fork', 'join', 'decision']) > -1) {
                     instance.create(command);
                 } else {
                     if (command === 'line') {

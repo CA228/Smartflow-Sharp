@@ -31,9 +31,19 @@ namespace Smartflow.API.Controllers
         /// </summary>
         /// <returns>角色列表</returns>
         [Route("api/setting/group/list"), HttpGet]
-        public IEnumerable<Role> GetRoles()
+        public IEnumerable<Role> GetRoles(string searchKey)
         {
-            return _workflowBridgeService.GetRoles();
+            return _workflowBridgeService.GetRoles(searchKey);
+        }
+
+        /// <summary>
+        /// 获取参与者清单
+        /// </summary>
+        /// <returns>参与者列表</returns>
+        [Route("api/setting/user/list"), HttpGet]
+        public IEnumerable<User> GetUsers(string searchKey)
+        {
+            return _workflowBridgeService.GetUsers(searchKey);
         }
 
         /// <summary>
@@ -53,11 +63,9 @@ namespace Smartflow.API.Controllers
         /// </summary>
         /// <returns>单位列表</returns>
         [Route("api/setting/organization/list"), HttpGet]
-        public IEnumerable<Bussiness.Models.Organization> GetOrganization()
+        public IEnumerable<Bussiness.Models.Organization> GetOrganization(string searchKey)
         {
-            IList<Bussiness.Models.Organization> orgs = new List<Bussiness.Models.Organization>();
-            _organizationService.Load("0", orgs);
-            return orgs;
+            return _organizationService.Query("0", searchKey);
         }
 
         /// <summary>

@@ -14,7 +14,7 @@
 		<property name="Name" column="Name" type="String" />
 	</class>
 
-	<class name="User" table="t_sys_user">
+	<class name="User">
 		<id name="Id" column="Id" type="String" generator="assigned" />
 		<property name="Name" column="Name" type="String" />
 		<property name="Mail" column="Mail" type="String" />
@@ -26,7 +26,6 @@
 		<id name="Id" column="Id" type="String" generator="assigned" />
 		<property name="Name" column="Name" type="String" />
 	</class>
-
 
 	<class name="Category" table="t_wf_category">
 		<id name="Code" column="Code" type="String" generator="assigned"/>
@@ -43,6 +42,11 @@
 	<sql-query name="queryMailByOrganizationCodes">
 		<return alias="ax" class="Smartflow.Bussiness.Models.User"/>
 		select {ax.*} from t_sys_user ax where organizationCode in (:organizationCodes) and mail is not null
+	</sql-query>
+
+	<sql-query name="queryUserBySearchKey">
+		<return alias="u" class="Smartflow.Bussiness.Models.User"/>
+		select ax.ID as {u.Id},ax.Name AS {u.Name},ax.Mail AS {u.Mail},ax.OrganizationCode AS {u.OrganizationCode},[dbo].[F_GetOrganizationName](ax.OrganizationCode) as {u.OrganizationName} from t_sys_user ax where Name LIKE :searchKey
 	</sql-query>
 
 </hibernate-mapping>

@@ -16,6 +16,7 @@
     <None Include="wwwroot\components\pending\base.mixin.pending.js" />
     <None Include="wwwroot\components\pending\tm.js" />
     <None Include="wwwroot\components\pending\transition.js" />
+    <None Include="wwwroot\content\wf\select2\js\i18n\zh-CN.js" />
   </ItemGroup>
 
 
@@ -68,10 +69,6 @@
     <Content Update="wwwroot\content\wf\design\svg.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\content\wf\userSelect.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Update="wwwroot\pages\login.html">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
@@ -84,22 +81,10 @@
     <Content Update="wwwroot\pages\vacation\detail.html">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\wf\actorSelect.html">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
     <Content Update="wwwroot\wf\design.html">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\wf\list.html">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\wf\organizationSelect.html">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\wf\roleSelect.html">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\wf\uc.html">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
