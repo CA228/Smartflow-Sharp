@@ -91,10 +91,19 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label class="layui-form-label smartflow-label">是否会签</label>
+                    <div>
+                        <select autocomplete="off" placeholder="是否会签" lay-filter="node_collaboration"  class="layui-select" id="node_collaboration">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
                     <label class="layui-form-label smartflow-label">参与单位</label>
                     <div>
                         <select id="node_organization" class="layui-input select2" style="width:100%;height:38px;" lay-ignore></select>
-                     </div>
+                    </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label smartflow-label">参与角色</label>
@@ -106,7 +115,7 @@
                     <label class="layui-form-label smartflow-label">参与人</label>
                     <div>
                         <select id="node_user" class="layui-input select2" style="width:100%;height:38px;" lay-ignore></select>
-                     </div>
+                    </div>
                 </div>
             </form>
         </div>

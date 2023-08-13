@@ -10,6 +10,12 @@ namespace Smartflow.Core.Elements
         protected ISet<Group> groups = new HashSet<Group>();
         protected ISet<Organization> organizations = new HashSet<Organization>();
 
+        public virtual int Collaboration
+        {
+            get;
+            set;
+        }
+
         public virtual ISet<Group> Groups
         {
             get => groups;

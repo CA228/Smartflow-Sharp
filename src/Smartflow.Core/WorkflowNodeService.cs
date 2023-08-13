@@ -20,6 +20,7 @@ namespace Smartflow.Core
             };
             string category = element.Attribute("category").Value;
             node.NodeType = Internals.Utils.Convert(category);
+            node.Collaboration = Internals.Utils.CheckAttributes(element, "collaboration") ? Convert.ToInt32(element.Attribute("collaboration").Value) :0;
             if (element.HasElements)
             {
                 List<Element> nodes = new List<Element>();
@@ -35,11 +36,10 @@ namespace Smartflow.Core
                 node.Transitions.AddRange(nodes.Where(transition => (transition is Transition)).Cast<Transition>().OrderBy(e => e.Order));
                 node.Groups.AddRange(nodes.Where(group => (group is Group)).Cast<Group>());
                 node.Actors.AddRange(nodes.Where(actor => (actor is Actor)).Cast<Actor>());
-                node.Organizations.ToList().AddRange(nodes.Where(org => (org is Elements.Organization)).Cast<Elements.Organization>());
+                node.Organizations.AddRange(nodes.Where(org => (org is Elements.Organization)).Cast<Elements.Organization>());
             }
             return node;
         }
-
 
         public Transition GetTransition(string props, Node el)
         {

@@ -19,6 +19,17 @@
                 $('#node_id').val(nx.id);
             }
         },
+        node_collaboration: {
+            field: 'collaboration',
+            parse: function (id) {
+                return $.SMF.getNodeById(id);
+            },
+            invoke: function (nx) {
+                const selector = '#node_collaboration';
+                $(selector).val(nx.collaboration);
+                layui.form.render('select');
+            }
+        },
         node_group: {
             field: 'group',
             parse: function (id) {
@@ -168,7 +179,7 @@
         });
 
         sl.push({
-            field: 'user',
+            field: 'actor',
             id: 'node_user',
             url: "api/setting/user/list",
             templateResult: function (item) {
@@ -254,7 +265,16 @@
         const $this = this;
         for (let propertyName in Configuration.controlSelectors) {
             let selector = '#' + propertyName;
-            if ($.inArray(propertyName, ['node_group', 'node_organization', 'node_user']) === -1) {
+            if (propertyName === 'node_collaboration') {
+                layui.form.on('select(node_collaboration)', function (data) {
+                    var el = data.elem; 
+                    var value = data.value; 
+                    var result = Configuration.findElementById.call($this, el);
+                    var obj = Configuration.controlSelectors[el.id];
+                    result.element[obj.field] = value;
+                });
+            }
+            else if ($.inArray(propertyName, ['node_group', 'node_organization', 'node_user']) === -1) {
                 $(selector).keyup(function () {
                     var result = Configuration.findElementById.call($this, this);
                     var obj = Configuration.controlSelectors[this.id];
@@ -275,7 +295,7 @@
             category = nx.category.toLowerCase();
         if (category === 'node') {
             Configuration.show([$this.option.node]);
-            const controls = ['node_name', 'node_id', 'node_group', 'node_user', 'node_organization'];
+            const controls = ['node_name', 'node_id', 'node_group', 'node_user', 'node_organization','node_collaboration'];
             $.each(controls, function (i, propertyName) {
                 if (Configuration.controlSelectors[propertyName].invoke) {
                     Configuration.controlSelectors[propertyName].invoke(nx, $this);

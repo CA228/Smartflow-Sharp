@@ -88,5 +88,13 @@ namespace Smartflow.Core
                     .Query<WorkflowTask>()
                     .Where(e => e.InstanceId == instanceId).ToList();
         }
+
+        public Boolean CheckTaskCompleted(string instanceId, string nodeCode)
+        {
+            using ISession session = DbFactory.OpenSession();
+            return session
+                .Query<WorkflowTask>()
+                .Where(e => e.InstanceId == instanceId&&e.Code== nodeCode && e.Status==0).Count()>0;
+        }
     }
 }

@@ -12,6 +12,43 @@ namespace Smartflow.Bussiness
 {
     public class WorkflowConversionService : IWorkflowConversion
     {
+        public IList<string> GetActorList(IList<WorkflowTaskActor> actors)
+        {
+            List<string> all = new List<string>();
+            IList<string> roleGroupId = actors.Where(s => s.Type == 0).Select(c => c.Id).ToList();
+            IList<string> organizationGroupId = actors.Where(s => s.Type == 2).Select(c => c.Id).ToList();
+            using ISession session = DbFactory.OpenBussinessSession();
+            IList<string> roleMailGroup = new List<string>();
+            if (roleGroupId.Count > 0)
+            {
+                roleMailGroup = session.GetNamedQuery("queryMailByRoleIds")
+                                                 .SetParameterList("rIds", roleGroupId)
+                                                 .List<User>()
+                                                 .Select(c => c.Id)
+                                                 .ToList();
+            }
+            IList<string> organizationMailGroup = new List<string>();
+            if (roleGroupId.Count > 0)
+            {
+                organizationMailGroup = session.GetNamedQuery("queryMailByOrganizationCodes")
+                                                           .SetParameterList("organizationCodes", organizationGroupId)
+                                                           .List<User>()
+                                                           .Select(c => c.Id)
+                                                           .ToList();
+            }
+
+            if (roleMailGroup.Count > 0)
+            {
+                all.AddRange(roleMailGroup);
+            }
+            if (organizationMailGroup.Count > 0)
+            {
+                all.AddRange(organizationMailGroup);
+            }
+
+            return all.Distinct().ToList();
+        }
+
         public string GetCategoryName(string categoryCode)
         {
             using ISession session = DbFactory.OpenSession();

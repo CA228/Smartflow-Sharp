@@ -31,7 +31,6 @@ namespace Smartflow.Core.Dispatch
                     this.CreateSubprocess(task.Id, lineCode, publisher, subprocess, parallel);
                 }
             }
-
             ChainFactory.Chain()
                 .Add(new WorkflowTaskActorHandler(task.Id, to, users, roles))
                 .Add(new WorkflowTaskMailHandler(Instance.CategoryCode, task.Id))

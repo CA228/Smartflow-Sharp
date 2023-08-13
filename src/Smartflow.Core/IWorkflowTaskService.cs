@@ -1,5 +1,6 @@
 ﻿using Smartflow.Core.Elements;
 using System.Collections.Generic;
+using System;
 
 namespace Smartflow.Core
 {
@@ -10,6 +11,8 @@ namespace Smartflow.Core
         WorkflowTask GetTaskById(long id);
 
         IList<WorkflowTask> GetTaskListByInstanceId(string instanceId);
+
+        Boolean CheckTaskCompleted(string instanceId, string nodeCode);
 
         IList<WorkflowTask> GetUserTaskListByUserId(string userId);
 

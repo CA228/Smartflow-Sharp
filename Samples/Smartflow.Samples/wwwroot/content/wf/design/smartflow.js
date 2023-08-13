@@ -21,6 +21,7 @@
         rule: 'rule',
         x3: 'x3',
         y3: 'y3',
+        collaboration:'collaboration',
         textRect:'textRect'
     };
 
@@ -568,12 +569,15 @@
     }
 
     Shape.prototype.export = function (doc, root) {
-        var self = this;
-        var node = doc.createElement(self.category);
+         const self = this;
+         const node = doc.createElement(self.category);
         node.setAttribute(config.id, self[config.id]);
         node.setAttribute(config.name, self[config.name]);
         node.setAttribute(config.layout, self.x + ' ' + self.disX + ' ' + self.y + ' ' + self.disY);
         node.setAttribute(config.category, self.category);
+        if (Shape.isNotEmpty(self.collaboration)) {
+          node.setAttribute(config.collaboration, self.collaboration);
+        }
         if (Shape.isNotEmpty(self.rule)) {
             node.setAttribute(config.rule, self.rule);
         }
@@ -1549,6 +1553,7 @@
         this.y = 10;
         this.disX = 0;
         this.disY = 0;
+        this.collaboration = 0;
     }
 
     Node.extend(Shape, {
@@ -2000,7 +2005,7 @@
         }
     });
 
-     function Join() {
+    function Join() {
          this.xr = 30;
          this.yr = 1;
     }
@@ -2180,6 +2185,7 @@
             layout: 'value',
             category: 'value',
             rule: 'value',
+            collaboration:'value',
             group: {
                 type: 'array',
                 id: 'value',
