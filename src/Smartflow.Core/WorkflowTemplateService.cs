@@ -64,7 +64,7 @@ namespace Smartflow.Core
         public decimal GetWorkflowTemplateVersionByCategoryCode(string categoryCode)
         {
             using ISession session = DbFactory.OpenSession();
-            string hql = "select max(t.Version) from WorkflowTemplate as t where t.CategoryCode=:CategoryCode and t.Status=1";
+            string hql = "select max(t.Version) from WorkflowTemplate as t where t.CategoryCode=:CategoryCode ";
             IQuery query =session.CreateQuery(hql).SetParameter("CategoryCode", categoryCode, NHibernateUtil.String);
             return query.FutureValue<decimal>().Value;
         }

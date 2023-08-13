@@ -1657,7 +1657,8 @@
                 x: self.x,
                 y: self.y
             });
-            if (self.brush && this.category === 'node') {
+
+            if (self.brush && $.inArray(self.category, ["node", "collaboration"])>-1) {
                 self.brush.attr({
                     x: (element.x() + (element.width() / 2)),
                     y: element.y() + (element.height() / 2)
@@ -2185,7 +2186,6 @@
             layout: 'value',
             category: 'value',
             rule: 'value',
-            collaboration:'value',
             group: {
                 type: 'array',
                 id: 'value',

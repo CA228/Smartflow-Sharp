@@ -16,6 +16,7 @@ namespace Smartflow.Core.Internals
             innerHandlerMap.Add("end", typeof(WorkflowNodeService));
             innerHandlerMap.Add("decision", typeof(WorkflowNodeService));
             innerHandlerMap.Add("node", typeof(WorkflowNodeService));
+            innerHandlerMap.Add("collaboration", typeof(WorkflowNodeService));
             innerHandlerMap.Add("group", typeof(WorkflowGroupService));
             innerHandlerMap.Add("transition", typeof(WorkflowTransitionService));
             innerHandlerMap.Add("actor", typeof(WorkflowActorService));

@@ -21,6 +21,11 @@ namespace Smartflow.Core
         Node,
 
         /// <summary>
+        /// 会签节点
+        /// </summary>
+        Collaboration,
+
+        /// <summary>
         /// 决策节点
         /// </summary>
         Decision,

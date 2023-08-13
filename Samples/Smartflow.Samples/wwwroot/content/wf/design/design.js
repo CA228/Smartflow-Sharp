@@ -19,14 +19,14 @@
                 $('#node_id').val(nx.id);
             }
         },
-        node_collaboration: {
-            field: 'collaboration',
+        node_category: {
+            field: 'category',
             parse: function (id) {
                 return $.SMF.getNodeById(id);
             },
             invoke: function (nx) {
-                const selector = '#node_collaboration';
-                $(selector).val(nx.collaboration);
+                const selector = '#node_category';
+                $(selector).val(nx.category);
                 layui.form.render('select');
             }
         },
@@ -265,8 +265,8 @@
         const $this = this;
         for (let propertyName in Configuration.controlSelectors) {
             let selector = '#' + propertyName;
-            if (propertyName === 'node_collaboration') {
-                layui.form.on('select(node_collaboration)', function (data) {
+            if (propertyName === 'node_category') {
+                layui.form.on('select(node_category)', function (data) {
                     var el = data.elem; 
                     var value = data.value; 
                     var result = Configuration.findElementById.call($this, el);
@@ -293,9 +293,9 @@
     Configuration.prototype.selectTab = function (nx) {
         const $this = this,
             category = nx.category.toLowerCase();
-        if (category === 'node') {
+        if (category === 'node' || category === 'collaboration') {
             Configuration.show([$this.option.node]);
-            const controls = ['node_name', 'node_id', 'node_group', 'node_user', 'node_organization','node_collaboration'];
+            const controls = ['node_name', 'node_id', 'node_group', 'node_user', 'node_organization','node_category'];
             $.each(controls, function (i, propertyName) {
                 if (Configuration.controlSelectors[propertyName].invoke) {
                     Configuration.controlSelectors[propertyName].invoke(nx, $this);

@@ -79,40 +79,40 @@
         <div id="workflow-node" class="attributes_tab hide">
             <form class="layui-form" lay-filter="form_node">
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">节点名称</label>
+                    <label class="smartflow-label">节点名称</label>
                     <div>
                         <input type="text" autocomplete="off" placeholder="节点名称" class="layui-input" id="node_name" />
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">节点编码</label>
+                    <label class="smartflow-label">节点编码</label>
                     <div>
                         <input type="text" autocomplete="off" placeholder="节点编码" class="layui-input" id="node_id" />
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">是否会签</label>
+                    <label class="smartflow-label">节点类型</label>
                     <div>
-                        <select autocomplete="off" placeholder="是否会签" lay-filter="node_collaboration"  class="layui-select" id="node_collaboration">
-                            <option value="0">否</option>
-                            <option value="1">是</option>
+                        <select autocomplete="off" placeholder="节点类型" lay-filter="node_category"  class="layui-select" id="node_category">
+                            <option value="node">普通节点</option>
+                            <option value="collaboration">会签节点</option>
                         </select>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">参与单位</label>
+                    <label class="smartflow-label">参与单位</label>
                     <div>
                         <select id="node_organization" class="layui-input select2" style="width:100%;height:38px;" lay-ignore></select>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">参与角色</label>
+                    <label class="smartflow-label">参与角色</label>
                     <div>
                         <select id="node_group" class="layui-input select2" style="width:100%;height:38px;" lay-ignore></select>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">参与人</label>
+                    <label class="smartflow-label">参与人</label>
                     <div>
                         <select id="node_user" class="layui-input select2" style="width:100%;height:38px;" lay-ignore></select>
                     </div>
@@ -122,31 +122,31 @@
         <div id="workflow-line" class="attributes_tab hide">
             <form class="layui-form" lay-filter="form_line">
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">操作名称</label>
+                    <label class="smartflow-label">操作名称</label>
                     <div>
                         <input type="text" placeholder="操作名称" class="layui-input" id="line_name" />
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">操作编码</label>
+                    <label class="smartflow-label">操作编码</label>
                     <div>
                         <input type="text" placeholder="操作编码" class="layui-input" id="line_id" />
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">操作顺序</label>
+                    <label class="smartflow-label">操作顺序</label>
                     <div>
                         <input type="text" placeholder="顺序" class="layui-input" id="line_order" />
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">表单</label>
+                    <label class="smartflow-label">表单</label>
                     <div>
                         <input type="text" placeholder="表单url" class="layui-input" id="line_url" />
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label smartflow-label">表达式</label>
+                    <label class="smartflow-label">表达式</label>
                     <div>
                         <input type="text" placeholder="表达式" class="layui-input" id="line_expression" />
                     </div>
@@ -216,7 +216,7 @@
             $("#menus li").click(function () {
                 var command = $(this).attr("command");
                 var instance = $.SMF.getInstanceComponent();
-                if ($.inArray(command, ['node', 'fork', 'join', 'decision']) > -1) {
+                if ($.inArray(command, ['node', 'fork', 'join', 'decision','collaboration']) > -1) {
                     instance.create(command);
                 } else {
                     if (command === 'line') {

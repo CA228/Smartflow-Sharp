@@ -20,7 +20,6 @@ namespace Smartflow.Core
             };
             string category = element.Attribute("category").Value;
             node.NodeType = Internals.Utils.Convert(category);
-            node.Collaboration = Internals.Utils.CheckAttributes(element, "collaboration") ? Convert.ToInt32(element.Attribute("collaboration").Value) :0;
             if (element.HasElements)
             {
                 List<Element> nodes = new List<Element>();

@@ -72,8 +72,12 @@ text {font-size: 12px;text-anchor: middle;dominant-baseline: middle;pointer-even
 }
 
 .smartflow-label {
-    text-align: left !important;
-    padding-left: 0px !important;
+    text-align: left;
     font-weight: 600;
     font-size: 16px;
+    padding: 9px 15px;
+    width: 80px;
+    line-height: 20px;
+    display: block;
+    padding-left: 0px;
 }
