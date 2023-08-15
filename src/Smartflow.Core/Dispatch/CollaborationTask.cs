@@ -27,7 +27,6 @@ namespace Smartflow.Core.Dispatch
             set;
         }
 
-
         /// <summary>
         /// 参与者
         /// </summary>
