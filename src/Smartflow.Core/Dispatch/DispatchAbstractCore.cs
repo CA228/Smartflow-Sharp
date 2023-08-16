@@ -20,7 +20,7 @@ namespace Smartflow.Core.Dispatch
 
         public WorkflowTask CreateTask(Node to,string lineCode,string publisher, bool parallel, long parentId, IList<WorkflowSubprocess> children = null, IList<string> users = null, IList<string> roles = null)
         {
-            int close= to.NodeType == WorkflowNodeCategory.Decision||to.NodeType == WorkflowNodeCategory.Fork ? 1 : 0;
+            int close = to.NodeType == WorkflowNodeCategory.End || to.NodeType == WorkflowNodeCategory.Decision||to.NodeType == WorkflowNodeCategory.Fork ? 1 : 0;
             
             WorkflowTask task = TaskService.CreateTask(to, lineCode, Instance.Id, publisher, parentId, false, close);
            
