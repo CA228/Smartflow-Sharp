@@ -7,16 +7,10 @@
 
     Page.prototype.init = function () {
         var $this = this;
-        this.bind();
-        this.renderTable();
-        util.ajaxWFService({
-            url: $this.setting.config.select.url,
-            type: 'GET',
-            success: function (serverData) {
-                $this.renderTree(serverData);
-            }
-        });
+        $this.bind();
+        $this.renderTable();
     }
+
     Page.prototype.bind = function () {
         var $this = this;
         $.each($this.setting.event, function (propertyName) {
@@ -26,6 +20,7 @@
             });
         });
     }
+
     Page.prototype.renderTable = function () {
         var $this = this;
         var config = this.setting.config;
@@ -79,37 +74,6 @@
         });
     }
 
-    Page.prototype.renderTree = function (serverData) {
-        var $this = this;
-        var id = '#' + $this.setting.config.select.selector
-        var treeObj = $.fn.zTree.init($(id), {
-            callback: $this.setting.config.tree.callback,
-            data: {
-                key: {
-                    name: 'Name'
-                },
-                simpleData: {
-                    enable: true,
-                    idKey: 'Id',
-                    pIdKey: 'ParentId',
-                    rootPId: 0
-                }
-            }
-        }, serverData);
-        var nodes = treeObj.getNodesByFilter(function (node) { return node.level == 0; });
-        if (nodes.length > 0) {
-            treeObj.expandNode(nodes[0]);
-        }
-    }
-    Page.prototype.refresh = function () {
-        var config = {
-            page: false
-        }
-        this.search(config);
-    }
-    Page.prototype.search = function (searchCondition) {
-        layui.table.reload(this.setting.config.id, searchCondition);
-    }
     Page.prototype.check = function (id, callback) {
         var checkStatus = layui.table.checkStatus(id);
         var dataArray = checkStatus.data;
@@ -119,14 +83,17 @@
             callback && callback(dataArray[0]);
         }
     }
+
     Page.prototype.open = function (url) {
         var h = window.screen.availHeight;
         var w = window.screen.availWidth;
         window.open(url, '流程设计器', "width=" + w + ", height=" + h + ",top=0,left=0,titlebar=no,menubar=no,scrollbars=yes,resizable=yes,status=yes,toolbar=no,location=no");
     }
+
     initialize(function (option) {
         return new Page(option);
     });
+
 })(function (initialize) {
    initialize({
         config: {
@@ -135,27 +102,7 @@
            url: 'api/wf/template/list',
            templet: {
                checkbox: '#col-checkbox'
-           },
-            select: {
-                url: 'api/setting/category/list',
-                selector: 'ztree'
-            },
-            tree: {
-                callback: {
-                    beforeClick: function (id, node) {
-                        return !node.isParent;
-                    },
-                    onClick: function (event, id, node) {
-                        $("#hidCategoryCode").val(node.Id);
-                        $("#txtCategoryName").val(node.Name);
-                    },
-                    onDblClick: function () {
-                        $("#hidCategoryCode").val(node.Id);
-                        $("#txtCategoryName").val(node.Name);
-                        $("#zc").hide();
-                    }
-                }
-            }
+           }
         },
         methods: {
             add: function () {

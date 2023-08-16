@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Smartflow.API.Code;
 using Smartflow.API.DTOs;
 using Smartflow.Bussiness.Interfaces;
 using Smartflow.Bussiness.Models;
@@ -41,6 +42,17 @@ namespace Smartflow.API.Controllers
         public IList<WorkflowTask> GetUserTaskListByUserId(string userId)
         {
             return WorkflowEngine.Instance.AbstractCoreService.TaskService.GetUserTaskListByUserId(userId);
+        }
+
+        /// <summary>
+        /// 获取所有待办任务列表
+        /// </summary>
+        /// <returns>任务清单</returns>
+        [Route("api/smf/task/list"), HttpPost]
+        public ResultData GetTaskList()
+        {
+            var tasks = _workflowReportService.GetPendingTaskList();
+            return CommonMethods.Response(tasks, tasks.Count);
         }
 
         /// <summary>

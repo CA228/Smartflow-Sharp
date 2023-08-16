@@ -23,6 +23,12 @@
             <param name="userId">用户Id</param>
             <returns>任务清单</returns>
         </member>
+        <member name="M:Smartflow.API.Controllers.SMFController.GetTaskList">
+            <summary>
+            获取所有待办任务列表
+            </summary>
+            <returns>任务清单</returns>
+        </member>
         <member name="M:Smartflow.API.Controllers.SMFController.Submit(Smartflow.Core.WorkflowSubmitInput)">
             <summary>
             提交任务

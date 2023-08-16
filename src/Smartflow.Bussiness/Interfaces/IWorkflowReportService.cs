@@ -10,5 +10,7 @@ namespace Smartflow.Bussiness.Interfaces
     public interface IWorkflowReportService
     {
         IList<StatisticsInstance> GetStatisticsInstanceByUserId(string userId);
+
+        IList<StatisticsTask> GetPendingTaskList();
     }
 }

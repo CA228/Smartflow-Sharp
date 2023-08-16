@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using NHibernate;
-using NHibernate.Criterion;
 using Smartflow.Bussiness.Models;
 using Smartflow.Common;
 using Smartflow.Core;

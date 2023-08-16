@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resource\Smartflow.Core.hbm.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Iesi.Collections" Version="4.0.4" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
