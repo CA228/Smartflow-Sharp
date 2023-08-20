@@ -9,6 +9,25 @@
 </head>
 <body>
     <div class="layui-container layui-table-container p10">
+
+        <blockquote class="layui-elem-quote">
+            <form class="layui-form" lay-filter="form-search">
+                <div class="layui-row">
+                    <div class="layui-col-sm4">
+                        <div class="layui-form-label">业务类型</div>
+                        <div class="layui-input-block">
+                            <select class="layui-select" name="CategoryId" id="ddlType" lay-filter="CategoryId"></select>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm8" style="padding-left:10px;">
+                        <div class="layui-btn-group">
+                            <button id="search" type="button" class="layui-btn">查询</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </blockquote>
+
         <table class="layui-hide" id="template-table" lay-filter="template-table"></table>
     </div>
     <script type="text/html" id="col-checkbox">

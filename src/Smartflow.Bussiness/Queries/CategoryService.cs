@@ -12,7 +12,8 @@ namespace Smartflow.Bussiness.Queries
         public IList<Category> Query()
         {
             using ISession session = DbFactory.OpenSession();
-            return session.Query<Category>().OrderBy(e=>e.Code).ToList();
+
+            return session.Query<Category>().OrderBy(e=>e.Sort).ToList();
         }
     }
 }

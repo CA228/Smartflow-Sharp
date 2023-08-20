@@ -69,7 +69,7 @@ namespace Smartflow.Core.Dispatch
                var afterTask=TaskService.CreateTask(To, TransitionId, Instance.Id, Submiter, TaskId, true,0);
                ChainFactory.Chain()
                      .Add(new WorkflowCollaborationTaskActorHandler(afterTask.Id, actor))
-                     .Add(new WorkflowTaskMailHandler(Instance.CategoryCode, afterTask.Id))
+                     .Add(new WorkflowTaskMailHandler(Instance.CategoryId, afterTask.Id))
                      .Done();
             }
         }

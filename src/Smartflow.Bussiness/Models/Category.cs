@@ -4,13 +4,7 @@ namespace Smartflow.Bussiness.Models
 {
     public class Category
     {
-        public virtual string Code
-        {
-            get;
-            set;
-        }
-
-        public virtual string ParentCode
+        public virtual int Id
         {
             get;
             set;
@@ -23,6 +17,12 @@ namespace Smartflow.Bussiness.Models
         }
 
         public virtual string Url
+        {
+            get;
+            set;
+        }
+
+        public virtual int Sort
         {
             get;
             set;

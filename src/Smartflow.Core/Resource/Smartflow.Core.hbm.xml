@@ -7,7 +7,7 @@
 		<id name="Id" column="Id" type="String" />
 		<property name="TemplateId" column="TemplateId" type="Int64" />
 		<property name="CreateTime" column="CreateTime" type="DateTime" />
-		<property name="CategoryCode" column="CategoryCode" type="String" />
+		<property name="CategoryId" column="CategoryId" type="Int32" />
 		<property name="Creator" column="Creator" type="String" />
 		<property name="BusinessId" column="BusinessId" type="String" />
 	</class>
@@ -34,7 +34,7 @@
 		<property name="CreateTime" column="CreateTime" type="DateTime" />
 		<property name="UpdateTime" column="UpdateTime" type="DateTime" />
 		<property name="CategoryName" column="CategoryName" type="String" />
-		<property name="CategoryCode" column="CategoryCode" type="String" />
+		<property name="CategoryId" column="CategoryId" type="Int32" />
 		<property name="Memo" column="Memo" type="String" />
 	</class>
 

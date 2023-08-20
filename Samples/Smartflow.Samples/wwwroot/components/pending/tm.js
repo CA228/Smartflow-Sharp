@@ -32,7 +32,7 @@
 })(function (template) {
     Vue.component('pending-vacation', {
         template: template,
-        mixins: [baseMixinPendingComponent],
+        mixins: [baseMixinPendingComponent],   
         data: function () {
             return {
                 url: '/pages/vacation/detail.html',

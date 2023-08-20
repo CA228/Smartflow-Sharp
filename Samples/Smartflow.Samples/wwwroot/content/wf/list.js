@@ -6,8 +6,9 @@
     }
 
     Page.prototype.init = function () {
-        var $this = this;
+        const $this = this;
         $this.bind();
+        $this.loadCategory();
         $this.renderTable();
     }
 
@@ -21,6 +22,25 @@
         });
     }
 
+    Page.prototype.loadCategory = function () {
+        var config = this.setting.config;
+        var url = config.categoryUrl,
+            id = '#' + config.categoryId;
+        util.ajaxWFService({
+            url: url,
+            type: 'GET',
+            success: function (serverData) {
+                var htmlArray = [];
+                htmlArray.push("<option value=\"\"></option>");
+                $.each(serverData, function () {
+                    htmlArray.push("<option value='" + this.Id + "'>" + this.Name + "</option>");
+                });
+                $(id).html(htmlArray.join(''));
+                layui.form.render('select');
+            }
+        });
+    }
+
     Page.prototype.renderTable = function () {
         var $this = this;
         var config = this.setting.config;
@@ -29,7 +49,7 @@
             elem: selector
             , toolbar: '#list-bar'
             , url: config.url
-            , page:false
+            , page: true
             , cols: [[
                 { type: 'radio' }
                 , { width: 60, type: 'numbers', sort: false, title: '序号', align: 'center', unresize: true }
@@ -74,6 +94,10 @@
         });
     }
 
+    Page.prototype.search = function (searchCondition) {
+        layui.table.reload(this.setting.config.id, searchCondition);
+    }
+
     Page.prototype.check = function (id, callback) {
         var checkStatus = layui.table.checkStatus(id);
         var dataArray = checkStatus.data;
@@ -100,6 +124,8 @@
            id: 'template-table',
            checkbox: 'checkbox(form-status)',
            url: 'api/wf/template/list',
+           categoryUrl: 'api/setting/category/list',
+           categoryId: 'ddlType',
            templet: {
                checkbox: '#col-checkbox'
            }
@@ -115,7 +141,11 @@
                 });
             }
         },
-        event: {
+       event: {
+           search: function () {
+               let searchCondition = layui.form.val('form-search');
+               this.search({ where: searchCondition });
+           }
         }
     })
 });

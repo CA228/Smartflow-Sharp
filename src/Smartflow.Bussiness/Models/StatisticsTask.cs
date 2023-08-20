@@ -14,11 +14,15 @@ namespace Smartflow.Bussiness.Models
 
         public virtual string InstanceId { get; set; }
 
+        public virtual int CategoryId { get; set; }
+
         public virtual string CategoryName { get; set; }
 
         public virtual string TemplateName { get; set; }
 
         public virtual DateTime CreateTime { get; set; }
+
+        public virtual string Sender { get; set; }
 
         public virtual string Actor { get; set; }
     }

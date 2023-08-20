@@ -49,11 +49,11 @@ namespace Smartflow.Bussiness
             return all.Distinct().ToList();
         }
 
-        public string GetCategoryName(string categoryCode)
+        public string GetCategoryName(int categoryId)
         {
             using ISession session = DbFactory.OpenSession();
             Category category = session.Query<Category>()
-                                      .Where(c => c.Code.Equals(categoryCode))
+                                      .Where(c => c.Id.Equals(categoryId))
                                       .FirstOrDefault();
             return category?.Name;
         }

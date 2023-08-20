@@ -15,11 +15,11 @@ namespace Smartflow.Core
         public WorkflowStartTask Start(WorkflowStartInput start)
         {
             string instanceId = Guid.NewGuid().ToString();
-            WorkflowTemplate workflowTemplate = TemplateService.GetWorkflowTemplateByCategoryCode(start.CategoryCode);
+            WorkflowTemplate workflowTemplate = TemplateService.GetWorkflowTemplateByCategoryId(start.CategoryId);
             WorkflowInstance instance = new WorkflowInstance
             {
                 BusinessId = start.BusinessId,
-                CategoryCode = start.CategoryCode,
+                CategoryId = start.CategoryId,
                 CreateTime = DateTime.Now,
                 Creator = start.Creator,
                 Id = instanceId,

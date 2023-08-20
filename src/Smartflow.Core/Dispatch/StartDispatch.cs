@@ -27,15 +27,8 @@ namespace Smartflow.Core.Dispatch
               .Add(new WorkflowRecordHandler(Instance.Id, Start.Creator, Destination, transition.Name, Start.Message))
               .Add(new WorkflowRecordMailHandler(Instance.Creator, Start.Message))
               .Done();
-            if (destination.NodeType == WorkflowNodeCategory.Collaboration)
-            {
-                CollaborationTask.CreateInstance(Instance, destination, transition.Id, 0,Start.Creator,Start.Users,Start.Roles).Dispatch();
-            }
-            else
-            {
-                WorkflowTask afterTask = this.CreateTask(destination, transition.Id, Start.Creator, Start.Parallel, 0, Start.Children, Start.Users, Start.Roles);
-                base.DispatchBranchTask(Start.Props, destination, afterTask);
-            }
+            
+            base.Dispatch(transition, Start.Creator,Start.Props, 0, Start.Parallel, Start.Children, Start.Users, Start.Roles);
         }
 
         public static IDispatch CreateInstance(WorkflowInstance instance, Node destination, WorkflowStartInput start)

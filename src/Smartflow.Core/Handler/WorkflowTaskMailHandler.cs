@@ -15,11 +15,11 @@ namespace Smartflow.Core.Handler
         private IList<string> Sender { get; set; }
         private string Comment { get; set; }
 
-        public WorkflowTaskMailHandler(string categoryCode,long taskId)
+        public WorkflowTaskMailHandler(int categoryId,long taskId)
         {
             IList<WorkflowTaskAuth> auths=authService.GetTaskAuthListByTaskId(taskId);
             Sender = conversionService?.GetReceiveAddress(auths);
-            string categoryName = conversionService?.GetCategoryName(categoryCode);
+            string categoryName = conversionService?.GetCategoryName(categoryId);
             if (String.IsNullOrEmpty(categoryName)) {
                 Comment = ResourceManage.NOTIFICATION_TASK_CONTENT_DEFAULT;
             }

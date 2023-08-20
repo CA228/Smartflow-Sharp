@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Smartflow.API.Input
+namespace Smartflow.Abstraction.DTOs.Input
 {
     public class WorkflowTemplateInput
     {
@@ -16,7 +16,7 @@ namespace Smartflow.API.Input
             set;
         }
 
-        public string CategoryCode
+        public int CategoryId
         {
             get;
             set;

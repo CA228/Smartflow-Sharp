@@ -81,12 +81,12 @@ namespace Smartflow.API.Controllers
         /// <summary>
         /// 通过类别代码，获取类别实体
         /// </summary>
-        /// <param name="code">类别代码</param>
+        /// <param name="id">类别代码</param>
         /// <returns>类别信息</returns>
-        [Route("api/setting/category/{code}/info"), HttpGet]
-        public Category GetCategory(string code)
+        [Route("api/setting/category/{id}/info"), HttpGet]
+        public Category GetCategory(int id)
         {
-            return _categoryService.Query().FirstOrDefault(cate => cate.Code == code);
+            return _categoryService.Query().FirstOrDefault(cate => cate.Id == id);
         }
     }
 }

@@ -37,8 +37,8 @@
             refreshChildren: function () {
                 var that = this;
                 this.categories.forEach(s => {
-                    var arr = that.$refs[s.code];
-                    if (that.$refs[s.code]&&arr.length > 0) {
+                    var arr = that.$refs[s.Id];
+                    if (that.$refs[s.Id]&&arr.length > 0) {
                         arr.forEach(e => {
                             e.init();
                         });

@@ -21,7 +21,7 @@ namespace Smartflow.Core
             set;
         }
 
-        public virtual string CategoryCode
+        public virtual int CategoryId
         {
             get;
             set;

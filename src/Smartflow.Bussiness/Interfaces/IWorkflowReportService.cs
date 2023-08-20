@@ -1,4 +1,5 @@
-﻿using Smartflow.Bussiness.Models;
+﻿using Smartflow.Abstraction.DTOs.Output;
+using Smartflow.Bussiness.Models;
 using Smartflow.Common;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,8 @@ namespace Smartflow.Bussiness.Interfaces
     public interface IWorkflowReportService
     {
         IList<StatisticsInstance> GetStatisticsInstanceByUserId(string userId);
+        
 
-        IList<StatisticsTask> GetPendingTaskList();
+        IList<StatisticsTask> GetPendingTaskList(TaskQueryOption queryOption, out int total);
     }
 }

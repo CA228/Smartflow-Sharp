@@ -1,7 +1,7 @@
 ﻿using NHibernate;
+using Smartflow.Abstraction.DTOs.Output;
 using Smartflow.Common;
 using Smartflow.Core.Cache;
-using Smartflow.Core.Elements;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,32 +22,46 @@ namespace Smartflow.Core
             CacheFactory.Instance.Publish(templateId);
         }
 
+        public IList<WorkflowTemplate> GetWorkflowTemplateList(TemplateQueryOption queryOption,out int total)
+        {
+            using ISession session = DbFactory.OpenSession();
+            var q = session.Query<WorkflowTemplate>();
+            if (!string.IsNullOrEmpty(queryOption.CategoryId))
+            {
+                q=q.Where(e => e.CategoryId == int.Parse(queryOption.CategoryId));
+            }
+            total = ((int)q.LongCount());
+
+            int index = queryOption.Index - 1;
+            return q.Skip(index * queryOption.Size).Take(queryOption.Size)
+                        .OrderBy(e => e.CategoryId)
+                       .OrderByDescending(e => e.Version).ToList();
+        }
+
         public IList<WorkflowTemplate> GetWorkflowTemplateList()
         {
             using ISession session = DbFactory.OpenSession();
-            return session
-                       .Query<WorkflowTemplate>()
-                       .OrderBy(e=>e.CategoryCode)
-                       .OrderByDescending(e => e.Version)
-                       .ToList();
+            return session.Query<WorkflowTemplate>()
+                           .OrderBy(e => e.CategoryId)
+                           .OrderByDescending(e => e.Version).ToList();
         }
 
-        public WorkflowTemplate GetWorkflowTemplateByCategoryCode(string categoryCode)
+        public WorkflowTemplate GetWorkflowTemplateByCategoryId(int categoryId)
         {
             using ISession session = DbFactory.OpenSession();
             return session
                        .Query<WorkflowTemplate>()
-                       .Where(e => e.CategoryCode == categoryCode&&e.Status==1)
+                       .Where(e => e.CategoryId == categoryId && e.Status==1)
                        .OrderByDescending(e => e.Version)
                        .FirstOrDefault();
         }
 
-        public IList<WorkflowTemplate> GetWorkflowTemplateListByCategoryCode(string categoryCode)
+        public IList<WorkflowTemplate> GetWorkflowTemplateListByCategoryId(int categoryId)
         {
             using ISession session = DbFactory.OpenSession();
             return session
                        .Query<WorkflowTemplate>()
-                       .Where(e => e.CategoryCode == categoryCode)
+                       .Where(e => e.CategoryId == categoryId)
                        .OrderByDescending(e => e.Version)
                        .ToList();
         }
@@ -61,11 +75,11 @@ namespace Smartflow.Core
                        .FirstOrDefault();
         }
 
-        public decimal GetWorkflowTemplateVersionByCategoryCode(string categoryCode)
+        public decimal GetWorkflowTemplateVersionByCategoryId(int categoryId)
         {
             using ISession session = DbFactory.OpenSession();
-            string hql = "select max(t.Version) from WorkflowTemplate as t where t.CategoryCode=:CategoryCode ";
-            IQuery query =session.CreateQuery(hql).SetParameter("CategoryCode", categoryCode, NHibernateUtil.String);
+            string hql = "select max(t.Version) from WorkflowTemplate as t where t.CategoryId=:CategoryId ";
+            IQuery query =session.CreateQuery(hql).SetParameter("CategoryId", categoryId, NHibernateUtil.Int32);
             return query.FutureValue<decimal>().Value;
         }
     }

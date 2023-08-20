@@ -23,7 +23,7 @@
             <param name="userId">用户Id</param>
             <returns>任务清单</returns>
         </member>
-        <member name="M:Smartflow.API.Controllers.SMFController.GetTaskList">
+        <member name="M:Smartflow.API.Controllers.SMFController.GetTaskList(Smartflow.Abstraction.DTOs.Output.TaskQueryOption)">
             <summary>
             获取所有待办任务列表
             </summary>
@@ -78,11 +78,11 @@
             </summary>
             <returns>类别列表</returns>
         </member>
-        <member name="M:Smartflow.API.Controllers.SettingController.GetCategory(System.String)">
+        <member name="M:Smartflow.API.Controllers.SettingController.GetCategory(System.Int32)">
             <summary>
             通过类别代码，获取类别实体
             </summary>
-            <param name="code">类别代码</param>
+            <param name="id">类别代码</param>
             <returns>类别信息</returns>
         </member>
         <member name="T:Smartflow.API.Controllers.TemplateController">
@@ -90,7 +90,7 @@
             流程模板操作API
             </summary>
         </member>
-        <member name="M:Smartflow.API.Controllers.TemplateController.GetWorkflowTemplateList">
+        <member name="M:Smartflow.API.Controllers.TemplateController.GetWorkflowTemplateList(Smartflow.Abstraction.DTOs.Output.TemplateQueryOption)">
             <summary>
             获取流程模板清单
             </summary>
@@ -103,13 +103,13 @@
             <param name="id">流程Id</param>
             <returns>流程模块</returns>
         </member>
-        <member name="M:Smartflow.API.Controllers.TemplateController.Persist(Smartflow.API.Input.WorkflowTemplateInput)">
+        <member name="M:Smartflow.API.Controllers.TemplateController.Persist(Smartflow.Abstraction.DTOs.Input.WorkflowTemplateInput)">
             <summary>
             保存/编辑流程模板
             </summary>
             <param name="body">流程模板实体</param>
         </member>
-        <member name="M:Smartflow.API.Controllers.TemplateController.SaveAs(Smartflow.API.Input.WorkflowTemplateInput)">
+        <member name="M:Smartflow.API.Controllers.TemplateController.SaveAs(Smartflow.Abstraction.DTOs.Input.WorkflowTemplateInput)">
             <summary>
             流程模板另存为
             </summary>

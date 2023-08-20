@@ -37,7 +37,7 @@ namespace Smartflow.Samples.Controllers
             {
                 BusinessId = vacation.NID,
                 Creator = vacation.UID,
-                CategoryCode = "001001",
+                CategoryId= 10001,
                 Message = "启动流程"
             });
             vacation.InstanceId = startTask.InstanceId;

@@ -3,6 +3,7 @@ using Smartflow.Core.Chain;
 using Smartflow.Core.Elements;
 using Smartflow.Core.Handler;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Smartflow.Core.Dispatch
 {
@@ -33,7 +34,7 @@ namespace Smartflow.Core.Dispatch
             }
             ChainFactory.Chain()
                 .Add(new WorkflowTaskActorHandler(task.Id, to, users, roles))
-                .Add(new WorkflowTaskMailHandler(Instance.CategoryCode, task.Id))
+                .Add(new WorkflowTaskMailHandler(Instance.CategoryId, task.Id))
                 .Done();
 
             return task;
@@ -45,8 +46,22 @@ namespace Smartflow.Core.Dispatch
             WorkflowTask afterTask = TaskService.CreateTask(node, lineCode, Instance.Id, publisher, taskId, parallel, 0);
             ChainFactory.Chain()
                             .Add(new WorkflowTaskActorHandler(afterTask.Id, node, subprocess.Users, subprocess.Roles))
-                            .Add(new WorkflowTaskMailHandler(Instance.CategoryCode, afterTask.Id))
+                            .Add(new WorkflowTaskMailHandler(Instance.CategoryId, afterTask.Id))
                             .Done();
+        }
+
+        public void Dispatch(Transition transition,string publisher, string props,long taskId, bool parallel, IList<WorkflowSubprocess> children = null, IList<string> users = null, IList<string> roles = null)
+        {
+            Node destination = Nodes.Where(c => c.Id == transition.Destination).FirstOrDefault();
+            if (destination.NodeType == WorkflowNodeCategory.Collaboration)
+            {
+                CollaborationTask.CreateInstance(Instance, destination, transition.Id, taskId, publisher, users, roles).Dispatch();
+            }
+            else
+            {
+                WorkflowTask afterTask = this.CreateTask(destination, transition.Id, publisher, parallel, taskId,children,users,roles);
+                this.DispatchBranchTask(props, destination, afterTask);
+            }
         }
 
         public void DispatchBranchTask(string props,Node destination,WorkflowTask afterTask)

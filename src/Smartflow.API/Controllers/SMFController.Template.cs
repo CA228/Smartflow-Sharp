@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Smartflow.Core;
 using Smartflow.API.Code;
-using Smartflow.API.Input;
 using System.Linq;
+using Smartflow.Abstraction.DTOs.Input;
+using Smartflow.Abstraction.DTOs.Output;
 
 namespace Smartflow.API.Controllers
 {
@@ -26,10 +27,10 @@ namespace Smartflow.API.Controllers
         /// </summary>
         /// <returns></returns>
         [Route("api/wf/template/list"), HttpPost]
-        public ResultData GetWorkflowTemplateList()
+        public ResultData GetWorkflowTemplateList(TemplateQueryOption queryOption)
         {
-            IList<WorkflowTemplate> templates = _workflowTemplateService.GetWorkflowTemplateList();
-            return CommonMethods.Response(templates, templates.Count);
+            IList<WorkflowTemplate> templates = _workflowTemplateService.GetWorkflowTemplateList(queryOption,out int total);
+            return CommonMethods.Response(templates, total);
         }
 
         /// <summary>
@@ -57,13 +58,13 @@ namespace Smartflow.API.Controllers
             }
             else
             {
-                decimal version = _workflowTemplateService.GetWorkflowTemplateVersionByCategoryCode(body.CategoryCode);
+                decimal version = _workflowTemplateService.GetWorkflowTemplateVersionByCategoryId(body.CategoryId);
                 template = new WorkflowTemplate
                 {
                     CreateTime = DateTime.Now,
                     Version = version + 0.1m,
                     Status = 0,
-                    CategoryCode = body.CategoryCode,
+                    CategoryId = body.CategoryId,
                     CategoryName = body.CategoryName
                 };
             }
@@ -86,10 +87,10 @@ namespace Smartflow.API.Controllers
                 CreateTime = DateTime.Now,
                 UpdateTime = DateTime.Now
             };
-            decimal version = _workflowTemplateService.GetWorkflowTemplateVersionByCategoryCode(body.CategoryCode);
+            decimal version = _workflowTemplateService.GetWorkflowTemplateVersionByCategoryId(body.CategoryId);
             template.Name = body.Name;
             template.Version = (version + 0.1m);
-            template.CategoryCode = body.CategoryCode;
+            template.CategoryId = body.CategoryId;
             template.CategoryName = body.CategoryName;
             template.Status = 0;
             template.Memo = body.Memo;
@@ -112,7 +113,7 @@ namespace Smartflow.API.Controllers
 
             if (template.Status == 1)
             {
-                IList<WorkflowTemplate> wfList = _workflowTemplateService.GetWorkflowTemplateListByCategoryCode(template.CategoryCode);
+                IList<WorkflowTemplate> wfList = _workflowTemplateService.GetWorkflowTemplateListByCategoryId(template.CategoryId);
                 foreach (WorkflowTemplate entry in wfList.Where(e => e.Id != template.Id && e.Status == 1).ToList())
                 {
                     entry.Status = 0;

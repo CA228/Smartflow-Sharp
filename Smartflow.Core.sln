@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smartflow.API", "src\Smartf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "Samples\ConsoleApp\ConsoleApp.csproj", "{A8680971-5FD6-485C-9BBF-F61A7E4E3564}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smartflow.Abstraction", "src\Smartflow.Abstraction\Smartflow.Abstraction.csproj", "{6D0056B4-D1D4-4B83-BEF6-557234E955F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{A8680971-5FD6-485C-9BBF-F61A7E4E3564}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8680971-5FD6-485C-9BBF-F61A7E4E3564}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8680971-5FD6-485C-9BBF-F61A7E4E3564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D0056B4-D1D4-4B83-BEF6-557234E955F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D0056B4-D1D4-4B83-BEF6-557234E955F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D0056B4-D1D4-4B83-BEF6-557234E955F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D0056B4-D1D4-4B83-BEF6-557234E955F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +73,7 @@ Global
 		{700ECB1D-DBFC-45C5-9F14-E24060649E83} = {38564511-FB1C-4615-940C-2D572AC143C8}
 		{53094925-0A71-4407-AB30-B92978BA4CE6} = {7163226A-E5D2-45C5-9B8B-4739F4C2524B}
 		{A8680971-5FD6-485C-9BBF-F61A7E4E3564} = {38564511-FB1C-4615-940C-2D572AC143C8}
+		{6D0056B4-D1D4-4B83-BEF6-557234E955F4} = {7163226A-E5D2-45C5-9B8B-4739F4C2524B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36149782-1554-4111-A20E-B56700CC0DB9}

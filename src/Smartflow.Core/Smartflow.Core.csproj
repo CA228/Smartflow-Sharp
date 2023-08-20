@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Smartflow.Abstraction\Smartflow.Abstraction.csproj" />
     <ProjectReference Include="..\Smartflow.Common\Smartflow.Common.csproj" />
   </ItemGroup>
 

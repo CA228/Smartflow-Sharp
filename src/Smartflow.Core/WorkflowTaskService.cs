@@ -67,7 +67,7 @@ namespace Smartflow.Core
 
                 ChainFactory.Chain()
                              .Add(new WorkflowTaskActorHandler(afterTask.Id, clone, subprocess.Users, subprocess.Roles))
-                             .Add(new WorkflowTaskMailHandler(instance.CategoryCode, afterTask.Id))
+                             .Add(new WorkflowTaskMailHandler(instance.CategoryId, afterTask.Id))
                              .Done();
             }
         }

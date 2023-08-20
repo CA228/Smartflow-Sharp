@@ -56,7 +56,7 @@
                 </tr>
                 <tr>
                     <td class="attribute_tab_table_column">连线</td>
-                    <td class="attribute_tab_table_content">先点击左边线条图标，然后选中节点，移动到连线节点双击鼠标右键</td>
+                    <td class="attribute_tab_table_content">先点击左边线条图标，然后选中节点，移动到连线节点双击鼠标左键</td>
                 </tr>
                 <tr>
                     <td class="attribute_tab_table_column">描点</td>
@@ -168,11 +168,8 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">业务类型</label>
                 <div class="layui-input-block" style="position:relative;">
-                    <input type="text" id="txtCategoryName" name="CategoryName" onclick="$('#zc').show()" class="layui-input" />
-                    <input type="hidden" id="hidCategoryCode" name="CategoryCode" />
-                    <div class="ztree-container" id="zc" onmouseleave="$('#zc').hide()">
-                        <div class="ztree" id="ztree"></div>
-                    </div>
+                    <select autocomplete="off" placeholder="业务类型" name="CategoryId" lay-filter="scategory" class="layui-select" id="ddlCategory"></select>
+                    <input type="text" id="txtCategoryName"  name="CategoryName" class="layui-input layui-hide" />
                 </div>
             </div>
             <div class="layui-form-item">
@@ -208,7 +205,7 @@
                 help: 'workflow-help',
                 container: 'drawing',
                 categoryUrl: 'api/setting/category/list',
-                categoryId: 'ztree',
+                categoryId: 'ddlCategory',
                 url: 'api/wf/template/{id}/info',
                 save: 'api/wf/template/persist',
                 saveAs: 'api/wf/template/saveas'

@@ -336,6 +336,11 @@
             success: function () {
                 var form = layui.form;
                 $this.loadCategory(function () {
+                    form.on('select(scategory)', function (data) {
+                        let text = data.elem.selectedOptions[0].text;
+                        $('#txtCategoryName').val(text);
+                        //console.log(data);
+                    });
                     form.render(null, 'layui_flow_info');
                 });
             },
@@ -375,18 +380,6 @@
         });
     }
 
-    Configuration.prototype.select = function (code, treeId) {
-        var treeObj = $.fn.zTree.getZTreeObj(treeId);
-        if (!!treeObj) {
-            var nodes = treeObj.getNodesByParam("Code", code, null);
-            if (nodes.length > 0) {
-                var n = nodes[0];
-                treeObj.selectNode(n);
-                $('#txtCateName').val(n.Name);
-            }
-        }
-    }
-
     Configuration.prototype.loadCategory = function (callback) {
         var url = this.option.categoryUrl,
             id = '#' + this.option.categoryId;
@@ -394,37 +387,13 @@
             url: url,
             type: 'GET',
             success: function (serverData) {
-                var treeObj = $.fn.zTree.init($(id), {
-                    beforeClick: function (id, node) {
-                        return !node.isParent;
-                    },
-                    callback: {
-                        onClick: function (event, id, node) {
-                            $("#hidCategoryCode").val(node.Code);
-                            $("#txtCategoryName").val(node.Name);
-                        },
-                        onDblClick: function (event, id, node) {
-                            $("#hidCategoryCode").val(node.Code);
-                            $("#txtCategoryName").val(node.Name);
-                            $("#zc").hide();
-                        }
-                    },
-                    data: {
-                        key: {
-                            name: 'Name'
-                        },
-                        simpleData: {
-                            enable: true,
-                            idKey: 'Code',
-                            pIdKey: 'ParentCode',
-                            rootPId: 0
-                        }
-                    }
-                }, serverData);
-                var nodes = treeObj.getNodesByFilter(function (node) { return node.level == 0; });
-                if (nodes.length > 0) {
-                    treeObj.expandNode(nodes[0]);
-                }
+                var htmlArray = [];
+                htmlArray.push("<option value=\"\"></option>");
+                $.each(serverData, function () {
+                    htmlArray.push("<option value='" + this.Id + "'>" + this.Name + "</option>");
+                });
+                $(id).html(htmlArray.join(''));
+                layui.form.render('select');
                 callback && callback();
             }
         });

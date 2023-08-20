@@ -11,7 +11,7 @@ body {
 
 .smartflow_head {
     height: 60px;
-    background-color: #259FE5;
+    background-color: #17a6f7;
 }
 
 .smartflow_title {
@@ -104,7 +104,7 @@ body {
     height: 100%;
     /*background-color: #C5E0ED;*/
     /*background-color: #2aa5ec;*/
-    background-color: #259fe5;
+    background-color: #17a6f7;
 }
 
 .smartflow_right {
@@ -125,8 +125,8 @@ body {
 }
 
 .menu_sub_item {
-    height: 40px;
-    line-height: 40px;
+    height: 36px;
+    line-height: 36px;
     text-align: left;
     padding-left: 20px;
     color: #fafafa;
@@ -147,10 +147,11 @@ body {
     font-size: 16px;
     text-decoration: none;
     padding-left: 20px;
+    font-weight:700;
     cursor: pointer;
     height: 40px;
     line-height: 40px;
-    background-color: #2aa5ec;
+    background-color: #14a1f3;
 }
 
 .smartflow_tab {

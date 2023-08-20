@@ -28,10 +28,9 @@
 	</class>
 
 	<class name="Category" table="t_wf_category">
-		<id name="Code" column="Code" type="String" generator="assigned"/>
+		<id name="Id" column="ID" type="Int32" generator="assigned"/>
 		<property name="Name" column="Name" type="String" />
 		<property name="Url" column="Url" type="String" />
-		<property name="ParentCode" column="ParentCode" type="String" />
 	</class>
 	
 	<sql-query name="queryMailByRoleIds">

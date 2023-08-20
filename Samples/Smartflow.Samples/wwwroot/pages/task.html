@@ -15,7 +15,7 @@
         <div class="list">
             <div class="list-container">
                 <template v-if="categories.length>0">
-                    <component v-for="(itm,index) in categories" :key="index" v-on:refresh="reload" :ref="itm.Code" :is="itm.Url" :nodes="nodes"></component>
+                    <component v-for="(itm,index) in categories" :key="index" v-on:refresh="reload" :ref="itm.Id" :is="itm.Url" :nodes="nodes"></component>
                 </template>
                 <template v-else>
                     <div style="font-size: 48px; color: rgb(191 191 191); text-align: center; line-height: 200px;">无任务待办信息</div>

@@ -182,7 +182,7 @@
             window.top.layer.full(index);
         },
         isEmpty: function (value) {
-            return (value == '' || !value) ? false : true;
+            return (value == '' || value === undefined || value == null);
         },
         openWin: function (url, title, width, height) {
             var h = height || 720;
@@ -207,6 +207,10 @@
                 , method: 'post'
                 , contentType: 'application/json'
                 , cellMinWidth: 80
+                , request: {
+                    pageName: 'Index', 
+                    limitName:'Size' 
+                }
                 , parseData: function (res) {
                     return {
                         "code": (res.Code == 200 ? 0 : res.Code),

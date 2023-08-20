@@ -6,13 +6,7 @@ namespace Smartflow.Bussiness.Models
 {
     public class StatisticsInstance
     {
-        public virtual string Code
-        {
-            get;
-            set;
-        }
-
-        public virtual string ParentCode
+        public virtual int Id
         {
             get;
             set;

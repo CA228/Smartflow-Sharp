@@ -1,4 +1,5 @@
 ﻿using NHibernate;
+using Smartflow.Abstraction.DTOs.Output;
 using Smartflow.Common;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +12,16 @@ namespace Smartflow.Core
 
         void Persist(long templateId,object template);
 
+        IList<WorkflowTemplate> GetWorkflowTemplateList(TemplateQueryOption queryOption,out int total);
+
         IList<WorkflowTemplate> GetWorkflowTemplateList();
 
-        WorkflowTemplate GetWorkflowTemplateByCategoryCode(string categoryCode);
+        WorkflowTemplate GetWorkflowTemplateByCategoryId(int categoryId);
 
-        IList<WorkflowTemplate> GetWorkflowTemplateListByCategoryCode(string categoryCode);
+        IList<WorkflowTemplate> GetWorkflowTemplateListByCategoryId(int categoryId);
 
         WorkflowTemplate GetWorkflowTemplateById(long id);
 
-        decimal GetWorkflowTemplateVersionByCategoryCode(string categoryCode);
+        decimal GetWorkflowTemplateVersionByCategoryId(int categoryId);
     }
 }

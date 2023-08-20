@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Smartflow.Abstraction.DTOs.Output;
 using Smartflow.API.Code;
 using Smartflow.API.DTOs;
 using Smartflow.Bussiness.Interfaces;
 using Smartflow.Bussiness.Models;
+using Smartflow.Common;
 using Smartflow.Core;
 using Smartflow.Core.Elements;
 
@@ -49,10 +51,10 @@ namespace Smartflow.API.Controllers
         /// </summary>
         /// <returns>任务清单</returns>
         [Route("api/smf/task/list"), HttpPost]
-        public ResultData GetTaskList()
+        public ResultData GetTaskList(TaskQueryOption option)
         {
-            var tasks = _workflowReportService.GetPendingTaskList();
-            return CommonMethods.Response(tasks, tasks.Count);
+            var tasks = _workflowReportService.GetPendingTaskList(option, out int total);
+            return CommonMethods.Response(tasks, total);
         }
 
         /// <summary>

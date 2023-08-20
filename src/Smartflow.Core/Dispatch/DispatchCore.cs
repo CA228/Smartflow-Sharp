@@ -29,13 +29,8 @@ namespace Smartflow.Core.Dispatch
             if (TaskService.CheckTaskCompleted(Instance.Id, Task.Code)) return;
             Node to = Nodes.Where(n => n.Id == transition.Destination).FirstOrDefault();
             if (to.NodeType == WorkflowNodeCategory.End) return;
-            if (to.NodeType == WorkflowNodeCategory.Collaboration){
-                CollaborationTask.CreateInstance(Instance, to, transition.Id, Task.Id, Input.Submiter,Input.Users,Input.Roles).Dispatch();
-            }
-            else{
-                WorkflowTask afterTask = base.CreateTask(to, transition.Id, Input.Submiter, Input.Parallel, Task.Id, Input.Children, Input.Users, Input.Roles);
-                base.DispatchBranchTask(Input.Props, to, afterTask);
-            }
+            
+            base.Dispatch(transition, Input.Submiter, Input.Props, Task.Id, Input.Parallel, Input.Children, Input.Users, Input.Roles);
         }
 
         public static IDispatch CreateInstance(WorkflowInstance instance, WorkflowTask task, WorkflowSubmitInput input)

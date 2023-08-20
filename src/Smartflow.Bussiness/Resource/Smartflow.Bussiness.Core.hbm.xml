@@ -4,27 +4,28 @@
                    namespace="Smartflow.Bussiness.Models">
 
 	<class name="Category" table="t_wf_category">
-		<id name="Code" column="Code" type="String" generator="assigned"/>
+		<id name="Id" column="ID" type="Int32" generator="assigned"/>
 		<property name="Name" column="Name" type="String" />
 		<property name="Url" column="Url" type="String" />
-		<property name="ParentCode" column="ParentCode" type="String" />
+		<property name="Sort" column="Sort" type="Int32" />
 	</class>
 
 	<class name="StatisticsInstance">
-		<id name="Code"  type="String" generator="assigned"/>
+		<id name="Id"   type="Int32" generator="assigned"/>
 		<property name="Name"  type="String" />
 		<property name="Url" type="String" />
-		<property name="ParentCode" type="String" />
 		<property name="Total" type="Int32" />
 	</class>
 
 	<class name="StatisticsTask" table="vw_task">
-		<id name="Id"  type="Int64" generator="assigned"/>
+		<id name="Id" column="ID" type="Int64" generator="assigned"/>
 		<property name="Name"  type="String" />
 		<property name="Code" type="String" />
 		<property name="ParentId" type="Int64" />
 		<property name="InstanceId" type="String" />
 		<property name="CreateTime"  type="DateTime" />
+		<property name="Sender" type="String" />
+		<property name="CategoryId" type="Int32" />
 		<property name="CategoryName" type="String" />
 		<property name="TemplateName" type="String" />
 		<property name="Actor" type="String" />
@@ -32,7 +33,7 @@
 	
 	<sql-query name="queryStatisticsInstanceByUserId">
 		<return alias="tx" class="Smartflow.Bussiness.Models.StatisticsInstance"/>
-		select {tx.*} from (select c.*,Total from [dbo].[t_wf_category] c, (select CategoryCode, Count(1) Total from [dbo].[t_wf_instance] where id in (select instanceId from t_wf_task where status=0) group by CategoryCode) as i where c.Code = i.CategoryCode  AND I.CategoryCode in (select i.CategoryCode from t_wf_task x, t_wf_task_auth y,t_wf_instance i where x.Status = 0 and x.id = y.TaskId and i.id = X.InstanceId and ((y.Type = 1 and y.AuthCode =:userId) or(y.Type = 0 and y.AuthCode in (select RID from [dbo].[t_sys_umr] where UID =:userId)) or(y.Type = 2 and y.AuthCode in (select OrganizationCode from [dbo].[t_sys_user] where ID =:userId))))) as tx
+		select {tx.*} from (select c.*,Total from [dbo].[t_wf_category] c, (select CategoryId, Count(1) Total from [dbo].[t_wf_instance] where id in (select instanceId from t_wf_task where status=0) group by CategoryId) as i where c.Id = i.CategoryId  AND i.CategoryId in (select i.CategoryId from t_wf_task x, t_wf_task_auth y,t_wf_instance i where x.Status = 0 and x.id = y.TaskId and i.id = X.InstanceId and ((y.Type = 1 and y.AuthCode =:userId) or(y.Type = 0 and y.AuthCode in (select RID from [dbo].[t_sys_umr] where UID =:userId)) or(y.Type = 2 and y.AuthCode in (select OrganizationCode from [dbo].[t_sys_user] where ID =:userId))))) as tx
 	</sql-query>
 
 

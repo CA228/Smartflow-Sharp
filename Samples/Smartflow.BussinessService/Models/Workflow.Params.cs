@@ -8,7 +8,7 @@ namespace Smartflow.BussinessService.Models
     {
         public string BusinessId { get; set; }
         public string Creator { get; set; }
-        public string CategoryCode { get; set; }
+        public int CategoryId { get; set; }
         public IList<string> Users { get; set; }
         public IList<string> Roles { get; set; }
         public string Message { get; set; }
