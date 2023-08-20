@@ -28,7 +28,7 @@ namespace Smartflow.Core.Dispatch
               .Add(new WorkflowRecordMailHandler(Instance.Creator, Start.Message))
               .Done();
             
-            base.Dispatch(transition, Start.Creator,Start.Props, 0, Start.Parallel, Start.Children, Start.Users, Start.Roles);
+            base.DispatchTask(transition, Start.Creator,Start.Props, 0, Start.Parallel, Start.Children, Start.Users, Start.Roles);
         }
 
         public static IDispatch CreateInstance(WorkflowInstance instance, Node destination, WorkflowStartInput start)

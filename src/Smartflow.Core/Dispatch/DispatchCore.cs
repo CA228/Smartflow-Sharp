@@ -30,7 +30,7 @@ namespace Smartflow.Core.Dispatch
             Node to = Nodes.Where(n => n.Id == transition.Destination).FirstOrDefault();
             if (to.NodeType == WorkflowNodeCategory.End) return;
             
-            base.Dispatch(transition, Input.Submiter, Input.Props, Task.Id, Input.Parallel, Input.Children, Input.Users, Input.Roles);
+            base.DispatchTask(transition, Input.Submiter, Input.Props, Task.Id, Input.Parallel, Input.Children, Input.Users, Input.Roles);
         }
 
         public static IDispatch CreateInstance(WorkflowInstance instance, WorkflowTask task, WorkflowSubmitInput input)

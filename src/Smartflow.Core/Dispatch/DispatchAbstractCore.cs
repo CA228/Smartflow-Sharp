@@ -50,7 +50,7 @@ namespace Smartflow.Core.Dispatch
                             .Done();
         }
 
-        public void Dispatch(Transition transition,string publisher, string props,long taskId, bool parallel, IList<WorkflowSubprocess> children = null, IList<string> users = null, IList<string> roles = null)
+        public void DispatchTask(Transition transition,string publisher, string props,long taskId, bool parallel, IList<WorkflowSubprocess> children = null, IList<string> users = null, IList<string> roles = null)
         {
             Node destination = Nodes.Where(c => c.Id == transition.Destination).FirstOrDefault();
             if (destination.NodeType == WorkflowNodeCategory.Collaboration)

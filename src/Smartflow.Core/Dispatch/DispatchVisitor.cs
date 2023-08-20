@@ -30,7 +30,7 @@ namespace Smartflow.Core.Dispatch
         {
             if (CheckGateway(WorkflowNodeCategory.Decision)) return;
             Transition transition = decision.NodeService.GetTransition(Props, Destination);
-            decision.Dispatch(transition,String.Empty,Props,Task.Id,false);
+            decision.DispatchTask(transition,String.Empty,Props,Task.Id,false);
         }
 
         public void Visit(ForkGateway fork)
@@ -39,7 +39,7 @@ namespace Smartflow.Core.Dispatch
             ISet<Transition> transitions = Destination.Transitions;
             foreach (Transition transition in transitions)
             {
-                fork.Dispatch(transition, String.Empty, Props, Task.Id, true);
+                fork.DispatchTask(transition, String.Empty, Props, Task.Id, true);
             }
         }
 
@@ -50,7 +50,7 @@ namespace Smartflow.Core.Dispatch
             int taskCount = join.TaskService.GetTaskListByInstanceId(Instance.Id).Where(c => previous.Where(s => s.Id == c.LineCode).Count() > 0 && c.Status == 1).Count();
             if (previous.Count != taskCount) return;
             Transition transition = Destination.Transitions.FirstOrDefault();
-            join.Dispatch(transition, String.Empty, Props, Task.Id, true);
+            join.DispatchTask(transition, String.Empty, Props, Task.Id, true);
         }
 
         protected bool CheckGateway(WorkflowNodeCategory nodeCategory)
