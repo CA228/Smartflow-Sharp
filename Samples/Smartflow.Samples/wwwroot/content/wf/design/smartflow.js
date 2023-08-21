@@ -127,11 +127,22 @@
     }
 
     Draw.angle = function (a, b) {
-         var dffx = b.x - a.x;
-         var diffy = b.y - a.y;
-         var angle = Math.atan2(diffy, dffx) * (180 / Math.PI);
+        let dffx = b.x - a.x;
+        let diffy = b.y - a.y;
+        let angle = Math.atan2(diffy, dffx) * (180 / Math.PI);
          //console.log(angle);
-         return Math.abs(Math.floor(angle));
+        return Math.abs(Math.floor(angle));
+     }
+
+    Draw.anglex = function (a, b) {
+         let dffx = b.x - a.x;
+         let diffy = b.y - a.y;
+         let angle = Math.atan2(diffy, dffx) * (180 / Math.PI);
+         let aw = 360 - angle + 90;
+         let tx = aw > 0 ? 360 + aw : aw;
+         let ta = tx % 360;
+         let abs = ta / 360 * 24;
+         return Math.abs(abs);
      }
 
     Draw.getPosition = function (layout) {
@@ -1579,75 +1590,52 @@
             this.name = text;
             this.brush.text(text);
         },
-        bound: function (moveX, moveY) {
-            var x = this.x,
+        checkPointInFourPoints: function (e, a, b, c, d) {
+            function dotProduct(a, b, e) {
+                return (b.x - a.x) * (e.x - a.x) + (b.y - a.y) * (e.y - a.y);
+            }
+            let ab = dotProduct(a, b, e);
+            let bc = dotProduct(b, c, e);
+            let cd = dotProduct(c, d, e);
+            let da = dotProduct(d, a, e);
+            return ab >= 0 && bc >= 0 && cd >= 0 && da >= 0;
+        },
+        checkCenter: function (mx, my) {
+            let x = this.x, y = this.y, w = this.w, h = this.h;
+            const la = [4.78, 7.77],
+                raa = [0, 4.22],
+                rab = [19.77, 23],
+                rb = [16, 19.23],
+                lba = [7.23, 16];
+
+            function compare(a, v) {
+                return a[0] <= v && v <= a[1];
+            }
+
+            const c = { x: w / 2 + x, y: h / 2 + y },
+                tc = { x: x + w / 2, y: y },
+                lc = { x: x, y: y + h / 2 },
+                rc = { x: x + w, y: y + h / 2 },
+                bc = { x: x + w / 2, y: y + h };
+
+            const angleX = Draw.anglex({ x: mx, y: my }, c);
+            if (compare(la, angleX)) {
+                return lc;
+            } else if (compare(raa, angleX) || compare(rab, angleX)) {
+                return tc;
+            } else if (compare(rb, angleX)) {
+                return rc;
+            } else if (compare(lba, angleX)) {
+                return bc;
+            }
+            return tc;
+        },
+        bound: function (mx, my) {
+            let x = this.x,
                 y = this.y,
                 w = this.w,
-                h = this.h,
-                tickness = this.tickness,
-                xt = x + w,
-                yt = y + h;
-
-            var direction = {
-                bottom: function (moveX, moveY) {
-                    var center = {
-                        x: x + w / 2,
-                        y: yt
-                    };
-                    return (x + tickness <= moveX
-                        && xt - tickness >= moveX
-                        && moveY >= yt - tickness
-                        && moveY <= yt) ? center : false;
-                },
-                top: function (moveX, moveY) {
-
-                    var center = {
-                        x: x + w / 2,
-                        y: y
-                    };
-                    return (x + tickness <= moveX && xt - tickness >= moveX
-                        && moveY >= y
-                        && moveY <= y + tickness) ? center : false;
-
-                },
-                left: function (moveX, moveY) {
-                    var center = {
-                        x: x,
-                        y: y + h / 2
-                    };
-
-                    return (
-                        x <= moveX
-                        && x + tickness >= moveX
-                        && moveY >= y
-                        && moveY <= yt
-                    ) ? center : false;
-
-                },
-                right: function (moveX, moveY) {
-
-                    var center = {
-                        x: xt,
-                        y: y + h / 2
-                    };
-
-                    return (
-                        xt - tickness <= moveX
-                        && xt >= moveX
-                        && moveY >= y
-                        && moveY <= yt
-                    ) ? center : false;
-                }
-            }
-
-            for (var propertName in direction) {
-                var _check = direction[propertName](moveX, moveY);
-                if (_check) {
-                    return _check;
-                }
-            }
-
-            return false;
+                h = this.h;
+            return this.checkPointInFourPoints({ x: mx, y: my }, { x: x, y: y }, { x: x + w, y: y }, { x: x + w, y: y + h }, { x: x, y: y + h }) ? this.checkCenter(mx, my) : false;
         },
         move: function (element, d) {
             var self = this;
@@ -1699,113 +1687,54 @@
         validate: function () {
             return true;
         },
-        bound: function (mX, mY) {
-            var r = 25,
-                c = 5,
+        checkPointInPoints: function (r,mx, my) {
+            let cc = {
+                x: this.x + r,
+                y: this.y
+            };
+
+            function pointInsideCircle(p, c, r) {
+                let dx = c.x - p.x;
+                let dy = c.y - p.y;
+                return dx * dx + dy * dy <= r * r;
+            }
+
+            return pointInsideCircle({ x: mx, y: my }, cc, r);
+        },
+        checkCenter: function (r,mx, my) {
+            let c = 5,
                 cx = this.x + r,
-                cy = this.y,
-                z = r * 2;
-            var tickness = this.tickness;
+                cy = this.y;
+            const la = [4.78, 7.77],
+                raa = [0, 4.22],
+                rab = [19.77, 23],
+                rb = [16, 19.23],
+                lba = [7.23, 16];
 
-            var direction = {
-                bottom: {
-                    x1: cx - r,
-                    y1: cy + r,
-                    x2: cx - r,
-                    y2: cy + r - tickness,
-                    x3: cx + z - r,
-                    y3: cy + r - tickness,
-                    x4: cx - r + z,
-                    y4: cy + r,
-                    check: function (moveX, moveY) {
-                        var center = {
-                            x: cx + c,
-                            y: cy + r - c
-                        };
+            const cc = { x: cx, y: cy },
+                tc = {x: cx + c,y: cy - r + c},
+                lc = {x: cx - r + c * 2,y: cy },
+                rc = { x: cx + r,y: cy },
+                bc = { x: cx + c, y: cy + r - c };
 
-                        return this.x1 <= moveX &&
-                            this.x3 >= moveX &&
-                            this.y1 >= moveY &&
-                            this.y2 <= moveY ? center : false;
-                    }
-
-                },
-                top: {
-                    x1: cx - r,
-                    y1: cy - r,
-                    x2: cx - r,
-                    y2: cy - r + tickness,
-                    x3: cx + z - r,
-                    y3: cy - r,
-                    x4: cx + z - r,
-                    y4: cy - r + tickness,
-                    check: function (moveX, moveY) {
-
-                        var center = {
-                            x: cx + c,
-                            y: cy - r + c
-                        };
-
-                        return this.x1 <= moveX &&
-                            this.x3 >= moveX &&
-                            this.y1 <= moveY &&
-                            this.y2 >= moveY ? center : false;
-                    }
-                },
-                left: {
-                    x1: cx - r,
-                    y1: cy - r + tickness,
-                    x2: cx - r,
-                    y2: cy + r - tickness,
-                    x3: cx - r + tickness,
-                    y3: cy - r + tickness,
-                    x4: cx - r + tickness,
-                    y4: cy + r - tickness,
-                    check: function (moveX, moveY) {
-
-                        var center = {
-                            x: cx - r + c * 2,
-                            y: cy
-                        };
-
-                        return this.x1 <= moveX &&
-                            this.x3 >= moveX &&
-                            this.y1 <= moveY &&
-                            this.y2 >= moveY ? center : false;
-
-                    }
-                },
-                right: {
-                    x1: cx + r,
-                    y1: cy - r + tickness,
-                    x2: cx + r,
-                    y2: cy + r - tickness,
-                    x3: cx + r - tickness,
-                    y3: cy - r + tickness,
-                    x4: cx + r - tickness,
-                    y4: cy + r - tickness,
-                    check: function (moveX, moveY) {
-
-                        var center = {
-                            x: cx + r,
-                            y: cy
-                        };
-
-                        return this.x1 >= moveX &&
-                            this.x3 <= moveX &&
-                            this.y1 <= moveY &&
-                            this.y2 >= moveY ? center : false;
-                    }
-                }
+            function compare(a, v) {
+                return a[0] <= v && v <= a[1];
             }
-            for (var propertName in direction) {
-                var _o = direction[propertName],
-                    check = _o.check(mX, mY);
-                if (check) {
-                    return check;
-                }
+            const angleX = Draw.anglex({ x: mx, y: my }, cc);
+            if (compare(la, angleX)) {
+                return lc;
+            } else if (compare(raa, angleX) || compare(rab, angleX)) {
+                return tc;
+            } else if (compare(rb, angleX)) {
+                return rc;
+            } else if (compare(lba, angleX)) {
+                return bc;
             }
-            return false;
+            return tc;
+        },
+        bound: function (mx, my) {
+            let r = 25;
+            return this.checkPointInPoints(r,mx, my) ? this.checkCenter(r,mx, my) : false;
         }
     });
 
@@ -1842,101 +1771,43 @@
         validate: function () {
             return true;
         },
-        bound: function (mX, mY) {
-
+        checkPointInPoints: function (mx, my) {
+            const h = 50, w = 100;
+            return Math.abs(mx * h / 2) + Math.abs(my * w / 2) > h * w/4
+        },
+        checkCenter: function (mx, my) {
+            let hh = 25, hw = 50;
             var n = SVG.get(this.$id);
-
             var x = n.x(),
                 y = n.y();
+            const la = [4.78, 7.77],
+                raa = [0, 4.22],
+                rab = [19.77, 23],
+                rb = [16, 19.23],
+                lba = [7.23, 16];
+            const cc = { x: x+hw, y: y },
+                tc = { x: x + hw, y: y-hh },
+                lc = { x: x, y: y },
+                rc = { x: x+hw*2, y: y },
+                bc = { x: x + hw, y: y + hh };
 
-            var direction = {
-                bottom: function (moveX, moveY) {
-                    var AX = x + 25;
-                    var AY = y + 12.5;
-
-                    var BX = x + 50;
-                    var BY = y + 25;
-
-                    var CX = BX + 25;
-                    var CY = AY;
-
-                    var center = {
-                        x: BX,
-                        y: BY
-                    };
-
-                    return (AX <= moveX && CX >= moveX
-                        && moveY >= AY
-                        && moveY <= BY) ? center : false;
-                },
-                top: function (moveX, moveY) {
-
-                    var AX = x + 25;
-                    var AY = y - 12.5;
-
-                    var BX = x + 50;
-                    var BY = y - 25;
-
-                    var CX = BX + 25;
-                    var CY = AY;
-
-                    var center = {
-                        y: BY,
-                        x: BX
-                    };
-
-                    return (AX <= moveX && CX >= moveX
-                        && moveY >= BY
-                        && moveY <= AY) ? center : false;
-                },
-                left: function (moveX, moveY) {
-                    var AX = x + 25;
-                    var AY = y - 12.5;
-
-                    var BX = x;
-                    var BY = y;
-
-                    var CX = BX + 25;
-                    var CY = BY + 12.5;
-
-                    var center = {
-                        x: BX,
-                        y: BY
-                    };
-
-                    return BX <= moveX && AX >= moveX
-                        && moveY >= AY
-                        && moveY <= CY ? center : false;
-                },
-                right: function (moveX, moveY) {
-
-                    var BX = x + 100;
-                    var BY = y;
-
-                    var AX = BX - 25;
-                    var AY = BY - 12.5;
-
-                    var CX = BX + 25;
-                    var CY = BY + 12.5;
-
-                    var center = {
-                        x: BX,
-                        y: BY
-                    };
-
-                    return (AX <= moveX && BX >= moveX
-                        && moveY >= AY
-                        && moveY <= CY) ? center : false;
-                }
-            };
-
-            for (var propertName in direction) {
-                var _check = direction[propertName](mX, mY);
-                if (_check) {
-                    return _check;
-                }
+            function compare(a, v) {
+                return a[0] <= v && v <= a[1];
             }
-            return false;
+            const angleX = Draw.anglex({ x: mx, y: my }, cc);
+            if (compare(la, angleX)) {
+                return lc;
+            } else if (compare(raa, angleX) || compare(rab, angleX)) {
+                return tc;
+            } else if (compare(rb, angleX)) {
+                return rc;
+            } else if (compare(lba, angleX)) {
+                return bc;
+            }
+            return tc;
+        },
+        bound: function (mx, my) {
+            return this.checkPointInPoints(mx, my) ? this.checkCenter(mx, my) : false;
         }
     });
 
@@ -2078,95 +1949,74 @@
             Fork.base.Constructor.call(this, rect.id(), text, 'fork', dw);
             Draw._proto_NC[n.$id] = n;
             return Fork.base.Parent.prototype.draw.call(this);
-         },
-         bound: function (moveX, moveY) {
-             var x = this.x,
-                 y = this.y,
-                 w = this.w,
-                 h = this.h,
-                 tickness = this.tickness - 10,
-                 xt = x + w,
-                 yt = y + h;
+        },
+        checkPointInFourPoints: function (e, a, b, c, d) {
+            function dotProduct(a, b, e) {
+                return (b.x - a.x) * (e.x - a.x) + (b.y - a.y) * (e.y - a.y);
+            }
+            let ab = dotProduct(a, b, e);
+            let bc = dotProduct(b, c, e);
+            let cd = dotProduct(c, d, e);
+            let da = dotProduct(d, a, e);
+            return ab >= 0 && bc >= 0 && cd >= 0 && da >= 0;
+        },
+        checkCenter: function (mx, my) {
+            let x = this.x, y = this.y, w = this.w, h = this.h;
+            const la = [4.78, 7.77],
+                raa = [0, 4.22],
+                rab = [19.77, 23],
+                rb = [16, 19.23],
+                lba = [7.23, 16];
 
-             var direction = {
-                 bottom: function (moveX, moveY) {
-                     var center = {
-                         x: x + w / 2,
-                         y: yt
-                     };
-                     return (x + tickness <= moveX
-                         && xt - tickness >= moveX
-                         && moveY >= yt - tickness
-                         && moveY <= yt) ? center : false;
-                 },
-                 top: function (moveX, moveY) {
-                     var center = {
-                         x: x + w / 2,
-                         y: y
-                     };
-                     return (x + tickness <= moveX && xt - tickness >= moveX
-                         && moveY >= y
-                         && moveY <= y + tickness) ? center : false;
-                 },
-                 left: function (moveX, moveY) {
-                     var center = {
-                         x: x,
-                         y: y + h / 2
-                     };
+            function compare(a, v) {
+                return a[0] <= v && v <= a[1];
+            }
 
-                     return (
-                         x <= moveX
-                         && x + tickness >= moveX
-                         && moveY >= y
-                         && moveY <= yt
-                     ) ? center : false;
+            const c = { x: w / 2 + x, y: h / 2 + y },
+                tc = { x: x + w / 2, y: y },
+                lc = { x: x, y: y + h / 2 },
+                rc = { x: x + w, y: y + h / 2 },
+                bc = { x: x + w / 2, y: y + h };
 
-                 },
-                 right: function (moveX, moveY) {
+            const angleX = Draw.anglex({ x: mx, y: my }, c);
+            if (compare(la, angleX)) {
+                return lc;
+            } else if (compare(raa, angleX) || compare(rab, angleX)) {
+                return tc;
+            } else if (compare(rb, angleX)) {
+                return rc;
+            } else if (compare(lba, angleX)) {
+                return bc;
+            }
+            return tc;
+        },
+        bound: function (mx, my) {
+            let x = this.x,
+                y = this.y,
+                w = this.w,
+                h = this.h;
+            return this.checkPointInFourPoints({ x: mx, y: my }, { x: x, y: y }, { x: x + w, y: y }, { x: x + w, y: y + h }, { x: x, y: y + h }) ? this.checkCenter(mx, my) : false;
+        },
+        move: function (element, d) {
+            var self = this;
+            self.x = Draw.getClientX(d) - self.disX;
+            self.y = Draw.getClientY(d) - self.disY;
+            element.attr({
+                x: self.x,
+                y: self.y
+            });
 
-                     var center = {
-                         x: xt,
-                         y: y + h / 2
-                     };
+            self.brush.attr({
+            x: element.x() + (element.width() / 2),
+                y: element.y() + (element.height() / 2)
+            });
 
-                     return (
-                         xt - tickness <= moveX
-                         && xt >= moveX
-                         && moveY >= y
-                         && moveY <= yt
-                     ) ? center : false;
-                 }
-             };
-
-             for (var propertName in direction) {
-                 var _check = direction[propertName](moveX, moveY);
-                 if (_check) {
-                     return _check;
-                 }
-             }
-
-             return false;
-         },
-         move: function (element, d) {
-             var self = this;
-             self.x = Draw.getClientX(d) - self.disX;
-             self.y = Draw.getClientY(d) - self.disY;
-             element.attr({
-                 x: self.x,
-                 y: self.y
-             });
-
-             self.brush.attr({
-                x: element.x() + (element.width() / 2),
-                 y: element.y() + (element.height() / 2)
-             });
-
-             Fork.base.Parent.prototype.move.call(this);
-         },
-         validate: function () {
-             return Draw.findById(this.$id, 'to').length == 1
-                 && Draw.findById(this.$id, 'from').length > 1;
-         }
+            Fork.base.Parent.prototype.move.call(this);
+        },
+        validate: function () {
+            return Draw.findById(this.$id, 'to').length == 1
+                && Draw.findById(this.$id, 'from').length > 1;
+        }
      });
 
     function XML(xml, support) {
