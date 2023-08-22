@@ -221,7 +221,7 @@
         return evt.offsetX;
     }
 
-     Draw.getClientY = function (evt) {
+    Draw.getClientY = function (evt) {
         return evt.offsetY;
      }
 
